@@ -34,7 +34,7 @@ int main(void) {
 
 	reset_printf();
 	memset(GetVRAMAddress(), 0, LCD_HEIGHT_PX * LCD_WIDTH_PX * 2);
-	printf("Prizoop Initializing...");
+	printf("PRIZMGBC INITIALIZING...");
 	DrawFrame(0x0000);
 	Bdisp_PutDisp_DD();
 
