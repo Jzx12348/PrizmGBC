@@ -1,4 +1,5 @@
 name: Publish PrizmGBC development pre-release
+# Rebuild the existing v1.3.0-development tag when release metadata changes.
 
 on:
   push:
