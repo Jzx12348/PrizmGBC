@@ -6,6 +6,9 @@
 
 struct keys_type keys;
 
+static bool saveKeyWasDown = false;
+static bool loadKeyWasDown = false;
+
 #if !TARGET_WINSIM
 // returns true if the key is down, false if up
 bool keyDown_fast(unsigned char keyCode) {
@@ -38,15 +41,15 @@ void refreshKeys(bool systemCalls) {
 	}
 
 	if (systemCalls) {
-		if (keyDown_fast(emulator.settings.keyMap[emu_button::STATE_SAVE])) {
-			emulator.saveState();
-		//	while (keyDown_fast(emulator.settings.keyMap[emu_button::STATE_SAVE])) {}
-		}
+		bool saveKeyDown = keyDown_fast(emulator.settings.keyMap[emu_button::STATE_SAVE]);
+		bool loadKeyDown = keyDown_fast(emulator.settings.keyMap[emu_button::STATE_LOAD]);
 
-		if (keyDown_fast(emulator.settings.keyMap[emu_button::STATE_LOAD])) {
-			emulator.loadState();
-		//	while (keyDown_fast(emulator.settings.keyMap[emu_button::STATE_LOAD])) {}
-		}
+		// Trigger once per press. Without edge detection a held key can repeatedly
+		// rewrite or reload the state file on consecutive emulation frames.
+		if (saveKeyDown && !saveKeyWasDown) emulator.saveState();
+		if (loadKeyDown && !loadKeyWasDown) emulator.loadState();
+		saveKeyWasDown = saveKeyDown;
+		loadKeyWasDown = loadKeyDown;
 
 		if (keyDown_fast(48)) {
 			// this will set keys.exit once a full frame renders
