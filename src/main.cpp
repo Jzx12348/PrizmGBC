@@ -11,6 +11,12 @@
 bool shouldExit = false;
 
 void shutdown() {
+	static bool shutdownComplete = false;
+	if (shutdownComplete) return;
+	shutdownComplete = true;
+
+	// Restore supported CPU tuning before releasing emulator resources.
+	restorePtuneSetting();
 	emulator.shutDown();
 	unloadROM();
 }

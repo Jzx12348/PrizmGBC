@@ -10,6 +10,16 @@
 
 #include "screen_play.h"
 
+// Ptune2 changes are only supported on CG20 hardware. Keep track of changes
+// so the OS clock configuration can be restored on both normal and forced exit.
+static bool ptuneSettingChanged = false;
+
+void restorePtuneSetting() {
+	if (!ptuneSettingChanged) return;
+	Ptune2_LoadSetting(PT2_DEFAULT);
+	ptuneSettingChanged = false;
+}
+
 static void recordPlaytime(const char* filename, unsigned int elapsedSeconds) {
 	if (!filename || !filename[0] || elapsedSeconds == 0) return;
 
@@ -168,7 +178,9 @@ void screen_play::play() {
 	}
 
 	// Apply settings
-	bool doOverclock = Ptune2_GetSetting() == PT2_DEFAULT;
+	// The bundled Ptune2 library explicitly warns against use on CG50 devices.
+	// Never call it there, including for the otherwise-default no-memory-wait mode.
+	bool doOverclock = getDeviceType() == DT_CG20 && Ptune2_GetSetting() == PT2_DEFAULT;
 	if (doOverclock) {
 		if (emulator.settings.overclock) {
 			// clock up to double unless not scaling/sound/CGB
@@ -180,6 +192,7 @@ void screen_play::play() {
 		} else {
 			Ptune2_LoadSetting(PT2_NOMEMWAIT);
 		}
+		ptuneSettingChanged = true;
 	}
 
 	// look for gameboy color palette override
@@ -231,10 +244,8 @@ void screen_play::play() {
 	// save sram
 	saveRAM();
 
-	// undo overclock
-	if (doOverclock) {
-		Ptune2_LoadSetting(PT2_DEFAULT);
-	}
+	// Restore any Ptune2 setting changed for this session.
+	restorePtuneSetting();
 
 	if (soundInitted) {
 		sndCleanup();

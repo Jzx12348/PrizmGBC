@@ -89,9 +89,10 @@ void screen_settings::select() {
 		options[i].noCGB = false;
 	}
 
-	// Overclock is only available on supported CG-20 hardware when Ptune2 is inactive.
-	int currentPtuneSetting = Ptune2_GetSetting();
-	options[0].disabled = getDeviceType() != DT_CG20 || currentPtuneSetting != PT2_DEFAULT;
+	// Ptune2 must not be called on CG50 devices, even just to query its setting.
+	bool supportsPtune = getDeviceType() == DT_CG20;
+	int currentPtuneSetting = supportsPtune ? Ptune2_GetSetting() : PT2_DEFAULT;
+	options[0].disabled = !supportsPtune || currentPtuneSetting != PT2_DEFAULT;
 	int profileCount = emulator.settings.profileCount > 8 ? 8 : emulator.settings.profileCount;
 	options[12].disabled = !emulator.settings.selectedRom[0] ||
 		(!emulator.hasGameProfile(emulator.settings.selectedRom) && profileCount >= 8);

@@ -45,7 +45,9 @@ void emulator_type::startUp() {
 }
 
 void emulator_type::shutDown() {
-	screens[curScreen]->deselect();
+	if (curScreen >= 0 && curScreen < 6 && screens[curScreen]) {
+		screens[curScreen]->deselect();
+	}
 }
 
 bool emulator_type::isCGBRomLoaded() {
