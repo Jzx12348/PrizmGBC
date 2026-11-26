@@ -138,11 +138,8 @@ bool emulator_type::saveGameProfile(const char* filename) {
 		}
 	}
 	if (index < 0) {
-		if (count < 8) {
-			index = count++;
-		} else {
-			index = 7;
-		}
+		if (count >= 8) return false;
+		index = count++;
 	}
 	strcpy(settings.profileRoms[index], filename);
 	unsigned char* values = settings.profileValues[index];
@@ -170,16 +167,17 @@ bool emulator_type::applyGameProfile(const char* filename) {
 	for (int index = 0; index < count; index++) {
 		if (strcmp(settings.profileRoms[index], filename)) continue;
 		const unsigned char* values = settings.profileValues[index];
-		settings.overclock = values[0];
+		settings.overclock = values[0] ? 1 : 0;
 		settings.scaleMode = values[1] < emu_scale::MAX ? values[1] : emu_scale::FIT_150;
-		settings.useCGBColors = values[2];
-		settings.clampSpeed = values[3];
-		settings.frameSkip = (char)values[4];
+		settings.useCGBColors = values[2] ? 1 : 0;
+		settings.clampSpeed = values[3] ? 1 : 0;
+		char savedFrameSkip = (char)values[4];
+		settings.frameSkip = (savedFrameSkip >= -1 && savedFrameSkip <= 4) ? savedFrameSkip : -1;
 		settings.bgColorPalette = values[5] < numPalettes() ? values[5] : 0;
 		settings.obj1ColorPalette = values[6] < numPalettes() ? values[6] : 0;
 		settings.obj2ColorPalette = values[7] < numPalettes() ? values[7] : 0;
-		settings.sound = values[8];
-		settings.fpsCounter = values[9];
+		settings.sound = values[8] ? 1 : 0;
+		settings.fpsCounter = values[9] ? 1 : 0;
 		settings.saveSlot = values[10] < 3 ? values[10] : 0;
 		for (int i = 0; i < emu_button::MAX; i++) settings.keyMap[i] = values[11 + i];
 		saveSettings();
@@ -262,11 +260,10 @@ bool emulator_type::loadSettings() {
 			if (readSettings.version == 13 && len == sizeof(readSettings)) {
 				memcpy(&emulator.settings, &readSettings, sizeof(emulator_settings));
 				// Update only the shipped defaults. Preserve any custom user bindings.
-				if (emulator.settings.keyMap[emu_button::STATE_SAVE] == 43 &&
-					emulator.settings.keyMap[emu_button::STATE_LOAD] == 25) {
+				if (emulator.settings.keyMap[emu_button::STATE_SAVE] == 43)
 					emulator.settings.keyMap[emu_button::STATE_SAVE] = 59;
+				if (emulator.settings.keyMap[emu_button::STATE_LOAD] == 25)
 					emulator.settings.keyMap[emu_button::STATE_LOAD] = 49;
-				}
 				emulator.settings.version = SETTINGS_VERSION;
 				return true;
 			}
