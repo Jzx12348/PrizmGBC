@@ -196,3 +196,12 @@ This fork should preserve the original license and copyright notices. See the re
 ## Disclaimer
 
 PrizmGBC is an independent community project and is not affiliated with, endorsed by or sponsored by CASIO or Nintendo. Game Boy is a Nintendo trademark. Casio and fx-CG50 are trademarks of CASIO COMPUTER CO., LTD.
+
+
+## Website
+
+The project landing page is in `index.html`. A GitHub Actions workflow deploys that page to GitHub Pages when it changes on `master`. Enable **Settings → Pages → Build and deployment → Source: GitHub Actions** in the repository to publish it.
+
+## Current hardware diagnostic build
+
+The initial fx-CG50 display investigation now defaults to **unscaled rendering**. This deliberately tests the simpler 1:1 display path before re-enabling the 150% and 200% scaling modes. The settings version was bumped, so the first launch of this build resets saved emulator settings to defaults. This is a diagnostic change, not confirmation that the renderer is fixed. Please test a small, known-good `.gb` ROM and a `.gbc` ROM separately and report whether either displays.
