@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   publish-stable:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.event.head_commit.message == 'Prepare v1.3.0 stable release'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.event.head_commit.message == 'Prepare v1.3.1 patch release'
     name: Build and publish stable release
     runs-on: windows-latest
     steps:
@@ -43,9 +43,9 @@ jobs:
       - name: Publish stable release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.3.0
+          tag_name: v1.3.1
           target_commitish: master
-          name: v1.3.0
+          name: v1.3.1
           draft: false
           prerelease: false
           make_latest: true
@@ -55,7 +55,7 @@ jobs:
           body: |
             ## **Stable release**
 
-            *PrizmGBC v1.3.0 is the stable library and usability release for the Casio fx-CG50.*
+            *PrizmGBC v1.3.1 is a small stable patch for the Casio fx-CG50, building on v1.3.0.*
 
             ## New features and improvements
 
@@ -65,7 +65,8 @@ jobs:
             - **Per-game settings profiles:** Save and manually apply performance, display, audio and control settings. Profile data is validated, and a full profile store no longer silently overwrites an existing profile.
             - **Save-state manager:** Three slots for the currently loaded game, with **F3 to save** and **F4 to load** both in the manager and during gameplay.
             - **Settings migration:** Legacy default save/load bindings migrate to F3/F4 without overwriting custom key mappings.
+            - **Library navigation:** Added F1 MENU and F5 NOTES hints beside the existing F2, F3, F4 and F6 actions.
 
             ## Stable release notes
 
-            This stable release follows the v1.3.0 testing cycle and includes the completed library and usability work, improved settings tab spacing, and a main-library footer that places each action label directly above its matching calculator key. The earlier v1.3.0-beta release remains unchanged in the release archive.
+            This patch adds the F1 MENU and F5 NOTES labels to the main library footer. F5 opens the selected game's matching .txt notes file from the menu; its Game Boy Select mapping during gameplay is unchanged. The earlier v1.3.0-beta release remains unchanged in the release archive.

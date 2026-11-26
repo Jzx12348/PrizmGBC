@@ -2,7 +2,7 @@
 
 <p align="center"><img src="PrizmGBC-logo.svg" alt="PrizmGBC logo" width="420"></p>
 <p align="center"><strong>A Game Boy and Game Boy Color emulator for the Casio fx-CG50.</strong><br>Built for the calculator and distributed as a native <code>.g3a</code> add-in.</p>
-<p align="center"><a href="https://github.com/Jzx12348/PrizmGBC/releases/latest"><strong>Latest stable release: v1.3.0</strong></a> · <a href="https://jzx12348.github.io/PrizmGBC/">Project website</a> · <a href="https://github.com/Jzx12348/PrizmGBC/releases">All releases</a></p>
+<p align="center"><a href="https://github.com/Jzx12348/PrizmGBC/releases/latest"><strong>Latest stable release: v1.3.1</strong></a> · <a href="https://jzx12348.github.io/PrizmGBC/">Project website</a> · <a href="https://github.com/Jzx12348/PrizmGBC/releases">All releases</a></p>
 
 ---
 
@@ -22,10 +22,15 @@ The project is primarily developed for the **Casio fx-CG50**. Compatibility and 
 - **Playtime tracking** and playtime-based sorting.
 - **Three-slot save-state manager** for the currently loaded game.
 - **F3 saves and F4 loads** the selected save-state slot, in the manager and during gameplay.
-- **Function-key hints** positioned above their matching F2, F3, F4 and F6 keys in the library.
+- **Function-key hints** positioned above all six function keys: F1 Menu, F2 Settings, F3 Favourite, F4 List/Grid, F5 Notes and F6 Play.
 - **Categorised settings** for Performance, Display, Controls, Audio and System, with improved tab spacing.
 - **Configurable key mappings** and display modes including native 1×, 1.5× Fit and 2× Crop.
 - **Native calculator installation** through a .g3a add-in.
+
+## v1.3.1 patch
+
+- Added **F1 MENU** and **F5 NOTES** hints to the game-library footer, alongside the existing F2, F3, F4 and F6 actions.
+- F5 opens the selected game's matching notes file from the menu; its in-game Select mapping is unchanged.
 
 ## Download and install
 
@@ -53,6 +58,8 @@ The default mappings are listed below. They can be changed in the in-emulator Co
 | Load state | F4 |
 | Increase volume | + |
 | Decrease volume | - |
+
+In menus, **F1** returns to the library and **F5** opens the selected game's matching `.txt` notes file. During gameplay, **F5** retains its Game Boy Select mapping.
 
 The **MENU** key exits the current game to the emulator menu. Press MENU again to return to the calculator's main system.
 

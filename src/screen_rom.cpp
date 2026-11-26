@@ -205,7 +205,7 @@ void screen_rom::drawGameDetails() {
 	Bdisp_AreaClr(&accent, 1, COLOR_LIGHTGREEN);
 	Print(12, 5, "PRIZMGBC", true, COLOR_WHITE);
 	Print(12, 24, "GAME INFORMATION", false, COLOR_LIGHTGREEN);
-	Print(300, 5, "v1.3.0", false, COLOR_LIGHTGREEN);
+	Print(300, 5, "v1.3.1", false, COLOR_LIGHTGREEN);
 
 	display_fill leftPanel;
 	leftPanel.x1 = 8; leftPanel.x2 = 187; leftPanel.y1 = 53; leftPanel.y2 = 185; leftPanel.mode = 1;
@@ -288,7 +288,7 @@ void screen_rom::drawFiles() {
 	Print(12, 24, "GAME LIBRARY", false, COLOR_LIGHTGREEN);
 	char countText[24];
 	sprintf(countText, "%d GAMES", numFiles);
-	Print(286, 5, "v1.3.0", false, COLOR_LIGHTGREEN);
+	Print(286, 5, "v1.3.1", false, COLOR_LIGHTGREEN);
 	Print(300, 24, countText, false, COLOR_SILVER);
 
 	// Main library and game information panels.
@@ -394,11 +394,11 @@ void screen_rom::drawFiles() {
 	Bdisp_AreaClr(&footer, 1, COLOR_BLACK);
 
 	// Place each action directly above its physical function-key position.
-	const int actionCenters[] = { 96, 160, 224, 352 };
-	const char* actionLabels[] = { "SETTINGS", "FAV", gridMode ? "LIST" : "GRID", "PLAY" };
-	const char* keyLabels[] = { "F2", "F3", "F4", "F6" };
-	const unsigned short actionColors[] = { COLOR_SILVER, COLOR_YELLOW, COLOR_LIGHTGREEN, COLOR_LIGHTGREEN };
-	for (int i = 0; i < 4; i++) {
+	const int actionCenters[] = { 32, 96, 160, 224, 288, 352 };
+	const char* actionLabels[] = { "MENU", "SETTINGS", "FAV", gridMode ? "LIST" : "GRID", "NOTES", "PLAY" };
+	const char* keyLabels[] = { "F1", "F2", "F3", "F4", "F5", "F6" };
+	const unsigned short actionColors[] = { COLOR_SILVER, COLOR_SILVER, COLOR_YELLOW, COLOR_LIGHTGREEN, COLOR_LIGHTGREEN, COLOR_LIGHTGREEN };
+	for (int i = 0; i < 6; i++) {
 		Print(actionCenters[i] - PrintWidth(actionLabels[i]) / 2, 187,
 			actionLabels[i], false, actionColors[i]);
 		Print(actionCenters[i] - PrintWidth(keyLabels[i]) / 2, 201,
