@@ -49,11 +49,13 @@ jobs:
         with:
           tag_name: dev
           target_commitish: master
-          name: PrizmGBC Development Build
+          name: dev
           body: |
-            Rolling development build from the latest successful master commit.
+            **Development build · PRE-RELEASE**
 
-            This build may contain unfinished features or regressions. Use the stable release for everyday play.
+            This is the latest development build from the master branch. It may contain unfinished features, experimental changes, or regressions. It is intended for testing, not everyday use.
+
+            For a stable version, install the latest numbered release.
           prerelease: true
           make_latest: false
           overwrite_files: true
@@ -64,7 +66,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          name: PrizmGBC ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
           prerelease: ${{ contains(github.ref_name, 'beta') || contains(github.ref_name, 'alpha') || contains(github.ref_name, 'rc') }}
           make_latest: ${{ !(contains(github.ref_name, 'beta') || contains(github.ref_name, 'alpha') || contains(github.ref_name, 'rc')) }}
           generate_release_notes: true
