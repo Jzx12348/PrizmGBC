@@ -29,7 +29,7 @@ namespace emu_scale {
 }
 
 // Emulation settings
-#define SETTINGS_VERSION 8 // add persistent game favourites
+#define SETTINGS_VERSION 9 // add recent history and library sorting
 struct emulator_settings {
 	int version;
 	unsigned int faqOffset;		// faq text offset (top 8 bits are name hash, bottom 24 are actual offset)
@@ -47,6 +47,9 @@ struct emulator_settings {
 	unsigned char fpsCounter;
 	unsigned char favoriteCount;
 	char favoriteRoms[8][32];
+	unsigned char recentCount;
+	char recentRoms[5][32];
+	unsigned char sortMode; // 0 = name, 1 = recent, 2 = favourites
 };
 
 // color palette colors
