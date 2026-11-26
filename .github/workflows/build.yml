@@ -48,6 +48,26 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
+      - name: Create v1.2.0 stable tag
+        if: github.ref == 'refs/heads/master'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GH_TOKEN }}
+          script: |
+            const tag = 'v1.2.0';
+            try {
+              await github.rest.git.getRef({ ...context.repo, ref: 'tags/' + tag });
+              core.info(tag + ' already exists; leaving it unchanged.');
+            } catch (error) {
+              if (error.status !== 404) throw error;
+              await github.rest.git.createRef({
+                ...context.repo,
+                ref: 'refs/tags/' + tag,
+                sha: context.sha
+              });
+              core.info('Created ' + tag + ' at ' + context.sha);
+            }
+
       - name: Publish rolling development build
         if: github.ref == 'refs/heads/master'
         uses: softprops/action-gh-release@v2
@@ -88,6 +108,21 @@ jobs:
           name: ${{ github.ref_name }}
           prerelease: ${{ contains(github.ref_name, 'beta') || contains(github.ref_name, 'alpha') || contains(github.ref_name, 'rc') }}
           make_latest: ${{ !(contains(github.ref_name, 'beta') || contains(github.ref_name, 'alpha') || contains(github.ref_name, 'rc')) }}
-          generate_release_notes: true
+          body: |
+            ## PrizmGBC v1.2.0
+
+            A Game Boy and Game Boy Color emulator for the Casio fx-CG50.
+
+            ## New in v1.2.0
+
+            - **Recently played:** Quickly access the five most recently launched games.
+            - **Library sorting:** Sort games by name, recent activity, or favourites.
+            - **Categorized settings:** Settings are organized into Performance, Display, Controls, Audio, and System sections.
+            - **Three save-state slots:** Select between three separate save-state files.
+            - **Settings migration:** Existing v1.1.0 settings are migrated when upgrading.
+
+            ---
+
+            **Stable release.** Please report bugs or compatibility issues through GitHub Issues. Hardware testing on a physical fx-CG50 is recommended.
           files: PrizmSDK/projects/PrizmGBC/PrizmGBC.g3a
           token: ${{ secrets.GH_TOKEN }}
