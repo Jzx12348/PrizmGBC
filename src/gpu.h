@@ -31,6 +31,9 @@ enum gpuMode {
 // clock times for each of the above modes (vblank is just for one line, and index 5 is the special gap difference for LY=0)
 extern unsigned int gpuTimes[5];
 
+// True while the current LCD frame is invalid (for example after LCD disable).
+extern bool invalidFrame;
+
 #define SET_LCDC_MODE(x) cpu.memory.STAT_lcdstatus = (cpu.memory.STAT_lcdstatus & 0xFC) | (x)
 #define GET_LCDC_MODE() (cpu.memory.STAT_lcdstatus & STAT_MODE)
 
