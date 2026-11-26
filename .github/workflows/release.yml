@@ -1,61 +1,72 @@
-name: Publish PrizmGBC stable release
+name: Publish PrizmGBC development pre-release
 
 on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: "Release tag, for example v0.1.0-alpha"
-        required: true
-        default: "v0.1.0-alpha"
-        type: string
   push:
+    branches: [master]
+    paths:
+      - ".github/workflows/release.yml"
     tags:
-      - "v*"
+      - "v*-development"
 
 permissions:
   contents: write
 
 jobs:
-  draft-release:
-    name: Publish stable release
-    runs-on: ubuntu-latest
+  publish-development:
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/master' && github.event.head_commit.message == 'Prepare v1.3.0 development pre-release') || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && endsWith(github.ref, '-development'))
+    name: Build and publish development pre-release
+    runs-on: windows-latest
     steps:
-      - name: Check out source
+      - name: Check out PrizmSDK
         uses: actions/checkout@v4
+        with:
+          repository: Jzx12348/PrizmSDK
+          ref: master
+          path: PrizmSDK
 
-      - name: Create draft release
+      - name: Check out PrizmGBC
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') && github.ref_name || 'master' }}
+          path: PrizmSDK/projects/PrizmGBC
+
+      - name: Generate add-in icons
+        shell: pwsh
+        working-directory: PrizmSDK/projects/PrizmGBC
+        run: ./generate-icons.ps1
+
+      - name: Build PrizmGBC
+        shell: cmd
+        working-directory: PrizmSDK\\projects\\PrizmGBC
+        run: |
+          call make.bat DEFINES="-DTARGET_PRIZM=1 -DDEBUG=0" CONFIG=DeviceRelease
+          if not exist PrizmGBC.g3a exit /b 1
+
+      - name: Publish development pre-release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ inputs.version || github.ref_name }}
+          tag_name: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') && github.ref_name || 'v1.3.0-development' }}
           target_commitish: master
+          name: PrizmGBC ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') && github.ref_name || 'v1.3.0-development' }}
           draft: false
-          prerelease: false
+          prerelease: true
+          make_latest: false
           generate_release_notes: false
-          name: PrizmGBC v1.2.0
+          files: PrizmSDK/projects/PrizmGBC/PrizmGBC.g3a
+          fail_on_unmatched_files: true
           body: |
-            ## PrizmGBC v1.2.0
+            ## **Development build · PRE-RELEASE**
 
-            A Game Boy and Game Boy Color emulator for the Casio fx-CG50.
+            *PrizmGBC v1.3.0 is an in-development build for the Casio fx-CG50. This release introduces library and usability improvements that need testing on a physical calculator.*
 
-            ## New in v1.2.0
+            ## New features and improvements
 
-            - **Recently played:** Quickly access the five most recently launched games.
-            - **Library sorting:** Sort games by name, recent activity, or favourites.
-            - **Categorized settings:** Settings are organized into Performance, Display, Controls, Audio, and System sections.
-            - **Three save-state slots:** Select between three separate save-state files.
-            - **Settings migration:** Existing v1.1.0 settings are migrated when upgrading.
+            - **Individual game information:** View cartridge and ROM metadata on dedicated game pages.
+            - **Remembered library layout:** Switch between grid and list views, with your preference saved between launches.
+            - **Playtime tracking:** Track playtime per game and sort the library by accumulated playtime.
+            - **Per-game settings profiles:** Save and manually apply individual performance, display, audio and control settings.
+            - **Save-state manager:** Manage three save-state slots for the currently loaded game.
 
             ---
 
-            **Stable release.** Please report bugs or compatibility issues through GitHub Issues. Hardware testing on a physical fx-CG50 is recommended.
-
-            Experimental Game Boy and Game Boy Color emulator for the Casio Prizm.
-
-            **Release asset required:** attach the tested `PrizmGBC.g3a` add-in before publishing this draft.
-
-            ### Before publishing
-            - [ ] Built from the tagged source using PrizmSDK.
-            - [ ] Tested on a physical Casio fx-CG50.
-            - [ ] Recorded calculator OS version and build configuration.
-            - [ ] Tested at least one known-good `.gb` and one `.gbc` ROM.
-            - [ ] Added `PrizmGBC.g3a` to this release.
+            **Development build.** This is a pre-release and is not recommended as a replacement for the stable v1.2.0 release. Features may contain bugs or behave unexpectedly. Please test on a physical Casio fx-CG50 and report issues through GitHub Issues.
