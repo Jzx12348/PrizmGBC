@@ -133,6 +133,7 @@ struct emulator_type {
 	bool hasGameProfile(const char* filename);
 	bool saveGameProfile(const char* filename);
 	bool applyGameProfile(const char* filename);
+	bool hasSaveState(int slot);
 
 	// load the given rom filename, returns false on error (unsupported MBC, etc)
 	bool loadRom(const char* filename);
