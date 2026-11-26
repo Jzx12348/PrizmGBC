@@ -49,6 +49,11 @@ void cgbInitROM() {
 	// initially all cgb colors are white
 	memset(ppuPalette, 0xFF, sizeof(ppuPalette));
 	memset(cgb.paletteMemory, 0xFF, sizeof(cgb.paletteMemory));
+	// Resolve the initial palette before the first scanline is rendered.
+	// Otherwise the CGB renderer can read stale palette entries until the
+	// game performs its first palette write.
+	cgb.dirtyPalette = true;
+	cgbResolvePalette();
 
 	// we are now in cgb mode!
 	cgb.isCGB = true;
