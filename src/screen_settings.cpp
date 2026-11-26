@@ -270,7 +270,7 @@ void screen_settings::drawCurrentKeyMap(int selected) {
 	Bdisp_AreaClr(&accent, 1, COLOR_LIGHTGREEN);
 	Print(12, 5, "PRIZMGBC", true, COLOR_WHITE);
 	Print(12, 24, "CONTROLS / KEY MAPPING", false, COLOR_LIGHTGREEN);
-	Print(300, 15, "v1.3.0 DEV", false, COLOR_LIGHTGREEN);
+	Print(300, 15, "v1.3.0 BETA", false, COLOR_LIGHTGREEN);
 
 	for (int i = 0; i < emu_button::MAX; i++) {
 		int column = i / 5;
