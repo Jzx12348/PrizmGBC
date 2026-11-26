@@ -33,6 +33,9 @@
     <ClCompile Include="..\src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\emulator_screen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\emulator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -68,6 +71,9 @@
     </ClCompile>
     <ClCompile Include="..\src\rom.cpp">
       <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\screen_savestate.cpp">
+      <Filter>Source Files\menu</Filter>
     </ClCompile>
     <ClCompile Include="..\src\screen_rom.cpp">
       <Filter>Source Files\menu</Filter>
@@ -145,6 +151,9 @@
     </ClInclude>
     <ClInclude Include="..\src\rom.h">
       <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\screen_savestate.h">
+      <Filter>Header Files\menu</Filter>
     </ClInclude>
     <ClInclude Include="..\src\screen_rom.h">
       <Filter>Header Files\menu</Filter>
