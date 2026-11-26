@@ -156,6 +156,42 @@ Released. Includes game information pages, persistent grid/list layout, refined 
 - More sorting and filtering options.
 - Expanded performance statistics.
 
+### v1.5.0 · Game Library Evolution
+
+- Improved game organisation.
+- Custom game categories and collections.
+- More game metadata.
+- Enhanced search.
+
+### v1.6.0 · Save System
+
+- Expanded save-state management.
+- Save-state organisation.
+- Backup and restore options.
+- Improved save reliability.
+
+### v1.7.0 · Emulator Performance
+
+- CPU optimisation.
+- Graphics rendering improvements.
+- Memory optimisation.
+- Better frame pacing.
+
+### v1.8.0 · Audio & Display
+
+- Improved audio options.
+- Display configuration.
+- More scaling options.
+- Visual rendering improvements.
+
+### v1.9.0 · Polish & Preparation
+
+- Interface refinements.
+- Compatibility improvements.
+- Stability fixes.
+- Performance tuning.
+- Preparation for v2.0.0.
+
 ### v2.0.0 · Major overhaul
 
 A substantial evolution of the emulator and the overall user experience.
