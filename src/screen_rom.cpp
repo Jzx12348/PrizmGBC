@@ -218,7 +218,7 @@ void screen_rom::drawFiles() {
 	Print(112, 198, "F3 FAV", false, COLOR_YELLOW);
 	Print(181, 198, "F2 SETTINGS", false, COLOR_SILVER);
 	Print(279, 198, gridMode ? "F4 LIST" : "F4 GRID", false, COLOR_LIGHTGREEN);
-	Print(342, 198, "F6", false, COLOR_LIGHTGREEN);
+	Print(330, 198, "F6 PLAY", false, COLOR_LIGHTGREEN);
 	DrawFrame(0);
 }
 void screen_rom::setup() {
