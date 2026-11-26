@@ -371,6 +371,19 @@ void fillSaveStatePath(unsigned short* pFile) {
 	Bfile_StrToName_ncpy(pFile, (const char*)filepath, strlen(filepath) + 2);
 }
 
+bool emulator_type::hasSaveState(int slot) {
+	if (slot < 0 || slot > 2) return false;
+	unsigned char previousSlot = settings.saveSlot;
+	settings.saveSlot = (unsigned char)slot;
+	unsigned short pFile[256];
+	fillSaveStatePath(pFile);
+	settings.saveSlot = previousSlot;
+	int handle = Bfile_OpenFile_OS(pFile, READ, 0);
+	if (handle < 0) return false;
+	Bfile_CloseFile_OS(handle);
+	return true;
+}
+
 // removing this for now... tend to want the sram to stick around..
 #define SAVE_STATE_SRAM 0
 
