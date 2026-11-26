@@ -113,6 +113,78 @@ void emulator_type::tryScreenChange(int targetFKey) {
 	}
 }
 
+bool emulator_type::hasGameProfile(const char* filename) {
+	if (!filename || !filename[0]) return false;
+	int count = settings.profileCount;
+	if (count > 8) count = 8;
+	for (int i = 0; i < count; i++) {
+		if (!strcmp(settings.profileRoms[i], filename)) return true;
+	}
+	return false;
+}
+
+bool emulator_type::saveGameProfile(const char* filename) {
+	if (!filename || !filename[0]) return false;
+	int count = settings.profileCount;
+	if (count > 8) count = 8;
+	int index = -1;
+	for (int i = 0; i < count; i++) {
+		if (!strcmp(settings.profileRoms[i], filename)) {
+			index = i;
+			break;
+		}
+	}
+	if (index < 0) {
+		if (count < 8) {
+			index = count++;
+		} else {
+			index = 7;
+		}
+	}
+	strcpy(settings.profileRoms[index], filename);
+	unsigned char* values = settings.profileValues[index];
+	values[0] = settings.overclock;
+	values[1] = settings.scaleMode;
+	values[2] = settings.useCGBColors;
+	values[3] = settings.clampSpeed;
+	values[4] = (unsigned char)settings.frameSkip;
+	values[5] = settings.bgColorPalette;
+	values[6] = settings.obj1ColorPalette;
+	values[7] = settings.obj2ColorPalette;
+	values[8] = settings.sound;
+	values[9] = settings.fpsCounter;
+	values[10] = settings.saveSlot;
+	for (int i = 0; i < emu_button::MAX; i++) values[11 + i] = settings.keyMap[i];
+	settings.profileCount = count;
+	saveSettings();
+	return true;
+}
+
+bool emulator_type::applyGameProfile(const char* filename) {
+	if (!filename || !filename[0]) return false;
+	int count = settings.profileCount;
+	if (count > 8) count = 8;
+	for (int index = 0; index < count; index++) {
+		if (strcmp(settings.profileRoms[index], filename)) continue;
+		const unsigned char* values = settings.profileValues[index];
+		settings.overclock = values[0];
+		settings.scaleMode = values[1] < emu_scale::MAX ? values[1] : emu_scale::FIT_150;
+		settings.useCGBColors = values[2];
+		settings.clampSpeed = values[3];
+		settings.frameSkip = (char)values[4];
+		settings.bgColorPalette = values[5] < numPalettes() ? values[5] : 0;
+		settings.obj1ColorPalette = values[6] < numPalettes() ? values[6] : 0;
+		settings.obj2ColorPalette = values[7] < numPalettes() ? values[7] : 0;
+		settings.sound = values[8];
+		settings.fpsCounter = values[9];
+		settings.saveSlot = values[10] < 3 ? values[10] : 0;
+		for (int i = 0; i < emu_button::MAX; i++) settings.keyMap[i] = values[11 + i];
+		saveSettings();
+		return true;
+	}
+	return false;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Custom color palettes
 
@@ -143,6 +215,10 @@ void emulator_type::defaultSettings() {
 	memset(settings.playtimeReserved, 0, sizeof(settings.playtimeReserved));
 	memset(settings.playtimeRoms, 0, sizeof(settings.playtimeRoms));
 	memset(settings.playtimeSeconds, 0, sizeof(settings.playtimeSeconds));
+	settings.profileCount = 0;
+	memset(settings.profileReserved, 0, sizeof(settings.profileReserved));
+	memset(settings.profileRoms, 0, sizeof(settings.profileRoms));
+	memset(settings.profileValues, 0, sizeof(settings.profileValues));
 
 	settings.keyMap[emu_button::A] = 78;			// SHIFT
 	settings.keyMap[emu_button::B] = 68;			// OPTN
@@ -172,11 +248,23 @@ bool emulator_type::loadSettings() {
 		memset(&readSettings, 0, sizeof(readSettings));
 		const int v8Size = (int)offsetof(emulator_settings, recentCount);
 		const int v11Size = (int)offsetof(emulator_settings, playtimeCount);
+		const int v12Size = (int)offsetof(emulator_settings, profileCount);
 		const int v9Size = v11Size - 4;
-		if ((len == sizeof(readSettings) || len == v11Size || len == v9Size || len == v8Size) &&
+		if ((len == sizeof(readSettings) || len == v12Size || len == v11Size || len == v9Size || len == v8Size) &&
 			!MCSGetData1(0, len, &readSettings)) {
 			if (readSettings.version == SETTINGS_VERSION && len == sizeof(readSettings)) {
 				memcpy(&emulator.settings, &readSettings, sizeof(emulator_settings));
+				return true;
+			}
+
+			// v1.3.0 development builds before per-game profiles.
+			if (readSettings.version == 12 && len == v12Size) {
+				memcpy(&emulator.settings, &readSettings, v12Size);
+				emulator.settings.profileCount = 0;
+				memset(emulator.settings.profileReserved, 0, sizeof(emulator.settings.profileReserved));
+				memset(emulator.settings.profileRoms, 0, sizeof(emulator.settings.profileRoms));
+				memset(emulator.settings.profileValues, 0, sizeof(emulator.settings.profileValues));
+				emulator.settings.version = SETTINGS_VERSION;
 				return true;
 			}
 
