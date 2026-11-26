@@ -66,6 +66,6 @@ jobs:
             - **Save-state manager:** Three slots for the currently loaded game, with **F3 to save** and **F4 to load** both in the manager and during gameplay.
             - **Settings migration:** Legacy default save/load bindings migrate to F3/F4 without overwriting custom key mappings.
 
-            ## Testing notes
+            ## Stable release notes
 
-            This is a beta pre-release, not a stable release. The stable v1.2.0 release remains available for normal use. Test on a physical Casio fx-CG50, back up important calculator data, and report issues through GitHub Issues. Playtime accuracy and save-state reliability still require real-device validation.
+            This stable release follows the v1.3.0 testing cycle and includes the completed library and usability work, improved settings tab spacing, and a main-library footer that places each action label directly above its matching calculator key. The earlier v1.3.0-beta release remains unchanged in the release archive.
