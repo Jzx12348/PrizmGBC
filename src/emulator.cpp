@@ -136,6 +136,8 @@ void emulator_type::defaultSettings() {
 	settings.recentCount = 0;
 	memset(settings.recentRoms, 0, sizeof(settings.recentRoms));
 	settings.sortMode = 0;
+	settings.saveSlot = 0;
+	memset(settings.reserved, 0, sizeof(settings.reserved));
 
 	settings.keyMap[emu_button::A] = 78;			// SHIFT
 	settings.keyMap[emu_button::B] = 68;			// OPTN
@@ -163,18 +165,29 @@ bool emulator_type::loadSettings() {
 	if (!MCSGetDlen2((unsigned char*) settingsDir, (unsigned char*) settingsFile, &len)) {
 		emulator_settings readSettings;
 		memset(&readSettings, 0, sizeof(readSettings));
-		const int oldSize = (int)offsetof(emulator_settings, recentCount);
-		if ((len == sizeof(readSettings) || len == oldSize) && !MCSGetData1(0, len, &readSettings)) {
+		const int v8Size = (int)offsetof(emulator_settings, recentCount);
+		const int v9Size = (int)sizeof(readSettings) - 4;
+		if ((len == sizeof(readSettings) || len == v9Size || len == v8Size) && !MCSGetData1(0, len, &readSettings)) {
 			if (readSettings.version == SETTINGS_VERSION && len == sizeof(readSettings)) {
 				memcpy(&emulator.settings, &readSettings, sizeof(emulator_settings));
 				return true;
 			}
+			// Preserve v1.2.0 development settings when adding selectable save slots.
+			if (readSettings.version == 9 && len == v9Size) {
+				memcpy(&emulator.settings, &readSettings, v9Size);
+				emulator.settings.saveSlot = 0;
+				memset(emulator.settings.reserved, 0, sizeof(emulator.settings.reserved));
+				emulator.settings.version = SETTINGS_VERSION;
+				return true;
+			}
 			// Preserve v1.1.0 settings and favourites when adding the v1.2.0 fields.
-			if (readSettings.version == 8 && len == oldSize) {
-				memcpy(&emulator.settings, &readSettings, oldSize);
+			if (readSettings.version == 8 && len == v8Size) {
+				memcpy(&emulator.settings, &readSettings, v8Size);
 				emulator.settings.recentCount = 0;
 				memset(emulator.settings.recentRoms, 0, sizeof(emulator.settings.recentRoms));
 				emulator.settings.sortMode = 0;
+				emulator.settings.saveSlot = 0;
+				memset(emulator.settings.reserved, 0, sizeof(emulator.settings.reserved));
 				emulator.settings.version = SETTINGS_VERSION;
 				return true;
 			}
@@ -223,7 +236,9 @@ void fillSaveStatePath(unsigned short* pFile) {
 	strcpy(filepath, "\\\\fls0\\");
 	strcat(filepath, emulator.settings.selectedRom);
 	filepath[strlen(filepath) - 2 - (cgb.isCGB ? 1 : 0)] = 0;
-	strcat(filepath, "prz");
+	if (emulator.settings.saveSlot == 1) strcat(filepath, "p02");
+	else if (emulator.settings.saveSlot >= 2) strcat(filepath, "p03");
+	else strcat(filepath, "prz");
 
 	Bfile_StrToName_ncpy(pFile, (const char*)filepath, strlen(filepath) + 2);
 }
