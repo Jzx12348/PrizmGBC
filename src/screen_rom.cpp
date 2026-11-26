@@ -75,7 +75,7 @@ void screen_rom::drawFiles() {
 	footer.x1 = 0; footer.x2 = 383; footer.y1 = 192; footer.y2 = 215; footer.mode = 1;
 	Bdisp_AreaClr(&footer, 1, COLOR_BLACK);
 	Print(10, 198, "UP/DOWN  BROWSE", false, COLOR_SILVER);
-	Print(238, 198, "F6  PLAY", false, COLOR_CYAN);
+	Print(238, 198, "F6 LOAD / EXE START", false, COLOR_CYAN);
 
 	EnableStatusArea(3);
 	DrawFrame(0);
