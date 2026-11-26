@@ -37,3 +37,6 @@ debug.txt
 /comp-gb/comp-gb.vcxproj.user
 /proj/Release/comp-gb.pdb
 /Release/comp-gb.log
+
+# Calculator add-ins are distributed as GitHub Release assets, not source files.
+*.g3a
