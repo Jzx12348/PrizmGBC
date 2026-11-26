@@ -1,0 +1,43 @@
+name: Build PrizmGBC
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Windows SDK build
+    runs-on: windows-latest
+    steps:
+      - name: Check out PrizmSDK
+        uses: actions/checkout@v4
+        with:
+          repository: Jzx12348/PrizmSDK
+          ref: master
+          path: PrizmSDK
+
+      - name: Check out PrizmGBC
+        uses: actions/checkout@v4
+        with:
+          path: PrizmSDK/projects/PrizmGBC
+
+      - name: Build PrizmGBC
+        shell: cmd
+        working-directory: PrizmSDK\projects\PrizmGBC
+        run: |
+          call make.bat DEFINES="-DTARGET_PRIZM=1 -DDEBUG=0" CONFIG=DeviceRelease
+          if not exist PrizmGBC.g3a exit /b 1
+
+      - name: Upload calculator add-in
+        uses: actions/upload-artifact@v4
+        with:
+          name: PrizmGBC-g3a
+          path: PrizmSDK/projects/PrizmGBC/PrizmGBC.g3a
+          if-no-files-found: error
+          retention-days: 14
