@@ -171,31 +171,15 @@ void emulator_screen::DrawPausePreview() {
 static const unsigned char* curBGData = 0;
 static int overwrittenBits = 0;
 void emulator_screen::ResolveBG(const unsigned char* data) {
-	unsigned short* vram = (unsigned short*) GetVRAMAddress();
-
-	bool needsLoad = false;
-	if (data != curBGData) {
-		needsLoad = true;
-	}
-
-	// load saved vram (so we can check expected bit consistency early)
-	if (!needsLoad) {
-		LoadVRAM_1();
-
-		// check for expected low bits in saved ram
-		needsLoad = (overwrittenBits == (vram[0] & 0x0003));
-	}
-
-	if (needsLoad) {
-		DrawBGEmbedded((unsigned char*) data);
-		SaveVRAM_1();
-	}
-
-	// now we increment the blue channel by a single point in vram directly
-	// if this is ever what is loaded, then we know the vram was saved without our permission (OS overwrite)
-	overwrittenBits = (vram[0] + 1) & 3;
-	vram[0] = overwrittenBits | (vram[0] & 0xFFFC);
-
-	curBGData = data;
+	// PrizmGBC owns the complete menu canvas. Never restore the inherited
+	// Prizoop bitmap underneath the new interface.
+	(void)data;
+	display_fill canvas;
+	canvas.x1 = 0;
+	canvas.y1 = 0;
+	canvas.x2 = LCD_WIDTH_PX - 1;
+	canvas.y2 = LCD_HEIGHT_PX - 1;
+	canvas.mode = 1;
+	Bdisp_AreaClr(&canvas, 1, COLOR_BLACK);
 	DrawFrame(0);
 }
