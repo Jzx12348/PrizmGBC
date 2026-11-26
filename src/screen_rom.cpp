@@ -97,10 +97,17 @@ void screen_rom::drawFiles() {
 }
 
 void screen_rom::setup() {
+	files = NULL;
+	numFiles = 0;
+	selectedFile = 0;
 	loadedFile = -1;
+	curScroll = 0;
 }
 
 void screen_rom::select() {
+	// Keep the library viewport deterministic every time the screen is opened.
+	curScroll = 0;
+
 	// file discovery doesn't work well when rom file is currently active, so we close it
 	loadedFile = -1;
 	bool wasLoaded = mbc.romFile != 0;
