@@ -62,7 +62,7 @@ void screen_rom::drawFiles() {
 	Print(12, 24, "GAME LIBRARY", false, COLOR_LIGHTGREEN);
 	char countText[24];
 	sprintf(countText, "%d GAMES", numFiles);
-	Print(300, 5, "v1.0.0", false, COLOR_LIGHTGREEN);
+	Print(300, 5, "v1.1.0", false, COLOR_LIGHTGREEN);
 	Print(300, 24, countText, false, COLOR_SILVER);
 
 	// Main library and game information panels.
