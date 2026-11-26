@@ -293,10 +293,10 @@ void screen_rom::drawFiles() {
 
 	// Main library and game information panels.
 	display_fill list;
-	list.x1 = 7; list.x2 = 254; list.y1 = 52; list.y2 = 180; list.mode = 1;
+	list.x1 = 7; list.x2 = 254; list.y1 = 52; list.y2 = 181; list.mode = 1;
 	Bdisp_AreaClr(&list, 1, COLOR_DARKGRAY);
 	display_fill detail;
-	detail.x1 = 261; detail.x2 = 376; detail.y1 = 52; detail.y2 = 180; detail.mode = 1;
+	detail.x1 = 261; detail.x2 = 376; detail.y1 = 52; detail.y2 = 181; detail.mode = 1;
 	Bdisp_AreaClr(&detail, 1, COLOR_BLACK);
 
 	if (!numFiles) {
@@ -310,7 +310,7 @@ void screen_rom::drawFiles() {
 		if (!gridMode) {
 			for (int i = 0; i < numFiles; i++) {
 				int curY = i * 16 - curScroll + 73;
-				if (curY >= 72 && curY < 184) {
+				if (curY >= 72 && curY < 176) {
 					if (i == selectedFile) {
 						display_fill selected;
 						selected.x1 = 10; selected.x2 = 251;
