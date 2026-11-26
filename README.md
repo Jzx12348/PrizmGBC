@@ -38,19 +38,19 @@ The project is primarily developed and validated for the **Casio fx-CG50**. Comp
 
 Some inherited emulator features may remain experimental. Consult the release notes and test on your own calculator before relying on save states or other critical functionality.
 
-## v1.3.0 development
+## v1.3.0 beta
 
-**Development pre-release available:** [PrizmGBC v1.3.0-development](https://github.com/Jzx12348/PrizmGBC/releases/tag/v1.3.0-development).
+**Beta release:** [PrizmGBC v1.3.0-beta](https://github.com/Jzx12348/PrizmGBC/releases/tag/v1.3.0-beta).
 
-This build is intended for testing on a physical Casio fx-CG50. The following features are included in the development build and still require hardware validation:
+The beta is ready for wider testing on a physical Casio fx-CG50. The v1.3.0 library and usability work includes:
 
 - Individual game information pages with cartridge and ROM metadata.
-- Persistent grid or list library preference.
-- Per-game playtime tracking and sorting by total playtime.
+- Persistent grid or list library preference, with consistent two-column grid navigation.
+- Improved recently played indicators and per-game playtime display, plus sorting by recent activity or total playtime.
 - Per-game settings profiles that can be saved and applied, including display, performance, audio and key mappings.
 - A dedicated three-slot save-state manager for the currently loaded game. **F3 saves** and **F4 loads** the selected slot, both in the manager and during gameplay.
 
-This is a development pre-release, not a stable release. Use v1.2.0 for normal installation if you prefer the established stable version. Further development builds may change settings formats or behaviour.
+This is a beta pre-release, not a stable release. Use v1.2.0 for normal installation if you prefer the established stable version. Back up calculator data before testing and report any issues through GitHub Issues.
 
 ## Download and install
 
@@ -148,9 +148,7 @@ The roadmap describes the current direction of the project. Planned features are
 
 ### v1.3.0 · Library and usability
 
-A development pre-release is available for calculator testing. The current development code includes the game information screen, persistent grid/list preference, playtime tracking and sorting, manually saved and applied per-game settings profiles, and a dedicated three-slot save-state manager. These features still require broader testing on a physical fx-CG50.
-
-Remaining work includes refining the library layout, improving the recently played experience, checking settings migration across upgrade paths, and validating save/load behaviour and profile handling on hardware.
+The v1.3.0 beta contains the planned library and usability implementation: game information pages, persistent grid/list layout, refined grid navigation, recently played indicators, playtime display and sorting, manually saved and applied per-game settings profiles, and a dedicated three-slot save-state manager. Settings migration now updates legacy default save/load bindings individually while preserving custom mappings, and profile data is validated before application. Physical fx-CG50 testing remains essential, especially for save/load reliability, playtime accuracy, profile behaviour and upgrades from older settings versions.
 
 ### v1.4.0 · Personalisation
 
