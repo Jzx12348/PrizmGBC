@@ -29,7 +29,7 @@ namespace emu_scale {
 }
 
 // Emulation settings
-#define SETTINGS_VERSION 6 // reset settings for the OS framebuffer scaled renderer
+#define SETTINGS_VERSION 7 // add configurable FPS overlay
 struct emulator_settings {
 	int version;
 	unsigned int faqOffset;		// faq text offset (top 8 bits are name hash, bottom 24 are actual offset)
@@ -44,7 +44,8 @@ struct emulator_settings {
 	unsigned char obj1ColorPalette;
 	unsigned char obj2ColorPalette;
 	unsigned char sound;
-	unsigned char padding[2];
+	unsigned char fpsCounter;
+	unsigned char padding[1];
 };
 
 // color palette colors
