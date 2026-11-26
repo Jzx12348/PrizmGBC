@@ -177,7 +177,7 @@ unsigned char getCurrentKey(bool wait = true) {
 	return keyPressed;
 }
 
-static void drawCurrentKeyMap() {
+void screen_settings::drawCurrentKeyMap() {
 	ResolveBG(bg_menu);
 	EnableStatusArea(3);
 	display_fill header;
