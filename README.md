@@ -209,6 +209,8 @@ The project website is published with GitHub Pages from `index.html`. The websit
 - Include the source commit, build configuration, calculator OS tested, and known limitations in each release's notes.
 - Mark builds as pre-releases until the fx-CG50 device validation checklist has passed.
 
+To prepare a draft release, open **Actions → Create PrizmGBC release → Run workflow** and enter a version such as `v0.1.0-alpha`. The workflow creates a draft release with generated notes. Build `PrizmGBC.g3a` with the PrizmSDK toolchain, test it on hardware, then attach that file to the draft release before publishing it. The workflow does not claim to build the proprietary/local SDK toolchain itself.
+
 ## Current hardware diagnostic build
 
 The initial fx-CG50 display investigation now defaults to **unscaled rendering**. This deliberately tests the simpler 1:1 display path before re-enabling the 150% and 200% scaling modes. The settings version was bumped, so the first launch of this build resets saved emulator settings to defaults. This is a diagnostic change, not confirmation that the renderer is fixed. Please test a small, known-good `.gb` ROM and a `.gbc` ROM separately and report whether either displays.
