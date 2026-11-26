@@ -169,7 +169,9 @@ void screen_settings::drawOptions() {
 
 		if (options[index].type == 0) {
 			unsigned char isOn = *((unsigned char*)options[index].addr);
-			Print(315, y, isOn ? "ON" : "OFF", selected,
+			const char* toggleText = (index == 0 && options[index].disabled)
+				? "CG20 ONLY" : (isOn ? "ON" : "OFF");
+			Print(294, y, toggleText, selected,
 				options[index].disabled ? COLOR_SILVER : (isOn ? COLOR_LIGHTGREEN : COLOR_SILVER));
 		} else if (options[index].type == 1) {
 			char bindText[16];
