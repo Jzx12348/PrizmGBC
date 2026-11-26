@@ -1,5 +1,7 @@
 # PrizmGBC
 
+![PrizmGBC logo](PrizmGBC-logo.svg)
+
 **A Game Boy and Game Boy Color emulator for the Casio fx-CG50, built for the calculator rather than a desktop.**
 
 PrizmGBC is a community-developed fork of [Prizoop](https://github.com/tswilliamson/prizoop), bringing classic handheld gaming to Casio Prizm graphing calculators. It packages as a native calculator add-in (`.g3a`).
@@ -7,8 +9,10 @@ PrizmGBC is a community-developed fork of [Prizoop](https://github.com/tswilliam
 ## Features
 
 - **Game Boy and Game Boy Color support:** load `.gb` and `.gbc` ROM files directly from calculator storage.
-- **On-device game library:** browse available games in a redesigned interface with game details and format indicators.
+- **On-device game library:** switch between list and compact grid views, browse game details and format indicators, and sort by name, recent activity or favourites.
+- **Recently played:** the five latest launched games are remembered for quicker access.
 - **Configurable controls:** remap Game Boy buttons to calculator keys, with an overview showing the current bindings.
+- **Save states:** use the configurable save and load shortcuts to preserve and restore a game's emulator state.
 - **Display modes:** choose native 1×, 1.5× fit, or 2× cropped rendering to suit the calculator screen.
 - **Calculator-friendly interface:** dedicated game library and settings screens, with clear navigation between gameplay and menus.
 - **Native add-in packaging:** install and launch PrizmGBC from the calculator's add-in menu using a `.g3a` release.
