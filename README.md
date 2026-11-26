@@ -31,6 +31,7 @@ The project is primarily developed for the **Casio fx-CG50**. Compatibility and 
 
 - Added **F1 MENU** and **F5 NOTES** hints to the game-library footer, alongside the existing F2, F3, F4 and F6 actions.
 - F5 opens the selected game's matching notes file from the menu; its in-game Select mapping is unchanged.
+- **fx-CG50 stability patch:** Removed Ptune2 calls on CG50 devices and hardened shutdown cleanup. This addresses an unsupported SDK interaction that could contribute to instability; the disappearing-add-ins symptom still requires confirmation on a physical calculator.
 
 ## Download and install
 
