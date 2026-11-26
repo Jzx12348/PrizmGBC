@@ -139,6 +139,10 @@ void emulator_type::defaultSettings() {
 	settings.saveSlot = 0;
 	settings.libraryView = 0;
 	memset(settings.reserved, 0, sizeof(settings.reserved));
+	settings.playtimeCount = 0;
+	memset(settings.playtimeReserved, 0, sizeof(settings.playtimeReserved));
+	memset(settings.playtimeRoms, 0, sizeof(settings.playtimeRoms));
+	memset(settings.playtimeSeconds, 0, sizeof(settings.playtimeSeconds));
 
 	settings.keyMap[emu_button::A] = 78;			// SHIFT
 	settings.keyMap[emu_button::B] = 68;			// OPTN
@@ -167,37 +171,63 @@ bool emulator_type::loadSettings() {
 		emulator_settings readSettings;
 		memset(&readSettings, 0, sizeof(readSettings));
 		const int v8Size = (int)offsetof(emulator_settings, recentCount);
-		const int v9Size = (int)sizeof(readSettings) - 4;
-		if ((len == sizeof(readSettings) || len == v9Size || len == v8Size) && !MCSGetData1(0, len, &readSettings)) {
+		const int v11Size = (int)offsetof(emulator_settings, playtimeCount);
+		const int v9Size = v11Size - 4;
+		if ((len == sizeof(readSettings) || len == v11Size || len == v9Size || len == v8Size) &&
+			!MCSGetData1(0, len, &readSettings)) {
 			if (readSettings.version == SETTINGS_VERSION && len == sizeof(readSettings)) {
 				memcpy(&emulator.settings, &readSettings, sizeof(emulator_settings));
 				return true;
 			}
-			// Preserve v1.2.0 settings while introducing the persistent library view.
-			if (readSettings.version == 10 && len == sizeof(readSettings)) {
-				memcpy(&emulator.settings, &readSettings, sizeof(emulator_settings));
-				emulator.settings.libraryView = 0;
-				memset(emulator.settings.reserved, 0, sizeof(emulator.settings.reserved));
+
+			// v1.3.0 development builds before playtime tracking.
+			if (readSettings.version == 11 && len == v11Size) {
+				memcpy(&emulator.settings, &readSettings, v11Size);
+				emulator.settings.playtimeCount = 0;
+				memset(emulator.settings.playtimeReserved, 0, sizeof(emulator.settings.playtimeReserved));
+				memset(emulator.settings.playtimeRoms, 0, sizeof(emulator.settings.playtimeRoms));
+				memset(emulator.settings.playtimeSeconds, 0, sizeof(emulator.settings.playtimeSeconds));
 				emulator.settings.version = SETTINGS_VERSION;
 				return true;
 			}
-			// Preserve v1.2.0 development settings when adding selectable save slots.
+
+			// Preserve v1.2.0 settings while introducing the persistent library view.
+			if (readSettings.version == 10 && len == v11Size) {
+				memcpy(&emulator.settings, &readSettings, v11Size);
+				emulator.settings.libraryView = 0;
+				emulator.settings.playtimeCount = 0;
+				memset(emulator.settings.playtimeReserved, 0, sizeof(emulator.settings.playtimeReserved));
+				memset(emulator.settings.playtimeRoms, 0, sizeof(emulator.settings.playtimeRoms));
+				memset(emulator.settings.playtimeSeconds, 0, sizeof(emulator.settings.playtimeSeconds));
+				emulator.settings.version = SETTINGS_VERSION;
+				return true;
+			}
+
+			// Preserve v1.2.0 development settings from before selectable save slots.
 			if (readSettings.version == 9 && len == v9Size) {
 				memcpy(&emulator.settings, &readSettings, v9Size);
 				emulator.settings.saveSlot = 0;
 				emulator.settings.libraryView = 0;
-				memset(emulator.settings.reserved, 0, sizeof(emulator.settings.reserved));
+				emulator.settings.playtimeCount = 0;
+				memset(emulator.settings.playtimeReserved, 0, sizeof(emulator.settings.playtimeReserved));
+				memset(emulator.settings.playtimeRoms, 0, sizeof(emulator.settings.playtimeRoms));
+				memset(emulator.settings.playtimeSeconds, 0, sizeof(emulator.settings.playtimeSeconds));
 				emulator.settings.version = SETTINGS_VERSION;
 				return true;
 			}
-			// Preserve v1.1.0 settings and favourites when adding the v1.2.0 fields.
+
+			// Preserve v1.1.0 settings and favourites.
 			if (readSettings.version == 8 && len == v8Size) {
 				memcpy(&emulator.settings, &readSettings, v8Size);
 				emulator.settings.recentCount = 0;
 				memset(emulator.settings.recentRoms, 0, sizeof(emulator.settings.recentRoms));
 				emulator.settings.sortMode = 0;
 				emulator.settings.saveSlot = 0;
-				memset(emulator.settings.reserved, 0, sizeof(emulator.settings.reserved));
+				emulator.settings.libraryView = 0;
+				emulator.settings.playtimeCount = 0;
+				memset(emulator.settings.playtimeReserved, 0, sizeof(emulator.settings.playtimeReserved));
+				memset(emulator.settings.playtimeRoms, 0, sizeof(emulator.settings.playtimeRoms));
+				memset(emulator.settings.playtimeSeconds, 0, sizeof(emulator.settings.playtimeSeconds));
 				emulator.settings.version = SETTINGS_VERSION;
 				return true;
 			}
