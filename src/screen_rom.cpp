@@ -13,19 +13,20 @@ typedef struct
 
 static void FindFiles(const char* path, foundFile* toArray, int& numFound) {
 	unsigned short filter[0x100], found[0x100];
-	int ret, handle;
+	int ret, handle = -1;
 	file_type_t info; // See Bfile_FindFirst for the definition of this struct
 
 	Bfile_StrToName_ncpy(filter, path, 0x50); // Overkill
 
 	ret = Bfile_FindFirst((const char*)filter, &handle, (char*)found, &info);
+	if (ret != 0) return;
 
 	while (ret == 0 && numFound < 64) {
 		Bfile_NameToStr_ncpy(toArray[numFound++].path, found, 32);
 		ret = Bfile_FindNext(handle, (char*)found, (char*)&info);
 	};
 
-	Bfile_FindClose(handle);
+	if (handle >= 0) Bfile_FindClose(handle);
 }
 
 
@@ -204,7 +205,7 @@ void screen_rom::drawGameDetails() {
 	Bdisp_AreaClr(&accent, 1, COLOR_LIGHTGREEN);
 	Print(12, 5, "PRIZMGBC", true, COLOR_WHITE);
 	Print(12, 24, "GAME INFORMATION", false, COLOR_LIGHTGREEN);
-	Print(300, 5, "v1.3.0 DEV", false, COLOR_LIGHTGREEN);
+	Print(300, 5, "v1.3.0 BETA", false, COLOR_LIGHTGREEN);
 
 	display_fill leftPanel;
 	leftPanel.x1 = 8; leftPanel.x2 = 187; leftPanel.y1 = 53; leftPanel.y2 = 185; leftPanel.mode = 1;
@@ -325,8 +326,9 @@ void screen_rom::drawFiles() {
 					char index[8];
 					sprintf(index, "%02d", i + 1);
 					Print(18, curY, index, false, COLOR_SILVER);
-					if (findFavorite(files[i].path) >= 0) Print(232, curY, "*", true, COLOR_YELLOW);
 					Print(43, curY, files[i].path, i == selectedFile, COLOR_WHITE);
+					if (findRecent(files[i].path) >= 0) Print(216, curY, "R", false, COLOR_LIGHTGREEN);
+					if (findFavorite(files[i].path) >= 0) Print(232, curY, "*", true, COLOR_YELLOW);
 				}
 			}
 		} else {
@@ -376,9 +378,14 @@ void screen_rom::drawFiles() {
 			(filename[length - 2] == 'b' || filename[length - 2] == 'B') &&
 			(filename[length - 1] == 'z' || filename[length - 1] == 'Z')) format = "COMPRESSED";
 		Print(270, 126, format, false, COLOR_WHITE);
-		Print(270, 151, "STATUS", false, COLOR_SILVER);
-		Print(270, 165, selectedFile == loadedFile ? "LOADED" : (findRecent(files[selectedFile].path) >= 0 ? "PLAYED" : "READY"), false, COLOR_LIGHTGREEN);
-		Print(270, 180, findFavorite(files[selectedFile].path) >= 0 ? "FAVORITE *" : "F3 TO FAVORITE", false, COLOR_YELLOW);
+		Print(270, 151, "PLAYTIME", false, COLOR_SILVER);
+		unsigned int playedSeconds = findPlaytime(files[selectedFile].path);
+		char playedText[20];
+		if (playedSeconds >= 3600) sprintf(playedText, "%uH %uM", playedSeconds / 3600, (playedSeconds / 60) % 60);
+		else if (playedSeconds >= 60) sprintf(playedText, "%u MIN", playedSeconds / 60);
+		else strcpy(playedText, playedSeconds ? "UNDER 1 MIN" : "NOT PLAYED");
+		Print(270, 165, playedText, false, COLOR_WHITE);
+		Print(270, 180, findFavorite(files[selectedFile].path) >= 0 ? "FAVOURITE *" : "F3 TO FAVOURITE", false, COLOR_YELLOW);
 	}
 
 	// Consistent footer navigation.
@@ -519,7 +526,7 @@ void screen_rom::changeSort(int direction) {
 
 void screen_rom::handleLeft() {
 	if (gridMode) {
-		if (numFiles && selectedFile > 0) selectedFile--;
+		if (numFiles && selectedFile % 2 == 1) selectedFile--;
 		checkScroll();
 		drawFiles();
 	} else {
@@ -529,7 +536,7 @@ void screen_rom::handleLeft() {
 
 void screen_rom::handleRight() {
 	if (gridMode) {
-		if (numFiles && selectedFile + 1 < numFiles) selectedFile++;
+		if (numFiles && selectedFile % 2 == 0 && selectedFile + 1 < numFiles) selectedFile++;
 		checkScroll();
 		drawFiles();
 	} else {
