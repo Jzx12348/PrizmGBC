@@ -33,7 +33,17 @@ void screen_faq::select() {
 	}
 
 	if (faqHandle < 0) {
-		Print(10, 10, "No .txt file found for this rom.", false);
+		ResolveBG(bg_faq);
+		Print(12, 5, "PRIZMGBC", false, COLOR_WHITE);
+		Print(12, 23, "GAME INFORMATION", false, COLOR_CYAN);
+		Print(18, 83, "NO GAME NOTES FOUND", false, COLOR_WHITE);
+		Print(18, 103, "Add a matching .TXT file beside", false, COLOR_SILVER);
+		Print(18, 117, "your ROM to display game notes.", false, COLOR_SILVER);
+		display_fill footer;
+		footer.x1 = 0; footer.x2 = 383; footer.y1 = 192; footer.y2 = 215; footer.mode = 1;
+		Bdisp_AreaClr(&footer, 1, COLOR_BLACK);
+		Print(10, 198, "F1 LIBRARY   F2 SETTINGS", false, COLOR_SILVER);
+		DrawFrame(0);
 	}
 }
 
@@ -82,6 +92,14 @@ void screen_faq::loadFAQ() {
 
 void screen_faq::draw() {
 	ResolveBG(bg_faq);
+	display_fill top;
+	top.x1 = 0; top.x2 = 383; top.y1 = 0; top.y2 = 43; top.mode = 1;
+	Bdisp_AreaClr(&top, 1, COLOR_BLACK);
+	display_fill accent;
+	accent.x1 = 0; accent.x2 = 383; accent.y1 = 42; accent.y2 = 45; accent.mode = 1;
+	Bdisp_AreaClr(&accent, 1, COLOR_CYAN);
+	Print(12, 5, "PRIZMGBC", false, COLOR_WHITE);
+	Print(12, 23, "GAME INFORMATION", false, COLOR_CYAN);
 
 	int curTextPos = readOffset;
 
@@ -119,7 +137,15 @@ void screen_faq::draw() {
 		readText(textOffset + 2048);
 		readOffset -= 2048;
 		draw();
+		return;
 	}
+
+	display_fill footer;
+	footer.x1 = 0; footer.x2 = 383; footer.y1 = 192; footer.y2 = 215; footer.mode = 1;
+	Bdisp_AreaClr(&footer, 1, COLOR_BLACK);
+	Print(10, 198, "UP/DOWN SCROLL", false, COLOR_SILVER);
+	Print(280, 198, "F1 LIBRARY", false, COLOR_CYAN);
+	DrawFrame(0);
 }
 
 void screen_faq::readText(int bufferPos) {
