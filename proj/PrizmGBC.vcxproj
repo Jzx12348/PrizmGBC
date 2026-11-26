@@ -46,11 +46,13 @@
     <ClCompile Include="..\src\display_preview.cpp" />
     <ClCompile Include="..\src\emulator.cpp" />
     <ClCompile Include="..\src\emulator_screen.cpp" />
+    <ClCompile Include="..\src\emulator_screen.cpp" />
     <ClCompile Include="..\src\mbc.cpp" />
     <ClCompile Include="..\src\screen_faq.cpp" />
     <ClCompile Include="..\src\screen_settings.cpp" />
     <ClCompile Include="..\src\screen_play.cpp" />
     <ClCompile Include="..\src\screen_rom.cpp" />
+    <ClCompile Include="..\src\screen_savestate.cpp" />
     <ClCompile Include="..\src\gpu.cpp" />
     <ClCompile Include="..\src\interrupts.cpp" />
     <ClCompile Include="..\src\keys.cpp" />
@@ -83,6 +85,7 @@
     <ClInclude Include="..\src\screen_settings.h" />
     <ClInclude Include="..\src\screen_play.h" />
     <ClInclude Include="..\src\screen_rom.h" />
+    <ClInclude Include="..\src\screen_savestate.h" />
     <ClInclude Include="..\src\gpu.h" />
     <ClInclude Include="..\src\interrupts.h" />
     <ClInclude Include="..\src\keys.h" />
