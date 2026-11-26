@@ -29,7 +29,7 @@ namespace emu_scale {
 }
 
 // Emulation settings
-#define SETTINGS_VERSION 12 // add per-game playtime tracking
+#define SETTINGS_VERSION 13 // add per-game settings profiles
 struct emulator_settings {
 	int version;
 	unsigned int faqOffset;		// faq text offset (top 8 bits are name hash, bottom 24 are actual offset)
@@ -57,6 +57,10 @@ struct emulator_settings {
 	unsigned char playtimeReserved[3];
 	char playtimeRoms[16][32];
 	unsigned int playtimeSeconds[16];
+	unsigned char profileCount;
+	unsigned char profileReserved[3];
+	char profileRoms[8][32];
+	unsigned char profileValues[8][24];
 };
 
 // color palette colors
@@ -126,6 +130,9 @@ struct emulator_type {
 	bool loadSettings();			// returns false if not found
 	void saveSettings();
 	void defaultSettings();
+	bool hasGameProfile(const char* filename);
+	bool saveGameProfile(const char* filename);
+	bool applyGameProfile(const char* filename);
 
 	// load the given rom filename, returns false on error (unsupported MBC, etc)
 	bool loadRom(const char* filename);
