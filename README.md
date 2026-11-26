@@ -109,7 +109,7 @@ The exact toolchain and SDK components must match the Makefile's expectations. A
 
 ### Visual Studio project
 
-The optional Visual Studio solution is located at <code>proj/PrizmGBC.sln</code>. It contains the calculator project and the separate <code>comp-gb</code> ROM compression utility. The primary supported release build remains the PrizmSDK Makefile workflow used by GitHub Actions.
+The optional Visual Studio solution is located at <code>proj/PrizmGBC.sln</code>. It contains the calculator project and the separate <code>comp-gb</code> ROM compression utility. The legacy <code>comp-gb</code> utility expects the external <code>prizm-zx7/zx7.inl</code> dependency in a sibling directory; that dependency is not bundled, and the utility is not required to build or run the emulator. Existing <code>.gbz</code> ROM support remains part of the emulator. The primary supported release build remains the PrizmSDK Makefile workflow used by GitHub Actions.
 
 ### If the build fails
 
