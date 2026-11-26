@@ -1,21 +1,8 @@
 # PrizmGBC
 
-<p align="center">
-  <img src="PrizmGBC-logo.svg" alt="PrizmGBC logo" width="420">
-</p>
-
-<p align="center">
-  <strong>A Game Boy and Game Boy Color emulator for the Casio fx-CG50.</strong><br>
-  Designed for the calculator, packaged as a native <code>.g3a</code> add-in.
-</p>
-
-<p align="center">
-  <a href="https://github.com/Jzx12348/PrizmGBC/releases/latest"><strong>Latest stable release: v1.3.0</strong></a>
-  ·
-  <a href="https://jzx12348.github.io/PrizmGBC/">Project website</a>
-  ·
-  <a href="https://github.com/Jzx12348/PrizmGBC/releases">All releases</a>
-</p>
+<p align="center"><img src="PrizmGBC-logo.svg" alt="PrizmGBC logo" width="420"></p>
+<p align="center"><strong>A Game Boy and Game Boy Color emulator for the Casio fx-CG50.</strong><br>Built for the calculator and distributed as a native <code>.g3a</code> add-in.</p>
+<p align="center"><a href="https://github.com/Jzx12348/PrizmGBC/releases/latest"><strong>Latest stable release: v1.3.0</strong></a> · <a href="https://jzx12348.github.io/PrizmGBC/">Project website</a> · <a href="https://github.com/Jzx12348/PrizmGBC/releases">All releases</a></p>
 
 ---
 
@@ -23,51 +10,37 @@
 
 PrizmGBC is a community-developed fork of [Prizoop](https://github.com/tswilliamson/prizoop), bringing classic handheld gaming to Casio Prizm graphing calculators.
 
-The project is primarily developed and validated for the **Casio fx-CG50**. Compatibility and performance can vary between games, calculator models and OS versions.
+The project is primarily developed for the **Casio fx-CG50**. Compatibility and performance can vary between games, calculator models and OS versions.
 
-## Features in v1.3.0
+## v1.3.0 stable features
 
-- **Game Boy and Game Boy Color ROM support** for .gb and .gbc files.
-- **Recently played list** that remembers the five latest launched games.
-- **Library sorting** by name, recent activity and favourites.
-- **Three save-state slots** selectable from the emulator settings.
-- **Categorised settings** for Performance, Display, Controls, Audio and System.
-- **Configurable key mappings** with an overview of current bindings.
-- **Display modes** including native 1×, 1.5× Fit and 2× Crop.
+- **Game Boy and Game Boy Color support** for .gb and .gbc ROMs, plus inherited .gbz support.
+- **Redesigned game library** with persistent grid/list layouts and improved navigation.
+- **Favourites and recently played** with sorting by name, recent activity, favourites and playtime.
+- **Game information pages** showing ROM title, file size, cartridge type and memory capacities.
+- **Per-game settings profiles** for performance, display, audio and controls.
+- **Playtime tracking** and playtime-based sorting.
+- **Three-slot save-state manager** for the currently loaded game.
+- **F3 saves and F4 loads** the selected save-state slot, in the manager and during gameplay.
+- **Function-key hints** positioned above their matching F2, F3, F4 and F6 keys in the library.
+- **Categorised settings** for Performance, Display, Controls, Audio and System, with improved tab spacing.
+- **Configurable key mappings** and display modes including native 1×, 1.5× Fit and 2× Crop.
 - **Native calculator installation** through a .g3a add-in.
-
-Some inherited emulator features may remain experimental. Consult the release notes and test on your own calculator before relying on save states or other critical functionality.
-
-## v1.3.0 stable
-
-**Stable release:** [PrizmGBC v1.3.0](https://github.com/Jzx12348/PrizmGBC/releases/tag/v1.3.0).
-
-The v1.3.0 library and usability release includes:
-
-- Individual game information pages with cartridge and ROM metadata.
-- Persistent grid or list library preference, with consistent two-column grid navigation.
-- Improved recently played indicators and per-game playtime display, plus sorting by recent activity or total playtime.
-- Per-game settings profiles that can be saved and applied, including display, performance, audio and key mappings.
-- A dedicated three-slot save-state manager for the currently loaded game. **F3 saves** and **F4 loads** the selected slot, both in the manager and during gameplay.
-- A clearer library footer with action labels positioned directly above their matching F2, F3, F4 and F6 keys.
-- Wider, evenly spaced settings category tabs.
-
-This is the stable v1.3.0 release. The v1.3.0-beta pre-release remains available in the release archive and will not receive further updates.
 
 ## Download and install
 
 1. Open the [latest stable release](https://github.com/Jzx12348/PrizmGBC/releases/latest).
 2. Download **PrizmGBC.g3a**.
-3. Connect your fx-CG50 to your computer and open its storage.
-4. Copy PrizmGBC.g3a to the calculator's root directory.
-5. Copy your legally obtained .gb or .gbc ROM files to the calculator.
+3. Connect the fx-CG50 to your computer and open its storage.
+4. Copy the add-in to the calculator's root directory.
+5. Copy your legally obtained .gb, .gbc or supported .gbz ROM files to the calculator.
 6. Safely eject the calculator and launch **PrizmGBC** from the add-in menu.
 
 Use short, simple ROM filenames. The original Prizoop documentation recommends names shorter than 12 characters; whether that limitation can be relaxed has not been verified for this fork.
 
 ## Controls
 
-The default mappings are listed below. You can change them in the in-emulator Controls settings.
+The default mappings are listed below. They can be changed in the in-emulator Controls settings.
 
 | Game Boy control | Default calculator key |
 | --- | --- |
@@ -97,16 +70,14 @@ PrizmGBC uses the **PrizmSDK / FXCGSDK toolchain**. It is not a standard desktop
 
 The default Makefile lookup expects the repository at PrizmSDK/projects/PrizmGBC:
 
-```text
-PrizmSDK/
-├── bin/
-├── toolchain/
-└── projects/
-    └── PrizmGBC/
-        ├── Makefile
-        ├── make-DeviceRelease.bat
-        └── src/
-```
+    PrizmSDK/
+    ├── bin/
+    ├── toolchain/
+    └── projects/
+        └── PrizmGBC/
+            ├── Makefile
+            ├── make-DeviceRelease.bat
+            └── src/
 
 If the SDK is installed elsewhere, set the FXCGSDK environment variable to the absolute path of the SDK root.
 
@@ -114,9 +85,7 @@ If the SDK is installed elsewhere, set the FXCGSDK environment variable to the a
 
 From a command prompt in the repository root, run:
 
-```bat
-make-DeviceRelease.bat
-```
+    make-DeviceRelease.bat
 
 A successful device-release build should produce PrizmGBC.g3a.
 
@@ -124,13 +93,15 @@ A successful device-release build should produce PrizmGBC.g3a.
 
 With a Linux-compatible SDK installation, run:
 
-```sh
-export FXCGSDK="/absolute/path/to/PrizmSDK"
-make clean
-make DEFINES="-DTARGET_PRIZM=1 -DDEBUG=0" CONFIG=DeviceRelease
-```
+    export FXCGSDK="/absolute/path/to/PrizmSDK"
+    make clean
+    make DEFINES="-DTARGET_PRIZM=1 -DDEBUG=0" CONFIG=DeviceRelease
 
 The exact toolchain and SDK components must match the Makefile's expectations. A successful compile does not by itself prove that the add-in works on a physical calculator.
+
+### Visual Studio project
+
+The optional Visual Studio solution is located at <code>proj/PrizmGBC.sln</code>. It contains the calculator project and the separate <code>comp-gb</code> ROM compression utility. The primary supported release build remains the PrizmSDK Makefile workflow used by GitHub Actions.
 
 ### If the build fails
 
@@ -144,13 +115,29 @@ Check that:
 
 To clean generated output before rebuilding, run rebuild.bat followed by make-DeviceRelease.bat on Windows. Do not remove source files or SDK directories.
 
+## Project structure
+
+| Path | Purpose |
+| --- | --- |
+| <code>src/</code> | Emulator core, calculator interface, graphics, audio and menus |
+| <code>src/asm/</code> | SH-family assembly routines used by the calculator build |
+| <code>src/bg_compressed.cpp</code> | Embedded compressed display backgrounds |
+| <code>proj/PrizmGBC.sln</code> | Optional Visual Studio solution |
+| <code>comp-gb/</code> | Source for the optional .gbz ROM compression utility |
+| <code>assets/upstream-backgrounds/</code> | Archived source bitmaps; not required by the current build |
+| <code>docs/legacy-performance-notes.txt</code> | Archived historical development notes |
+| <code>Makefile</code> | PrizmSDK build rules and .g3a packaging |
+| <code>make-DeviceRelease.bat</code> | Windows device-release build entry point |
+
+Generated executables and build outputs are intentionally excluded from source control. Build them locally with the relevant toolchain.
+
 ## Roadmap
 
 The roadmap describes the current direction of the project. Planned features are targets, not guarantees; implementation may change based on fx-CG50 hardware, memory and SDK limitations.
 
 ### v1.3.0 · Library and usability
 
-The stable v1.3.0 release delivers the library and usability implementation: game information pages, persistent grid/list layout, refined grid navigation, recently played indicators, playtime display and sorting, manually saved and applied per-game settings profiles, and a dedicated three-slot save-state manager. Settings migration now updates legacy default save/load bindings individually while preserving custom mappings, and profile data is validated before application. Physical fx-CG50 testing remains essential, especially for save/load reliability, playtime accuracy, profile behaviour and upgrades from older settings versions.
+Released. Includes game information pages, persistent grid/list layout, refined grid navigation, favourites and recently played, playtime display and sorting, manually saved and applied per-game settings profiles, and a dedicated three-slot save-state manager. Settings migration updates legacy default save/load bindings individually while preserving custom mappings.
 
 ### v1.4.0 · Personalisation
 
@@ -165,14 +152,14 @@ The stable v1.3.0 release delivers the library and usability implementation: gam
 
 A substantial evolution of the emulator and the overall user experience.
 
-- **Emulator engine:** major performance optimisation, improved Game Boy and Game Boy Color compatibility, more accurate CPU, graphics, memory and timing behaviour, and audio improvements.
+- **Emulator engine:** performance optimisation, improved Game Boy and Game Boy Color compatibility, more accurate CPU, graphics, memory and timing behaviour, and audio improvements.
 - **Interface:** a complete application UI overhaul, redesigned library, game information pages, updated settings and in-game menus, and transitions where performance permits.
 - **Game management:** artwork and metadata, per-game configuration, expanded save-state management and previews where practical, and improved ROM organisation.
-- **Emulator configuration:** expanded display and audio options, advanced key mapping, performance monitoring and diagnostic information.
+- **Configuration:** expanded display and audio options, advanced key mapping, performance monitoring and diagnostics.
 - **Personalisation:** themes, accent colours and configurable interface options.
 - **Reliability:** broader compatibility testing, better error handling, settings and save migration, and improved stability and memory management.
 
-The v2.0.0 scope will be refined as the earlier releases establish what is practical on the fx-CG50. The existing PrizmGBC logo and application icon are staying.
+The v2.0.0 scope will be refined as earlier releases establish what is practical on the fx-CG50. The existing PrizmGBC logo and application icon are staying unchanged.
 
 ## ROM files
 
@@ -181,7 +168,7 @@ The v2.0.0 scope will be refined as the earlier releases establish what is pract
 | .gb | Game Boy ROM |
 | .gbc | Game Boy Color ROM |
 | .gbz | Optional compressed format inherited from Prizoop |
-| .txt | Optional game FAQ text file |
+| .txt | Optional game FAQ / notes file |
 
 A FAQ file should use the same base filename as its ROM. For example, Pokemon.gbc can have a matching Pokemon.txt. The inherited FAQ reader expects ANSI text; UTF-8 support has not been established.
 
@@ -205,18 +192,7 @@ Try a known-good, unmodified .gb or .gbc file. Record whether the issue is a bla
 
 ### The build produces an unexpected filename
 
-The Makefile derives the target name from the project directory. Build from a directory named PrizmGBC and check the generated output before installing it.
-
-## Project structure
-
-| Path | Purpose |
-| --- | --- |
-| src/ | Emulator core, calculator interface, graphics, audio and menus |
-| src/asm/ | SH-family assembly routines used by the calculator build |
-| src/ptune2_simple/ | Inherited calculator clock and performance support |
-| proj/ | Visual Studio project and simulator configuration |
-| Makefile | PrizmSDK build rules and .g3a packaging |
-| make-DeviceRelease.bat | Windows device-release build entry point |
+The Makefile fixes the target name to PrizmGBC. Build from the repository root and check the generated output before installing it.
 
 ## Credits and licensing
 

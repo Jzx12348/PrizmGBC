@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2003
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "prizoop", "prizoop.vcxproj", "{0A1E9BF8-05DD-4F73-81D8-18DA73DB5796}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PrizmGBC", "PrizmGBC.vcxproj", "{0A1E9BF8-05DD-4F73-81D8-18DA73DB5796}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "comp-gb", "..\comp-gb\comp-gb.vcxproj", "{AEBE76A4-DB41-479F-86B2-D6236D7AA3EF}"
 EndProject

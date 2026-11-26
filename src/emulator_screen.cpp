@@ -171,8 +171,7 @@ void emulator_screen::DrawPausePreview() {
 static const unsigned char* curBGData = 0;
 static int overwrittenBits = 0;
 void emulator_screen::ResolveBG(const unsigned char* data) {
-	// PrizmGBC owns the complete menu canvas. Never restore the inherited
-	// Prizoop bitmap underneath the new interface.
+	// PrizmGBC owns the complete menu canvas. Never restore a legacy bitmap underneath the new interface.
 	(void)data;
 	display_fill canvas;
 	canvas.x1 = 0;

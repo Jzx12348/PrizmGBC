@@ -1,3 +1,7 @@
+# Archived performance notes
+
+These measurements are historical notes inherited from the original Prizoop development. They are retained for reference only and are not benchmarks of the current PrizmGBC release.
+
 3/6
 Starting point with frame skip 1:						37.9, 46.9% in CPU, 32.0% in render scanline
 readByteSpecial moved to switch case:					39.3, 45.2% in PCU, 33.1% in render scanline
