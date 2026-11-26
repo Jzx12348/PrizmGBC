@@ -125,10 +125,10 @@ void screen_settings::drawOptions() {
 	Bdisp_AreaClr(&accent, 1, COLOR_LIGHTGREEN);
 	Print(12, 4, "PRIZMGBC", true, COLOR_WHITE);
 	Print(12, 22, "SETTINGS", false, COLOR_LIGHTGREEN);
-	Print(310, 13, "v1.3.0 BETA", false, COLOR_LIGHTGREEN);
+	Print(310, 13, "v1.3.0", false, COLOR_LIGHTGREEN);
 
-	const int tabX[CATEGORY_COUNT] = { 8, 84, 160, 236, 312 };
-	const int tabW[CATEGORY_COUNT] = { 64, 64, 64, 64, 64 };
+	const int tabX[CATEGORY_COUNT] = { 4, 80, 156, 232, 308 };
+	const int tabW[CATEGORY_COUNT] = { 72, 72, 72, 72, 72 };
 	for (int i = 0; i < CATEGORY_COUNT; i++) {
 		if (i == curCategory) {
 			display_fill tab;
@@ -274,7 +274,7 @@ void screen_settings::drawCurrentKeyMap(int selected) {
 	Bdisp_AreaClr(&accent, 1, COLOR_LIGHTGREEN);
 	Print(12, 5, "PRIZMGBC", true, COLOR_WHITE);
 	Print(12, 24, "CONTROLS / KEY MAPPING", false, COLOR_LIGHTGREEN);
-	Print(300, 15, "v1.3.0 BETA", false, COLOR_LIGHTGREEN);
+	Print(300, 15, "v1.3.0", false, COLOR_LIGHTGREEN);
 
 	for (int i = 0; i < emu_button::MAX; i++) {
 		int column = i / 5;
