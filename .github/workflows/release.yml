@@ -1,4 +1,4 @@
-name: Publish PrizmGBC beta
+name: Publish PrizmGBC stable
 
 on:
   push:
@@ -10,9 +10,9 @@ permissions:
   contents: write
 
 jobs:
-  publish-beta:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.event.head_commit.message == 'Prepare v1.3.0 beta release'
-    name: Build and publish beta release
+  publish-stable:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.event.head_commit.message == 'Prepare v1.3.0 stable release'
+    name: Build and publish stable release
     runs-on: windows-latest
     steps:
       - name: Check out PrizmSDK
@@ -40,22 +40,22 @@ jobs:
           call make.bat DEFINES="-DTARGET_PRIZM=1 -DDEBUG=0" CONFIG=DeviceRelease
           if not exist PrizmGBC.g3a exit /b 1
 
-      - name: Publish beta release
+      - name: Publish stable release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.3.0-beta
+          tag_name: v1.3.0
           target_commitish: master
-          name: v1.3.0-beta
+          name: v1.3.0
           draft: false
-          prerelease: true
-          make_latest: false
+          prerelease: false
+          make_latest: true
           generate_release_notes: false
           files: PrizmSDK/projects/PrizmGBC/PrizmGBC.g3a
           fail_on_unmatched_files: true
           body: |
-            ## **Beta build · PRE-RELEASE**
+            ## **Stable release**
 
-            *PrizmGBC v1.3.0 is a beta release for the Casio fx-CG50. It brings the library and usability roadmap into a wider testing phase.*
+            *PrizmGBC v1.3.0 is the stable library and usability release for the Casio fx-CG50.*
 
             ## New features and improvements
 
