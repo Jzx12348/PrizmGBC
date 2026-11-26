@@ -71,10 +71,19 @@ void screen_settings::deselect() {
 void screen_settings::drawOptions() {
 	EnableStatusArea(3);
 
+	display_fill header;
+	header.x1 = 0; header.x2 = 383; header.y1 = 0; header.y2 = 38; header.mode = 1;
+	Bdisp_AreaClr(&header, 1, COLOR_BLACK);
+	display_fill accent;
+	accent.x1 = 0; accent.x2 = 383; accent.y1 = 37; accent.y2 = 39; accent.mode = 1;
+	Bdisp_AreaClr(&accent, 1, COLOR_CYAN);
+	Print(10, 5, "PRIZMGBC", false, COLOR_WHITE);
+	Print(10, 21, "SYSTEM SETTINGS", false, COLOR_CYAN);
+
 	int row = 0;
 	for (int i = 0; i < NumOptions(); i++) {
 		bool selected = curOption == i;
-		int y = row * 14 + 4;
+		int y = row * 14 + 44;
 
 		if (options[i].noCGB) continue;
 		row++;
