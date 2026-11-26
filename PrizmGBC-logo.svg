@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 144" role="img" aria-labelledby="title desc">
+<title id="title">PrizmGBC</title>
+<desc id="desc">A geometric three-facet prism symbol beside the PrizmGBC wordmark.</desc>
+<rect width="520" height="144" fill="#0c1311"/>
+<g transform="translate(18 12)" stroke="#d6f8e4" stroke-width="2" stroke-linejoin="round">
+  <path d="M48 4 91 29 48 54 5 29Z" fill="#79e5b0"/>
+  <path d="M5 29 48 54 48 112 5 87Z" fill="#39b982"/>
+  <path d="M91 29 48 54 48 112 91 87Z" fill="#176b4d"/>
+  <path d="M48 54V112M5 29 48 54 91 29" fill="none"/>
+</g>
+<g fill="#edf7f1" font-family="Arial, Helvetica, sans-serif">
+  <text x="140" y="83" font-size="55" font-weight="700" letter-spacing="4">PRIZM</text>
+  <text x="144" y="111" font-size="17" font-weight="600" letter-spacing="8" fill="#79e5b0">GAME BOY COLOR</text>
+  <text x="501" y="34" font-size="11" text-anchor="end" letter-spacing="2" fill="#7f9489">01</text>
+</g>
+</svg>
