@@ -1,0 +1,46 @@
+name: Create PrizmGBC release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release tag, for example v0.1.0-alpha"
+        required: true
+        default: "v0.1.0-alpha"
+        type: string
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  draft-release:
+    name: Create draft release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Create draft release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.version || github.ref_name }}
+          target_commitish: master
+          draft: true
+          prerelease: true
+          generate_release_notes: true
+          body: |
+            ## PrizmGBC
+
+            Experimental Game Boy and Game Boy Color emulator for the Casio Prizm.
+
+            **Release asset required:** attach the tested `PrizmGBC.g3a` add-in before publishing this draft.
+
+            ### Before publishing
+            - [ ] Built from the tagged source using PrizmSDK.
+            - [ ] Tested on a physical Casio fx-CG50.
+            - [ ] Recorded calculator OS version and build configuration.
+            - [ ] Tested at least one known-good `.gb` and one `.gbc` ROM.
+            - [ ] Added `PrizmGBC.g3a` to this release.
