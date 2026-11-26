@@ -81,7 +81,7 @@ void screen_settings::drawOptions() {
 	Bdisp_AreaClr(&accent, 1, COLOR_CYAN);
 	Print(12, 5, "PRIZMGBC", true, COLOR_WHITE);
 	Print(12, 24, "SYSTEM SETTINGS", false, COLOR_CYAN);
-	Print(300, 15, "v0.1.0", false, COLOR_CYAN);
+	Print(300, 15, "v1.0.0", false, COLOR_CYAN);
 
 	display_fill panel;
 	panel.x1 = 7; panel.x2 = 376; panel.y1 = 51; panel.y2 = 187; panel.mode = 1;
@@ -205,7 +205,7 @@ void screen_settings::drawCurrentKeyMap() {
 	Bdisp_AreaClr(&accent, 1, COLOR_CYAN);
 	Print(12, 5, "PRIZMGBC", true, COLOR_WHITE);
 	Print(12, 24, "CURRENT KEY BINDS", false, COLOR_CYAN);
-	Print(300, 15, "v0.1.0", false, COLOR_CYAN);
+	Print(300, 15, "v1.0.0", false, COLOR_CYAN);
 
 	for (int i = 0; i < emu_button::MAX; i++) {
 		int column = i / 5;
