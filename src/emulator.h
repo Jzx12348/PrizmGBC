@@ -29,7 +29,7 @@ namespace emu_scale {
 }
 
 // Emulation settings
-#define SETTINGS_VERSION 7 // add configurable FPS overlay
+#define SETTINGS_VERSION 8 // add persistent game favourites
 struct emulator_settings {
 	int version;
 	unsigned int faqOffset;		// faq text offset (top 8 bits are name hash, bottom 24 are actual offset)
@@ -45,7 +45,8 @@ struct emulator_settings {
 	unsigned char obj2ColorPalette;
 	unsigned char sound;
 	unsigned char fpsCounter;
-	unsigned char padding[1];
+	unsigned char favoriteCount;
+	char favoriteRoms[8][32];
 };
 
 // color palette colors
@@ -72,6 +73,7 @@ struct emulator_screen {
 	virtual void handleLeft() {}
 	virtual void handleRight() {}
 	virtual void handleSelect() {}
+	virtual void handleF3() {}
 
 protected:
 	// helper functions
