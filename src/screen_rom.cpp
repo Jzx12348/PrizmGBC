@@ -57,12 +57,12 @@ void screen_rom::drawFiles() {
 	Bdisp_AreaClr(&header, 1, COLOR_BLACK);
 	display_fill accent;
 	accent.x1 = 0; accent.x2 = 383; accent.y1 = 42; accent.y2 = 45; accent.mode = 1;
-	Bdisp_AreaClr(&accent, 1, COLOR_CYAN);
+	Bdisp_AreaClr(&accent, 1, COLOR_LIGHTGREEN);
 	Print(12, 5, "PRIZMGBC", true, COLOR_WHITE);
-	Print(12, 24, "GAME LIBRARY", false, COLOR_CYAN);
+	Print(12, 24, "GAME LIBRARY", false, COLOR_LIGHTGREEN);
 	char countText[24];
 	sprintf(countText, "%d GAMES", numFiles);
-	Print(300, 5, "v1.0.0", false, COLOR_CYAN);
+	Print(300, 5, "v1.0.0", false, COLOR_LIGHTGREEN);
 	Print(300, 24, countText, false, COLOR_SILVER);
 
 	// Main library and game information panels.
@@ -77,9 +77,9 @@ void screen_rom::drawFiles() {
 		Print(20, 82, "LIBRARY EMPTY", true, COLOR_WHITE);
 		Print(20, 103, "Add game files to the", false, COLOR_SILVER);
 		Print(20, 117, "calculator root folder.", false, COLOR_SILVER);
-		Print(20, 145, "GB  /  GBC  /  GBZ", false, COLOR_CYAN);
+		Print(20, 145, "GB  /  GBC  /  GBZ", false, COLOR_LIGHTGREEN);
 	} else {
-		Print(16, 56, "YOUR GAMES", false, COLOR_CYAN);
+		Print(16, 56, "YOUR GAMES", false, COLOR_LIGHTGREEN);
 		for (int i = 0; i < numFiles; i++) {
 			int curY = i * 16 - curScroll + 73;
 			if (curY >= 72 && curY < 184) {
@@ -88,12 +88,12 @@ void screen_rom::drawFiles() {
 					selected.x1 = 10; selected.x2 = 251;
 					selected.y1 = curY - 2; selected.y2 = curY + 12;
 					selected.mode = 1;
-					Bdisp_AreaClr(&selected, 1, COLOR_MEDIUMBLUE);
+					Bdisp_AreaClr(&selected, 1, COLOR_DARKGREEN);
 					display_fill marker;
 					marker.x1 = 10; marker.x2 = 13;
 					marker.y1 = curY - 2; marker.y2 = curY + 12;
 					marker.mode = 1;
-					Bdisp_AreaClr(&marker, 1, COLOR_CYAN);
+					Bdisp_AreaClr(&marker, 1, COLOR_LIGHTGREEN);
 				}
 				char index[8];
 				sprintf(index, "%02d", i + 1);
@@ -104,7 +104,7 @@ void screen_rom::drawFiles() {
 		}
 
 		// Selected game details.
-		Print(270, 59, "SELECTED", false, COLOR_CYAN);
+		Print(270, 59, "SELECTED", false, COLOR_LIGHTGREEN);
 		Print(270, 82, files[selectedFile].path, true, COLOR_WHITE);
 		Print(270, 112, "FORMAT", false, COLOR_SILVER);
 		const char* format = "GAME BOY";
@@ -118,7 +118,7 @@ void screen_rom::drawFiles() {
 			(filename[length - 1] == 'z' || filename[length - 1] == 'Z')) format = "COMPRESSED";
 		Print(270, 126, format, false, COLOR_WHITE);
 		Print(270, 151, "STATUS", false, COLOR_SILVER);
-		Print(270, 165, selectedFile == loadedFile ? "LOADED" : "READY", false, COLOR_CYAN);
+		Print(270, 165, selectedFile == loadedFile ? "LOADED" : "READY", false, COLOR_LIGHTGREEN);
 		Print(270, 180, findFavorite(files[selectedFile].path) >= 0 ? "FAVORITE *" : "F3 TO FAVORITE", false, COLOR_YELLOW);
 	}
 
@@ -129,7 +129,7 @@ void screen_rom::drawFiles() {
 	Print(10, 198, "UP / DOWN  BROWSE", false, COLOR_SILVER);
 	Print(145, 198, "F3  FAV", false, COLOR_YELLOW);
 	Print(220, 198, "F2 SETTINGS", false, COLOR_SILVER);
-	Print(316, 198, "F6 PLAY", false, COLOR_CYAN);
+	Print(316, 198, "F6 PLAY", false, COLOR_LIGHTGREEN);
 	DrawFrame(0);
 }
 void screen_rom::setup() {
