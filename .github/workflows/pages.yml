@@ -1,4 +1,4 @@
-name: Deploy PrizmGBC website
+name: Deploy PrizmGBC project website
 
 on:
   push:
