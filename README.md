@@ -48,7 +48,7 @@ This build is intended for testing on a physical Casio fx-CG50. The following fe
 - Persistent grid or list library preference.
 - Per-game playtime tracking and sorting by total playtime.
 - Per-game settings profiles that can be saved and applied, including display, performance, audio and key mappings.
-- A dedicated three-slot save-state manager with slot selection, saving and loading for the currently loaded game.
+- A dedicated three-slot save-state manager for the currently loaded game. **F3 saves** and **F4 loads** the selected slot, both in the manager and during gameplay.
 
 This is a development pre-release, not a stable release. Use v1.2.0 for normal installation if you prefer the established stable version. Further development builds may change settings formats or behaviour.
 
@@ -74,8 +74,8 @@ The default mappings are listed below. You can change them in the in-emulator Co
 | B | OPTN |
 | Select | F5 |
 | Start | F6 |
-| Save state | X (multiply) |
-| Load state | Right arrow / STORE |
+| Save state | F3 |
+| Load state | F4 |
 | Increase volume | + |
 | Decrease volume | - |
 
