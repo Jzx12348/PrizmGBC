@@ -38,6 +38,7 @@ static option_type options[] = {
 	{ "Map Keys", 1, CATEGORY_CONTROLS, NULL, false, false },
 	{ "Sound", 0, CATEGORY_AUDIO, &emulator.settings.sound, false, false },
 	{ "FPS Counter", 0, CATEGORY_SYSTEM, &emulator.settings.fpsCounter, false, false },
+	{ "Save State Slot", 5, CATEGORY_SYSTEM, &emulator.settings.saveSlot, false, false },
 };
 
 static inline int NumOptions() {
@@ -187,6 +188,11 @@ void screen_settings::drawOptions() {
 			unsigned char opt = *((unsigned char*)options[index].addr);
 			const char* modes[] = { "1X", "FIT 1.5X", "2X CROP" };
 			Print(286, y, modes[opt < emu_scale::MAX ? opt : 0], selected, COLOR_LIGHTGREEN);
+		} else if (options[index].type == 5) {
+			unsigned char slot = *((unsigned char*)options[index].addr);
+			char slotText[12];
+			sprintf(slotText, "SLOT %d", (slot < 3 ? slot : 0) + 1);
+			Print(300, y, slotText, selected, COLOR_LIGHTGREEN);
 		}
 	}
 
@@ -383,6 +389,11 @@ void screen_settings::handleSelect() {
 		case 4: {
 			unsigned char* opt = (unsigned char*)options[index].addr;
 			*opt = ((*opt) + 1) % emu_scale::MAX;
+			break;
+		}
+		case 5: {
+			unsigned char* slot = (unsigned char*)options[index].addr;
+			*slot = ((*slot) + 1) % 3;
 			break;
 		}
 	}
