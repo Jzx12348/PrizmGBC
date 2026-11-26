@@ -16,5 +16,6 @@ struct screen_settings : public emulator_screen {
 
 private:
 	void drawOptions();
+	void drawCurrentKeyMap();
 	void selectKeys();
 };
