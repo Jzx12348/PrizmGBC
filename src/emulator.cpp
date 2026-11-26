@@ -8,6 +8,7 @@
 #include "screen_settings.h"
 #include "screen_play.h"
 #include "screen_faq.h"
+#include "screen_savestate.h"
 
 emulator_type emulator;
 
@@ -26,11 +27,13 @@ void emulator_type::startUp() {
 	screens[1] = new screen_settings;
 	screens[2] = new screen_play;
 	screens[3] = new screen_faq;
+	screens[4] = new screen_savestate;
 
 	screens[0]->fKey = 1;
 	screens[1]->fKey = 2;
 	screens[2]->fKey = 6;
 	screens[3]->fKey = 5;
+	screens[4]->fKey = 4;
 
 	for (int i = 0; i < 6; i++) {
 		if (screens[i]) {
