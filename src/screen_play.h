@@ -12,7 +12,7 @@ struct screen_play : public emulator_screen {
 	virtual void postStateChange() override;
 
 private:
-	void initRom();
+	bool initRom();
 	void play();
 	void drawPlayBG();
 };
