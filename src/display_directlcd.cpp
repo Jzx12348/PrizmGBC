@@ -128,13 +128,15 @@ void resolveScanline_OS(void) {
 	if (mode == emu_scale::CROP_200) {
 		const int y = cpu.memory.LY_lcdline * 2 - 36;
 		if (y < 0 || y >= 216) return;
-		unsigned short* row = screen + y * LCD_WIDTH_PX;
-		unsigned short* dest = row + 32;
-		unsigned short* out = dest;
-		for (int x = 0; x < 160; x++) {
-			const unsigned short color = (unsigned short)GetPaletteForSrc(lineBuffer[x + 8]);
-			*out++ = color;
-			if ((x & 1) == 0) *out++ = color;
+		unsigned short* out = screen + y * LCD_WIDTH_PX + 32;
+		// Expand two source pixels into four destination pixels without a
+		// per-pixel branch in the hot scanline loop.
+		for (int x = 0; x < 160; x += 2) {
+			const unsigned short color0 = (unsigned short)GetPaletteForSrc(lineBuffer[x + 8]);
+			const unsigned short color1 = (unsigned short)GetPaletteForSrc(lineBuffer[x + 9]);
+			out[0] = color0; out[1] = color0;
+			out[2] = color1; out[3] = color1;
+			out += 4;
 		}
 		return;
 	}
@@ -142,11 +144,17 @@ void resolveScanline_OS(void) {
 	const int firstY = cpu.memory.LY_lcdline * 3 / 2;
 	const int lastY = (cpu.memory.LY_lcdline + 1) * 3 / 2;
 	for (int y = firstY; y < lastY && y < 216; y++) {
-		unsigned short* row = screen + y * LCD_WIDTH_PX;
-		unsigned short* dest = row + 72;
-		for (int x = 0; x < 240; x++) {
-			const int sourceX = x * 2 / 3;
-			dest[x] = (unsigned short)GetPaletteForSrc(lineBuffer[sourceX + 8]);
+		unsigned short* out = screen + y * LCD_WIDTH_PX + 72;
+		// 1.5x nearest-neighbour pattern: 4 source pixels become 6
+		// destination pixels. This removes multiply/divide from each pixel.
+		for (int x = 0; x < 160; x += 4) {
+			const unsigned short color0 = (unsigned short)GetPaletteForSrc(lineBuffer[x + 8]);
+			const unsigned short color1 = (unsigned short)GetPaletteForSrc(lineBuffer[x + 9]);
+			const unsigned short color2 = (unsigned short)GetPaletteForSrc(lineBuffer[x + 10]);
+			const unsigned short color3 = (unsigned short)GetPaletteForSrc(lineBuffer[x + 11]);
+			out[0] = color0; out[1] = color0; out[2] = color1;
+			out[3] = color2; out[4] = color2; out[5] = color3;
+			out += 6;
 		}
 	}
 }
