@@ -205,7 +205,7 @@ void screen_rom::drawGameDetails() {
 	Bdisp_AreaClr(&accent, 1, COLOR_LIGHTGREEN);
 	Print(12, 5, "PRIZMGBC", true, COLOR_WHITE);
 	Print(12, 24, "GAME INFORMATION", false, COLOR_LIGHTGREEN);
-	Print(300, 5, "v1.3.0 BETA", false, COLOR_LIGHTGREEN);
+	Print(300, 5, "v1.3.0", false, COLOR_LIGHTGREEN);
 
 	display_fill leftPanel;
 	leftPanel.x1 = 8; leftPanel.x2 = 187; leftPanel.y1 = 53; leftPanel.y2 = 185; leftPanel.mode = 1;
@@ -288,15 +288,15 @@ void screen_rom::drawFiles() {
 	Print(12, 24, "GAME LIBRARY", false, COLOR_LIGHTGREEN);
 	char countText[24];
 	sprintf(countText, "%d GAMES", numFiles);
-	Print(286, 5, "v1.3.0 DEV", false, COLOR_LIGHTGREEN);
+	Print(286, 5, "v1.3.0", false, COLOR_LIGHTGREEN);
 	Print(300, 24, countText, false, COLOR_SILVER);
 
 	// Main library and game information panels.
 	display_fill list;
-	list.x1 = 7; list.x2 = 254; list.y1 = 52; list.y2 = 187; list.mode = 1;
+	list.x1 = 7; list.x2 = 254; list.y1 = 52; list.y2 = 180; list.mode = 1;
 	Bdisp_AreaClr(&list, 1, COLOR_DARKGRAY);
 	display_fill detail;
-	detail.x1 = 261; detail.x2 = 376; detail.y1 = 52; detail.y2 = 187; detail.mode = 1;
+	detail.x1 = 261; detail.x2 = 376; detail.y1 = 52; detail.y2 = 180; detail.mode = 1;
 	Bdisp_AreaClr(&detail, 1, COLOR_BLACK);
 
 	if (!numFiles) {
@@ -390,13 +390,20 @@ void screen_rom::drawFiles() {
 
 	// Consistent footer navigation.
 	display_fill footer;
-	footer.x1 = 0; footer.x2 = 383; footer.y1 = 192; footer.y2 = 215; footer.mode = 1;
+	footer.x1 = 0; footer.x2 = 383; footer.y1 = 184; footer.y2 = 215; footer.mode = 1;
 	Bdisp_AreaClr(&footer, 1, COLOR_BLACK);
-	Print(8, 198, gridMode ? "ARROWS SELECT" : "LEFT/RIGHT SORT", false, COLOR_SILVER);
-	Print(112, 198, "F3 FAV", false, COLOR_YELLOW);
-	Print(181, 198, "F2 SETTINGS", false, COLOR_SILVER);
-	Print(279, 198, gridMode ? "F4 LIST" : "F4 GRID", false, COLOR_LIGHTGREEN);
-	Print(330, 198, "F6 PLAY", false, COLOR_LIGHTGREEN);
+
+	// Place each action directly above its physical function-key position.
+	const int actionCenters[] = { 96, 160, 224, 352 };
+	const char* actionLabels[] = { "SETTINGS", "FAV", gridMode ? "LIST" : "GRID", "PLAY" };
+	const char* keyLabels[] = { "F2", "F3", "F4", "F6" };
+	const unsigned short actionColors[] = { COLOR_SILVER, COLOR_YELLOW, COLOR_LIGHTGREEN, COLOR_LIGHTGREEN };
+	for (int i = 0; i < 4; i++) {
+		Print(actionCenters[i] - PrintWidth(actionLabels[i]) / 2, 187,
+			actionLabels[i], false, actionColors[i]);
+		Print(actionCenters[i] - PrintWidth(keyLabels[i]) / 2, 201,
+			keyLabels[i], true, COLOR_WHITE);
+	}
 	DrawFrame(0);
 }
 void screen_rom::setup() {
