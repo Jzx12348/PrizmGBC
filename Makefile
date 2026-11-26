@@ -16,7 +16,7 @@ include $(FXCGSDK)/toolchain/prizm_rules
 # that the generated add-in is always PrizmGBC.g3a.
 TARGET          := PrizmGBC
 BUILD           := $(CONFIG)
-SOURCES         := src src/ptune2_simple src/asm
+SOURCES         := src src/asm
 DATA            := data
 INCLUDES        :=
 
