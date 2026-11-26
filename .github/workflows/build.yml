@@ -28,6 +28,11 @@ jobs:
         with:
           path: PrizmSDK/projects/PrizmGBC
 
+      - name: Generate add-in icons
+        shell: pwsh
+        working-directory: PrizmSDK/projects/PrizmGBC
+        run: ./generate-icons.ps1
+
       - name: Build PrizmGBC
         shell: cmd
         working-directory: PrizmSDK\\projects\\PrizmGBC
