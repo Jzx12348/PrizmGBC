@@ -41,18 +41,41 @@ void screen_rom::discoverFiles() {
 void screen_rom::drawFiles() {
 	ResolveBG(bg_menu);
 
-	for (int i = 0; i < numFiles; i++) {
-		int curY = i * 14 - curScroll;
+	// PrizmGBC identity bar: high contrast and calculator-friendly.
+	display_fill header;
+	header.x1 = 0; header.x2 = 383; header.y1 = 0; header.y2 = 38; header.mode = 1;
+	Bdisp_AreaClr(&header, 1, COLOR_BLACK);
+	display_fill accent;
+	accent.x1 = 0; accent.x2 = 383; accent.y1 = 37; accent.y2 = 39; accent.mode = 1;
+	Bdisp_AreaClr(&accent, 1, COLOR_CYAN);
 
-		if (curY >= 0 && curY < 180) {
+	Print(10, 5, "PRIZMGBC", false, COLOR_WHITE);
+	Print(10, 21, "GAME LIBRARY", false, COLOR_CYAN);
+	Print(278, 21, "GB / GBC", false, COLOR_SILVER);
+
+	for (int i = 0; i < numFiles; i++) {
+		int curY = i * 16 - curScroll + 44;
+
+		if (curY >= 42 && curY < 188) {
 			char buffer[16];
 			memset(buffer, 0, sizeof(buffer));
-			sprintf(buffer, "%d/%d", i + 1, numFiles);
+			sprintf(buffer, "%02d/%02d", i + 1, numFiles);
 			int width = PrintWidth(buffer);
-			Print(10, curY, buffer, i == selectedFile);
-			Print(10 + width + 10, curY, files[i].path, i == selectedFile);
+			if (i == selectedFile) {
+				display_fill marker;
+				marker.x1 = 5; marker.x2 = 8; marker.y1 = curY + 1; marker.y2 = curY + 12; marker.mode = 1;
+				Bdisp_AreaClr(&marker, 1, COLOR_CYAN);
+			}
+			Print(14, curY, buffer, i == selectedFile, COLOR_SILVER);
+			Print(14 + width + 10, curY, files[i].path, i == selectedFile, COLOR_WHITE);
 		}
 	}
+
+	display_fill footer;
+	footer.x1 = 0; footer.x2 = 383; footer.y1 = 192; footer.y2 = 215; footer.mode = 1;
+	Bdisp_AreaClr(&footer, 1, COLOR_BLACK);
+	Print(10, 198, "UP/DOWN  BROWSE", false, COLOR_SILVER);
+	Print(238, 198, "F6  PLAY", false, COLOR_CYAN);
 
 	EnableStatusArea(3);
 	DrawFrame(0);
@@ -94,7 +117,7 @@ void screen_rom::select() {
 	} else {
 		int x = 10;
 		int y = 10;
-		PrintMini(&x, &y, "No .gb files found", 0x42, 0xffffffff, 0, 0, COLOR_RED, COLOR_BLACK, 1, 0);
+		PrintMini(&x, &y, "No .gb or .gbc files found", 0x42, 0xffffffff, 0, 0, COLOR_RED, COLOR_BLACK, 1, 0);
 	}
 }
 
@@ -120,14 +143,14 @@ void screen_rom::deselect() {
 }
 
 bool screen_rom::checkScroll() {
-	int selectY = selectedFile * 14 - curScroll;
+	int selectY = selectedFile * 16 - curScroll + 44;
 
-	if (selectY < 0) {
-		curScroll = 14 * selectedFile - 4;
+	if (selectY < 44) {
+		curScroll = 16 * selectedFile;
 		return true;
 	}
-	if (selectY > 170) {
-		curScroll = 14 * selectedFile - 166;
+	if (selectY > 178) {
+		curScroll = 16 * selectedFile - 134;
 		return true;
 	}
 	return false;
