@@ -1,22 +1,19 @@
 # PrizmGBC
 
-**A Game Boy and Game Boy Color emulator for Casio Prizm graphing calculators.**
+**A Game Boy and Game Boy Color emulator for the Casio fx-CG50, built for the calculator rather than a desktop.**
 
-PrizmGBC is a community fork of [Prizoop](https://github.com/tswilliamson/prizoop), originally written for the Casio fx-CG10, fx-CG20 and fx-CG50. The project targets the calculator itself and produces a Casio add-in (`.g3a`).
+PrizmGBC is a community-developed fork of [Prizoop](https://github.com/tswilliamson/prizoop), bringing classic handheld gaming to Casio Prizm graphing calculators. It packages as a native calculator add-in (`.g3a`).
 
-> **Development status:** experimental. The inherited emulator has not yet been revalidated on current calculator hardware after the fork and subsequent changes. Treat compatibility, performance and save behaviour as unverified until a release has passed the device test checklist below.
+## Features
 
-## Features inherited from Prizoop
+- **Game Boy and Game Boy Color support:** load `.gb` and `.gbc` ROM files directly from calculator storage.
+- **On-device game library:** browse available games in a redesigned interface with game details and format indicators.
+- **Configurable controls:** remap Game Boy buttons to calculator keys, with an overview showing the current bindings.
+- **Display modes:** choose native 1×, 1.5× fit, or 2× cropped rendering to suit the calculator screen.
+- **Calculator-friendly interface:** dedicated game library and settings screens, with clear navigation between gameplay and menus.
+- **Native add-in packaging:** install and launch PrizmGBC from the calculator's add-in menu using a `.g3a` release.
 
-- Game Boy (`.gb`) and Game Boy Color (`.gbc`) emulation.
-- ROM selection and an on-calculator settings menu.
-- Configurable calculator-key mappings.
-- Save states.
-- Optional compressed `.gbz` ROM support.
-- A text FAQ viewer for matching `.txt` files.
-- Sound output using the calculator's supported audio connection.
-
-These are inherited project capabilities, not a claim that every feature currently works in this fork or on every calculator OS version.
+PrizmGBC is an actively developed community project. Compatibility and performance can vary by calculator model, OS version and game. Save-state, audio and other inherited upstream features should be considered experimental unless confirmed in the current release.
 
 ## Supported hardware
 
