@@ -1,7 +1,6 @@
 name: Game compatibility report
 description: Report how a game behaves in a specific PrizmGBC build
 title: "[Compatibility]: "
-labels: ["compatibility"]
 body:
   - type: markdown
     attributes:
@@ -11,8 +10,8 @@ body:
     id: game
     attributes:
       label: Game title
-      validations:
-        required: true
+    validations:
+      required: true
   - type: input
     id: region
     attributes:
