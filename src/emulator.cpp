@@ -84,7 +84,7 @@ void emulator_type::run() {
 				tryScreenChange(2);
 				break;
 			case KEY_CTRL_F3:
-				tryScreenChange(3);
+				screens[curScreen]->handleF3();
 				break;
 			case KEY_CTRL_F4:
 				tryScreenChange(4);
