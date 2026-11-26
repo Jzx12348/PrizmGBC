@@ -215,10 +215,10 @@ void screen_rom::drawFiles() {
 	footer.x1 = 0; footer.x2 = 383; footer.y1 = 192; footer.y2 = 215; footer.mode = 1;
 	Bdisp_AreaClr(&footer, 1, COLOR_BLACK);
 	Print(8, 198, gridMode ? "ARROWS SELECT" : "LEFT/RIGHT SORT", false, COLOR_SILVER);
-	Print(137, 198, "F3 FAV", false, COLOR_YELLOW);
-	Print(214, 198, "F2 SETTINGS", false, COLOR_SILVER);
-	Print(310, 198, gridMode ? "F4 LIST" : "F4 GRID", false, COLOR_LIGHTGREEN);
-	Print(310, 198, "F6 PLAY", false, COLOR_LIGHTGREEN);
+	Print(112, 198, "F3 FAV", false, COLOR_YELLOW);
+	Print(181, 198, "F2 SETTINGS", false, COLOR_SILVER);
+	Print(279, 198, gridMode ? "F4 LIST" : "F4 GRID", false, COLOR_LIGHTGREEN);
+	Print(342, 198, "F6", false, COLOR_LIGHTGREEN);
 	DrawFrame(0);
 }
 void screen_rom::setup() {
