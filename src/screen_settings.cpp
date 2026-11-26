@@ -92,7 +92,9 @@ void screen_settings::select() {
 	// Overclock is only available on supported CG-20 hardware when Ptune2 is inactive.
 	int currentPtuneSetting = Ptune2_GetSetting();
 	options[0].disabled = getDeviceType() != DT_CG20 || currentPtuneSetting != PT2_DEFAULT;
-	options[12].disabled = !emulator.settings.selectedRom[0];
+	int profileCount = emulator.settings.profileCount > 8 ? 8 : emulator.settings.profileCount;
+	options[12].disabled = !emulator.settings.selectedRom[0] ||
+		(!emulator.hasGameProfile(emulator.settings.selectedRom) && profileCount >= 8);
 	options[13].disabled = !emulator.hasGameProfile(emulator.settings.selectedRom);
 	options[14].disabled = !emulator.settings.selectedRom[0];
 
@@ -123,7 +125,7 @@ void screen_settings::drawOptions() {
 	Bdisp_AreaClr(&accent, 1, COLOR_LIGHTGREEN);
 	Print(12, 4, "PRIZMGBC", true, COLOR_WHITE);
 	Print(12, 22, "SETTINGS", false, COLOR_LIGHTGREEN);
-	Print(310, 13, "v1.3.0 DEV", false, COLOR_LIGHTGREEN);
+	Print(310, 13, "v1.3.0 BETA", false, COLOR_LIGHTGREEN);
 
 	const int tabX[CATEGORY_COUNT] = { 9, 87, 163, 246, 311 };
 	const int tabW[CATEGORY_COUNT] = { 73, 71, 77, 60, 64 };
