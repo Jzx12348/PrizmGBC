@@ -2,7 +2,7 @@
 
 #include "emulator.h"
 #include "rom.h"
-#include "ptune2_simple\Ptune2_direct.h"
+#include "screen_play.h"
 #include "debug.h"
 
 #include "calctype/fonts/arial_small/arial_small.c"		// For Menus
