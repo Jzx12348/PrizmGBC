@@ -41,42 +41,57 @@ void screen_rom::discoverFiles() {
 void screen_rom::drawFiles() {
 	ResolveBG(bg_menu);
 
-	// PrizmGBC identity bar: high contrast and calculator-friendly.
-	display_fill header;
-	header.x1 = 0; header.x2 = 383; header.y1 = 0; header.y2 = 38; header.mode = 1;
-	Bdisp_AreaClr(&header, 1, COLOR_BLACK);
+	// PRIZMGBC / LIBRARY
+	display_fill top;
+	top.x1 = 0; top.x2 = 383; top.y1 = 0; top.y2 = 43; top.mode = 1;
+	Bdisp_AreaClr(&top, 1, COLOR_BLACK);
 	display_fill accent;
-	accent.x1 = 0; accent.x2 = 383; accent.y1 = 37; accent.y2 = 39; accent.mode = 1;
+	accent.x1 = 0; accent.x2 = 383; accent.y1 = 42; accent.y2 = 45; accent.mode = 1;
 	Bdisp_AreaClr(&accent, 1, COLOR_CYAN);
 
-	Print(10, 5, "PRIZMGBC", false, COLOR_WHITE);
-	Print(10, 21, "GAME LIBRARY", false, COLOR_CYAN);
-	Print(278, 21, "GB / GBC", false, COLOR_SILVER);
+	Print(12, 5, "PRIZMGBC", false, COLOR_WHITE);
+	Print(12, 23, "GAME LIBRARY", false, COLOR_CYAN);
+	Print(300, 23, "GB / GBC", false, COLOR_SILVER);
 
-	for (int i = 0; i < numFiles; i++) {
-		int curY = i * 16 - curScroll + 44;
+	display_fill list;
+	list.x1 = 6; list.x2 = 377; list.y1 = 51; list.y2 = 187; list.mode = 1;
+	Bdisp_AreaClr(&list, 1, COLOR_DARKGRAY);
 
-		if (curY >= 42 && curY < 188) {
-			char buffer[16];
-			memset(buffer, 0, sizeof(buffer));
-			sprintf(buffer, "%02d/%02d", i + 1, numFiles);
-			int width = PrintWidth(buffer);
-			if (i == selectedFile) {
-				display_fill marker;
-				marker.x1 = 5; marker.x2 = 8; marker.y1 = curY + 1; marker.y2 = curY + 12; marker.mode = 1;
-				Bdisp_AreaClr(&marker, 1, COLOR_CYAN);
+	if (!numFiles) {
+		Print(18, 83, "NO GAMES FOUND", false, COLOR_WHITE);
+		Print(18, 103, "Place .GB, .GBC or .GBZ files", false, COLOR_SILVER);
+		Print(18, 117, "in the calculator root folder.", false, COLOR_SILVER);
+	} else {
+		for (int i = 0; i < numFiles; i++) {
+			int curY = i * 16 - curScroll + 58;
+			if (curY >= 54 && curY < 184) {
+				if (i == selectedFile) {
+					display_fill selected;
+					selected.x1 = 9; selected.x2 = 374;
+					selected.y1 = curY - 2; selected.y2 = curY + 13;
+					selected.mode = 1;
+					Bdisp_AreaClr(&selected, 1, COLOR_MEDIUMBLUE);
+					display_fill marker;
+					marker.x1 = 9; marker.x2 = 12;
+					marker.y1 = curY - 2; marker.y2 = curY + 13;
+					marker.mode = 1;
+					Bdisp_AreaClr(&marker, 1, COLOR_CYAN);
+				}
+				char index[12];
+				memset(index, 0, sizeof(index));
+				sprintf(index, "%02d", i + 1);
+				Print(19, curY, index, i == selectedFile, COLOR_SILVER);
+				Print(48, curY, files[i].path, i == selectedFile, COLOR_WHITE);
+				if (i == loadedFile) Print(325, curY, "LOADED", false, COLOR_CYAN);
 			}
-			Print(14, curY, buffer, i == selectedFile, COLOR_SILVER);
-			Print(14 + width + 10, curY, files[i].path, i == selectedFile, COLOR_WHITE);
 		}
 	}
 
 	display_fill footer;
 	footer.x1 = 0; footer.x2 = 383; footer.y1 = 192; footer.y2 = 215; footer.mode = 1;
 	Bdisp_AreaClr(&footer, 1, COLOR_BLACK);
-	Print(10, 198, "UP/DOWN  BROWSE", false, COLOR_SILVER);
-	Print(238, 198, "F6 LOAD / EXE START", false, COLOR_CYAN);
-
+	Print(10, 198, "F1 LIBRARY   F2 SETTINGS", false, COLOR_SILVER);
+	Print(265, 198, "F6 PLAY", false, COLOR_CYAN);
 	EnableStatusArea(3);
 	DrawFrame(0);
 }
@@ -111,14 +126,8 @@ void screen_rom::select() {
 		}
 	}
 	
-	if (numFiles) {
-		checkScroll();
-		drawFiles();
-	} else {
-		int x = 10;
-		int y = 10;
-		PrintMini(&x, &y, "No .gb or .gbc files found", 0x42, 0xffffffff, 0, 0, COLOR_RED, COLOR_BLACK, 1, 0);
-	}
+	if (numFiles) checkScroll();
+	drawFiles();
 }
 
 void screen_rom::deselect() {
