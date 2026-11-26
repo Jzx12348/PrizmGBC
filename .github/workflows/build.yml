@@ -60,21 +60,17 @@ jobs:
 
             *The latest development build from ongoing v1.2.0 development on master. This build is intended for testing and may contain unfinished changes or regressions.*
 
-            ## **Included in v1.2.0 development**
+            ## **New in v1.2.0 development**
 
-            - Recently played list with the five most recently launched games.
+            - Recently played list showing the five most recently launched games.
             - Library sorting by name, recent activity, or favourites.
-            - Persistent game favourites.
-            - Categorized settings: Performance, Display, Controls, Audio, and System.
-            - Customisable key mappings and reset controls.
-            - FPS counter.
-            - Three selectable save-state slots.
-            - Display modes: 1×, 1.5× Fit, and 2× Crop.
-            - Settings migration designed to preserve existing v1.1.0 settings and favourites.
+            - Categorized settings interface with Performance, Display, Controls, Audio, and System sections.
+            - Three selectable save-state slots, allowing separate save-state files for each slot.
+            - Settings migration intended to preserve existing v1.1.0 settings when upgrading.
 
             ## **Testing notes**
 
-            Please test game launching, library navigation, settings persistence, key mappings, display modes, FPS reporting, and all three save-state slots on a physical fx-CG50. A successful build does not guarantee hardware validation.
+            Please test library sorting, recently played history, settings navigation and persistence, and all three save-state slots on a physical fx-CG50. A successful build does not guarantee hardware validation.
 
             Report bugs, compatibility issues, and performance differences through GitHub Issues.
 
