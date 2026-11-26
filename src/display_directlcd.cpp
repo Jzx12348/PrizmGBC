@@ -103,35 +103,22 @@ inline void flushScanBuffer(int startX, int endX, int startY, int endY, int scan
 	curScan = 0;
 }
 
-void resolveScanline_NONE() {
+// Render directly into the OS framebuffer. This deliberately avoids the
+// legacy R61524 GRAM/DMA path: newer fx-CG50 hardware revisions use a different
+// LCD controller, while the OS framebuffer API remains compatible.
+void resolveScanline_OS(void) {
 	TIME_SCOPE();
 
-	const int bufferLines = 8;	// 320 bytes * 8 lines = 2560
-	const int scanBufferSize = bufferLines * 160 * 2;
+	unsigned short* screen = (unsigned short*)GetVRAMAddress();
+	unsigned short* dest = screen + (36 + cpu.memory.LY_lcdline) * LCD_WIDTH_PX + 112;
 
-	curScan++;
-	if (curScan == bufferLines) {
-		// we've rendered as much as we can buffer, resolve to pixels and DMA it:
-		unsigned char* curLineBuffer = ((unsigned char*)0xE5017000);
-		unsigned int* scanline = (unsigned int*)&scanGroup[curScanBuffer*scanBufferSize];
-		for (int i = 0; i < bufferLines; i++) {
-			lineBuffer = curLineBuffer + curLineBuffer[0];
-			DirectScanline16(scanline);
-			scanline += 80;
-			curLineBuffer += lineBufferSize;
-
-			condSoundUpdate();
-		}
-
-		// send DMA
-		flushScanBuffer(118, 277, 36 + cpu.memory.LY_lcdline - bufferLines + 1, 36 + cpu.memory.LY_lcdline, scanBufferSize);
-
-		// move line buffer to front
-		lineBuffer = ((unsigned char*)0xE5017000);
-	} else {
-		// move line buffer down a line
-		lineBuffer += lineBufferSize;
+	for (int i = 8; i < 168; i++) {
+		dest[i - 8] = (unsigned short)GetPaletteForSrc(lineBuffer[i]);
 	}
+}
+
+void resolveScanline_NONE() {
+	resolveScanline_OS();
 }
 
 static const int scaledScanline[16] = {
@@ -413,20 +400,17 @@ void drawFramebufferMain(void) {
 		return;
 	}
 
-	// frame end.. kill DMA operations to make sure they stay in sync
-	DmaWaitNext();
-	*((volatile unsigned*)MSTPCR0) &= ~(1 << 21);//Clear bit 21
-	curScan = 0;
+	// Present through the calculator OS instead of writing directly to the
+	// legacy LCD GRAM port. This supports the 2025 fx-CG50 display revision.
+	Bdisp_PutDisp_DD();
 
 	// good time to refresh keys and check for os requests and such
 	refreshKeys(true);
 }
 
 void SetupDisplayDriver(char withFrameskip) {
-	// A ROM can be stopped and started again without restarting the add-in.
-	// Reset the scanline/DMA pipeline so a previous partial frame cannot leave
-	// the next game launch waiting on stale buffer state.
-	DmaWaitNext();
+	// Reset per-game rendering state. Game pixels are presented through the
+	// OS framebuffer, so no legacy LCD DMA state is required here.
 	curScanBuffer = 0;
 	curScan = 0;
 	skippingFrame = false;
