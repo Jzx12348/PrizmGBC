@@ -20,10 +20,14 @@ struct screen_rom : public emulator_screen {
 	// key press handles
 	virtual void handleUp() override;
 	virtual void handleDown() override;
+	virtual void handleLeft() override;
+	virtual void handleRight() override;
 	virtual void handleF3() override;
 
 private:
 	void discoverFiles();
+	void sortFiles();
+	void changeSort(int direction);
 	void drawFiles();
 	bool checkScroll();
 };
