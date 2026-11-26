@@ -53,15 +53,15 @@ jobs:
           body: |
             ## **Development build · PRE-RELEASE**
 
-            *This is the latest development build from the v1.2.0 development branch. It may contain unfinished features, experimental changes, or regressions. It is intended for testing, not everyday use.*
+            *This is the latest development build from ongoing v1.2.0 development on master. It may contain unfinished features, experimental changes, or regressions. It is intended for testing, not everyday use.*
 
             ## **v1.2.0 development focus**
             - Complete interface redesign with stronger contrast and improved readability.
-            - Reorganized settings with clear categories.
-            - Recently played games and improved library sorting.
+            - Continued refinement of the categorized settings and game library.
             - Per-game configuration profiles.
+            - Additional library and gameplay quality-of-life improvements.
 
-            The v1.2.0 items are planned work, not completed features. Please report bugs, compatibility issues, and performance differences. A successful build does not guarantee physical fx-CG50 validation.
+            This build already includes recently played games, library sorting, and categorized settings. The remaining v1.2.0 focus items are planned work, not completed features. Please report bugs, compatibility issues, and performance differences. A successful build does not guarantee physical fx-CG50 validation.
 
             For a stable version, install the latest numbered release.
           prerelease: true
