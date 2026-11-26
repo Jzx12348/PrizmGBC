@@ -124,7 +124,7 @@ void screen_settings::drawOptions() {
 			}
 		} else if (options[i].type == 4) {
 			unsigned char opt = *((unsigned char*)options[i].addr);
-			const char* modes[] = { "NONE", "150% LOW", "150% HIGH", "FIT LOW", "FIT HIGH" };
+			const char* modes[] = { "1X", "FIT 1.5X", "2X CROP" };
 			Print(230, y, modes[opt], selected,
 				!options[i].disabled ? COLOR_CYAN : COLOR_DARKGRAY);
 		}
