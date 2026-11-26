@@ -137,6 +137,7 @@ void emulator_type::defaultSettings() {
 	memset(settings.recentRoms, 0, sizeof(settings.recentRoms));
 	settings.sortMode = 0;
 	settings.saveSlot = 0;
+	settings.libraryView = 0;
 	memset(settings.reserved, 0, sizeof(settings.reserved));
 
 	settings.keyMap[emu_button::A] = 78;			// SHIFT
@@ -172,10 +173,19 @@ bool emulator_type::loadSettings() {
 				memcpy(&emulator.settings, &readSettings, sizeof(emulator_settings));
 				return true;
 			}
+			// Preserve v1.2.0 settings while introducing the persistent library view.
+			if (readSettings.version == 10 && len == sizeof(readSettings)) {
+				memcpy(&emulator.settings, &readSettings, sizeof(emulator_settings));
+				emulator.settings.libraryView = 0;
+				memset(emulator.settings.reserved, 0, sizeof(emulator.settings.reserved));
+				emulator.settings.version = SETTINGS_VERSION;
+				return true;
+			}
 			// Preserve v1.2.0 development settings when adding selectable save slots.
 			if (readSettings.version == 9 && len == v9Size) {
 				memcpy(&emulator.settings, &readSettings, v9Size);
 				emulator.settings.saveSlot = 0;
+				emulator.settings.libraryView = 0;
 				memset(emulator.settings.reserved, 0, sizeof(emulator.settings.reserved));
 				emulator.settings.version = SETTINGS_VERSION;
 				return true;
