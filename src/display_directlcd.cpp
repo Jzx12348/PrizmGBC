@@ -120,7 +120,7 @@ void resolveScanline_OS(void) {
 		return;
 	}
 
-	if (mode == emu_scale::LO_200 || mode == emu_scale::HI_200) {
+	if (mode == emu_scale::CROP_200) {
 		const int y = cpu.memory.LY_lcdline * 2 - 36;
 		if (y < 0 || y >= 216) return;
 		unsigned short* row = screen + y * LCD_WIDTH_PX;
