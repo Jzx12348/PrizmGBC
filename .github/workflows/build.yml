@@ -49,7 +49,7 @@ jobs:
         with:
           tag_name: dev
           target_commitish: master
-          name: dev
+          name: v1.0.0-development
           body: |
             **Development build · PRE-RELEASE**
 
