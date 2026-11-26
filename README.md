@@ -1,90 +1,198 @@
-![Options Screen](https://github.com/tswilliamson/prizoop/raw/master/Screens/Options.png?raw=true)
+# PrizmGBC
 
-Prizoop v 1.1
-=============
+**A Game Boy and Game Boy Color emulator for Casio Prizm graphing calculators.**
 
-Prizoop is a Game Boy and Game Boy Color emulator for the Casio Prizm series graphing calculator, with intense focus on optimization and decent feature set for the target device. As such, it is not a very accurate emulator but is very fast and compatible. The emulator now supports fx-CG10, fx-CG20, and the new fx-CG50. 
+PrizmGBC is a community fork of [Prizoop](https://github.com/tswilliamson/prizoop), originally written for the Casio fx-CG10, fx-CG20 and fx-CG50. The project targets the calculator itself and produces a Casio add-in (`.g3a`).
 
-It got its name because it started out as a fork of the multiplatform Game Boy emulator, Cinoop, by CTurt. It has since undergone an almost total rewrite and shares some of the cpu code, organization and constructs from Cinoop, but for the most part resembles Cinoop much less than a normal fork.
+> **Development status:** experimental. The inherited emulator has not yet been revalidated on current calculator hardware after the fork and subsequent changes. Treat compatibility, performance and save behaviour as unverified until a release has passed the device test checklist below.
 
-## Install
+## Features inherited from Prizoop
 
-Copy the prizoop.g3a file to your Casio Prizm calculator's root path when linked via USB. Gameboy and Gameboy Color roms (.gb and .gbc) also should go inside of the root directory. The filenames for these files should be simple and less than 12 characters, such as MyGame.gbc. 
+- Game Boy (`.gb`) and Game Boy Color (`.gbc`) emulation.
+- ROM selection and an on-calculator settings menu.
+- Configurable calculator-key mappings.
+- Save states.
+- Optional compressed `.gbz` ROM support.
+- A text FAQ viewer for matching `.txt` files.
+- Sound output using the calculator's supported audio connection.
 
-Additionally, Windows users can compress a .gb and .gbc ROM file into a smaller .gbz file that is also compatible, though the game will be slightly slower when starting a new level, etc due to needing to decompress data on the fly. Some games such as Ghosts and Goblins will compress to ~10% of their original size, enabling you to have a much larger library on your calculator. To compress a ROM file, simply run comp-gb.exe and select the ROM to compress. The tool will automatically create a .gbz file in the same folder.
+These are inherited project capabilities, not a claim that every feature currently works in this fork or on every calculator OS version.
 
-## Usage
+## Supported hardware
 
-### Menu
+The upstream Prizoop project lists these calculator families:
 
-In the menu system use the arrow keys and SHIFT to select.
+- Casio fx-CG10
+- Casio fx-CG20
+- Casio fx-CG50
 
-- F1: Select ROM
-- F2: Settings (most are self explanatory)
-- F5: FAQ Viewer
-- F6: Play ROM (it will first show diagnostic information)
+PrizmGBC is primarily being brought back to a known-good state on the **fx-CG50**. Other models should be considered unverified until tested.
 
-When inside a game, the MENU key will exit to the settings screen, and pressing MENU again will take you back to the calculator OS.
+## Installation
 
-A single save state is supported per ROM, which can be loaded/saved using the remappable keys mentioned in the Controls section.
+1. Build PrizmGBC using the instructions below, or obtain a `.g3a` file from a project release.
+2. Connect the calculator to your computer over USB and open its storage.
+3. Copy **`PrizmGBC.g3a`** to the calculator's root directory.
+4. Copy your legally obtained `.gb` or `.gbc` game files to the same root directory.
+5. Safely eject the calculator and launch **PrizmGBC** from the add-in menu.
 
-### In Game
+Keep ROM filenames short and simple. The original Prizoop documentation recommends names shorter than 12 characters; this fork has not yet verified whether that restriction can be relaxed.
 
-You can configure your own keys in the Settings menu, these are the default I found to work well:
+**Important:** do not use the old `prizoop.g3a` binary in the repository as proof that the current source builds correctly. The current Makefile derives the output filename from the project directory, which is `PrizmGBC.g3a` when the repository folder is named `PrizmGBC`. Always install the freshly generated file.
 
-- Dpad : Dpad
-- A: SHIFT
-- B: OPTN
-- Select: F5
-- Start: F6
-- Save State : X (multiply), which is the alpha 's' key for save
-- Load State : -> (store), which is the alpha 'l' key for load
-- Increase Volume/Distortion : + 
-- Decrease Volume/Distortion : -
+## Building from source
 
-Some games, such as the Mario titles, play much better with a reversed control scheme, where you bind left and right to Shift/Option, and A and B to Cos/Tan. This is because the Prizm directional pad is a little flaky and on the opposite side as a traditional game controller.
+PrizmGBC uses the **PrizmSDK / FXCGSDK toolchain**. It is not a normal desktop C++ project and cannot be built by compiling the source files with a regular host compiler.
 
-### FAQ Viewer
+### 1. Set up the SDK directory
 
-![FAQ View](https://github.com/tswilliamson/prizoop/raw/master/Screens/FAQ.png?raw=true)
+The expected directory layout is:
 
-If you have a text file (.txt) with the same base filename as any of your ROM's, this text file can now be viewed inside of Prizoop for easy reference. The FAQ is viewed with a calctype font (see my other repo) that is a clear and easy to read text at just 5 pixels wide per character. To read the FAQ, just use the new FAQ option from within the menu. Prizoop will save your most recently viewed FAQ position to make it simple to go back and forth with the game and between sessions.
+```text
+PrizmSDK/
+├── bin/
+├── toolchain/
+└── projects/
+    └── PrizmGBC/
+        ├── Makefile
+        ├── make-DeviceRelease.bat
+        ├── src/
+        └── ...
+```
 
-Many game FAQs are built to wrap short lines (around 80 characters) and these will display with no trouble on the calculator. Many international characters are supported, but make sure your .txt file is saved in ANSI text format. UTF formats are not supported.
+Clone or move this repository into `PrizmSDK/projects/PrizmGBC`. The Makefile's default SDK lookup assumes that exact two-level relationship. If your SDK is somewhere else, set the `FXCGSDK` environment variable to the absolute path of the SDK root before building.
 
-FAQ viewing controls:
-- Up / Down: Scroll up and down
-- Left / Right : Shift left and right (useful for badly wrapping FAQ files)
-- F2: Game settings
-- F6: Return to Game
+### 2. Build a calculator release on Windows
 
-## Support
+Open a command prompt in the repository directory and run:
 
-![Game Banner](https://github.com/tswilliamson/prizoop/raw/master/Screens/GameBanner.png?raw=true)
+```bat
+make-DeviceRelease.bat
+```
 
-The emulator now plays over 95% of the games I have been able to test smoothly at this point. Some games where timing accuracy is very important suffer, specifically racing games. Road Rash and F1 Race are playable but have some visual issues, and F1 Pole Position does not play at all. Pokemon Rouge (the French Pokemon Red) now officially works.
+The script invokes the SDK's make executable and enables the calculator target with `TARGET_PRIZM=1` and `DEBUG=0`.
 
-The emulator now supports Real Time Clock games such as Pokemon Gold and Silver, utilizing the real time clock on the Prizm.
+A successful build should create:
 
-### Sound
+```text
+PrizmGBC.g3a
+```
 
-The emulator has full support for sound, though it is somewhat limited due to the 1-bit nature of the Prizm serial port. If you have a 2.5 mm to 3.5 mm headphone adapter, you can enjoy low-lag sound with a decent frequency range in one earphone (left or right, depending on the adaptor). Some adaptors seem to have different voltage output, so you may get some distortion or unusually high volume. Volume and distortion can be simultaneously adjusted with the + and - keys.
+If the build fails, check that:
 
-## Building
+- The repository is inside `PrizmSDK/projects/PrizmGBC`.
+- `PrizmSDK/bin/make.exe` exists.
+- `PrizmSDK/toolchain/prizm_rules` exists.
+- The SDK compiler and libraries are installed and match the SDK revision.
+- The build is being run from the repository root, not from `src` or `proj`.
 
-My other repository, PrizmSDK, is required to build Prizoop from source. Put your Prizoop clone in the SDK projects directory.
+### 3. Clean rebuild
 
-To build on a Windows machine, I recommed using the project files using Visual Studio Community Edition, where I have NMAKE set up nicely. For other systems please refer to your Prizm SDK documentation on how to compile projects. Refer to the configuration options in make-DeviceRelease.bat.
+To remove generated build output and rebuild:
 
-If you do use Visual Studio, a project is included that uses a Windows Simulator I wrote that wraps Prizm OS functions so that the code and emulator can easily be tested and iterated on within Visual Studio. See the prizmsim.cpp/h code for details on its usage.
+```bat
+rebuild.bat
+make-DeviceRelease.bat
+```
 
-## Special Thanks
+Do not delete source files or the SDK directories when cleaning. The Makefile's `clean` target is intended to remove generated project output only.
 
-BGB was a huge part of bug fixing and obtaining decent ROM compatibility. It is a Gameboy emulator with great debugging and memory visualization tools:
-http://bgb.bircd.org/
+### 4. Linux
 
-A huge special thanks obviously goes to CTurt, who's simple explanations and easy to read source got this project rolling by making it seem much less scary. See the original Cinoop source code here:
-https://github.com/CTurt/Cinoop
-<!--stackedit_data:
-eyJoaXN0b3J5IjpbMTY3NDc2NDM3OF19
--->
+The project Makefile uses the PrizmSDK make rules and toolchain. Use a Linux-compatible installation of the SDK toolchain and GNU Make, then build from the project directory:
+
+```sh
+export FXCGSDK="/absolute/path/to/PrizmSDK"
+make clean
+make DEFINES="-DTARGET_PRIZM=1 -DDEBUG=0" CONFIG=DeviceRelease
+```
+
+The SDK must provide the compiler, linker, `prizm_rules`, Casio libraries and `mkg3a` utility expected by the Makefile. A successful host-side compile alone does not prove that the resulting add-in is valid on a calculator.
+
+## Controls
+
+The original Prizoop defaults are listed below. Key mappings may be changed in the in-emulator settings menu.
+
+| Game Boy control | Default calculator key |
+| --- | --- |
+| Directional pad | Calculator directional pad |
+| A | SHIFT |
+| B | OPTN |
+| Select | F5 |
+| Start | F6 |
+| Save state | X (multiply) |
+| Load state | Right arrow / STORE |
+| Increase volume | + |
+| Decrease volume | - |
+
+The MENU key exits the game to the emulator menu. Press MENU again to return to the calculator's main system.
+
+Some games may feel better with custom key mappings. Use the settings menu rather than assuming the defaults are ideal for every title.
+
+## ROMs and FAQ files
+
+- Raw Game Boy ROM: `.gb`
+- Raw Game Boy Color ROM: `.gbc`
+- Optional compressed ROM format inherited from Prizoop: `.gbz`
+- Optional FAQ text file: `.txt`
+
+A FAQ file should share the ROM's base filename. For example, `Pokemon.gbc` can have a matching `Pokemon.txt`. The original FAQ reader expects ANSI text; UTF-8 support is not established.
+
+Only use game files that you are legally entitled to use. Do not distribute commercial game ROMs with PrizmGBC.
+
+## Device validation checklist
+
+A build is not considered calculator-working merely because it compiles or launches in the Windows simulator. Before calling a release stable, test it on a physical fx-CG50 and record the calculator OS version and exact build.
+
+- [ ] The add-in appears in the calculator's add-in menu.
+- [ ] The add-in launches without an OS error or immediate return to the menu.
+- [ ] The ROM browser lists files from calculator storage.
+- [ ] A known-good `.gb` ROM boots and displays correctly.
+- [ ] A known-good `.gbc` ROM boots and displays correctly.
+- [ ] Directional input, A, B, Start and Select work.
+- [ ] Gameplay remains stable for at least 10 minutes.
+- [ ] Sound can be enabled and disabled without a crash.
+- [ ] Save state and load state work after returning to the game.
+- [ ] Exiting the game and returning to the calculator OS works.
+- [ ] The same checks pass after a cold restart of the calculator.
+
+Record failures with the game title, ROM type, calculator model, OS version, PrizmGBC build/commit, observed behaviour and any diagnostic output. Do not publish compatibility percentages until they are backed by a repeatable test list.
+
+## Troubleshooting
+
+### PrizmGBC does not appear in the add-in menu
+
+- Confirm that the freshly built `PrizmGBC.g3a` is in the calculator's root directory.
+- Check that the file transfer completed and the calculator was safely ejected.
+- Rebuild with the PrizmSDK device-release configuration. A Windows simulator executable is not a calculator add-in.
+
+### The build creates `Prizoop.g3a` or another unexpected filename
+
+The Makefile sets `TARGET` from the current project directory name. Build from a directory named `PrizmGBC`, then install the resulting `PrizmGBC.g3a`. Do not rename an unrelated or stale binary and assume it is a valid build.
+
+### The add-in appears but will not start
+
+A visible add-in entry does not guarantee that its binary is compatible with the calculator. Rebuild with the matching PrizmSDK toolchain and the device-release defines. Then test the generated file on the physical calculator. Capture the exact OS error or startup behaviour before changing emulator code.
+
+### The emulator starts but a game does not
+
+Try a known-good, unmodified `.gb` or `.gbc` file. Confirm the extension and filename, then record whether the issue is a black screen, freeze, incorrect graphics, missing audio or a crash. Different symptoms point to different parts of the emulator.
+
+## Project structure
+
+- `src/`: emulator core, calculator interface, graphics, audio and menu code.
+- `src/asm/`: SH-family assembly routines used by the calculator build.
+- `src/ptune2_simple/`: inherited calculator clock/performance support.
+- `proj/`: Visual Studio project and simulator configuration.
+- `Makefile`: PrizmSDK build rules and `.g3a` packaging.
+- `make-DeviceRelease.bat`: Windows device-release build entry point.
+
+## Credits and upstream
+
+PrizmGBC is based on [Prizoop by tswilliamson](https://github.com/tswilliamson/prizoop), which in turn acknowledges [Cinoop by CTurt](https://github.com/CTurt/Cinoop). The upstream project also credits BGB for its usefulness during emulator debugging and compatibility work.
+
+This fork should preserve the original license and copyright notices. See the repository's license information before redistributing modified binaries or source.
+
+## Disclaimer
+
+PrizmGBC is an independent community project and is not affiliated with, endorsed by or sponsored by CASIO or Nintendo. Game Boy is a Nintendo trademark. Casio and fx-CG50 are trademarks of CASIO COMPUTER CO., LTD.
