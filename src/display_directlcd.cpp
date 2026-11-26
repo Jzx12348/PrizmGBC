@@ -103,20 +103,45 @@ inline void flushScanBuffer(int startX, int endX, int startY, int endY, int scan
 	curScan = 0;
 }
 
-// Render directly into the OS framebuffer. This deliberately avoids the
-// legacy R61524 GRAM/DMA path: newer fx-CG50 hardware revisions use a different
-// LCD controller, while the OS framebuffer API remains compatible.
+// Render into the OS framebuffer using integer nearest-neighbour scaling.
+// The 1.5x mode fills the 216px display height exactly (160x144 -> 240x216).
+// The 2x mode is centered and vertically cropped to the calculator display.
 void resolveScanline_OS(void) {
 	TIME_SCOPE();
 
 	unsigned short* screen = (unsigned short*)GetVRAMAddress();
-	unsigned short* dest = screen + (36 + cpu.memory.LY_lcdline) * LCD_WIDTH_PX + 112;
+	const unsigned char mode = emulator.settings.scaleMode;
 
-	for (int i = 8; i < 168; i++) {
-		dest[i - 8] = (unsigned short)GetPaletteForSrc(lineBuffer[i]);
+	if (mode == emu_scale::NONE) {
+		unsigned short* dest = screen + (36 + cpu.memory.LY_lcdline) * LCD_WIDTH_PX + 112;
+		for (int x = 0; x < 160; x++) {
+			dest[x] = (unsigned short)GetPaletteForSrc(lineBuffer[x + 8]);
+		}
+		return;
+	}
+
+	if (mode == emu_scale::LO_200 || mode == emu_scale::HI_200) {
+		const int y = cpu.memory.LY_lcdline * 2 - 36;
+		if (y < 0 || y >= LCD_HEIGHT_PX) return;
+		unsigned short* dest = screen + y * LCD_WIDTH_PX + 32;
+		for (int x = 0; x < 160; x++) {
+			const unsigned short color = (unsigned short)GetPaletteForSrc(lineBuffer[x + 8]);
+			dest[x * 2] = color;
+			dest[x * 2 + 1] = color;
+		}
+		return;
+	}
+
+	const int firstY = cpu.memory.LY_lcdline * 3 / 2;
+	const int lastY = (cpu.memory.LY_lcdline + 1) * 3 / 2;
+	for (int y = firstY; y < lastY && y < LCD_HEIGHT_PX; y++) {
+		unsigned short* dest = screen + y * LCD_WIDTH_PX + 72;
+		for (int x = 0; x < 240; x++) {
+			const int sourceX = x * 2 / 3;
+			dest[x] = (unsigned short)GetPaletteForSrc(lineBuffer[sourceX + 8]);
+		}
 	}
 }
-
 void resolveScanline_NONE() {
 	resolveScanline_OS();
 }
