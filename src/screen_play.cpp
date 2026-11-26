@@ -166,6 +166,6 @@ void screen_play::play() {
 	ScopeTimer::Shutdown();
 #endif
 
-	// switch to options screen
-	emulator.tryScreenChange(2);
+	// Return to the game library after MENU exits gameplay.
+	emulator.tryScreenChange(1);
 }
