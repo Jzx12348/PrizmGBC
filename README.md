@@ -205,6 +205,20 @@ A substantial evolution of the emulator and the overall user experience.
 
 The v2.0.0 scope will be refined as earlier releases establish what is practical on the fx-CG50. The existing PrizmGBC logo and application icon are staying unchanged.
 
+## Community and contributing
+
+PrizmGBC is open to community bug reports, feature ideas, compatibility testing and code contributions.
+
+- **[Report a bug](https://github.com/Jzx12348/PrizmGBC/issues/new?template=bug_report.yml):** use the structured form to provide reproducible details.
+- **[Request a feature](https://github.com/Jzx12348/PrizmGBC/issues/new?template=feature_request.yml):** share ideas and explain the problem they solve.
+- **[Submit a game compatibility report](https://github.com/Jzx12348/PrizmGBC/issues/new?template=compatibility_report.yml):** record how a game performs on a specific build and calculator.
+- **[Contribution guide](CONTRIBUTING.md):** learn how to propose code, documentation and testing changes.
+- **[Compatibility tracker](COMPATIBILITY.md):** review community game test results.
+- **[Development testing programme](TESTING.md):** find available development build artifacts and submit test feedback.
+- **[Changelog](CHANGELOG.md):** follow user-facing changes across releases.
+
+Development builds are experimental and are not stable releases. A successful CI build does not guarantee correct operation on a physical calculator. Never upload or distribute copyrighted ROMs or private calculator data.
+
 ## ROM files
 
 | File extension | Description |
