@@ -88,7 +88,7 @@ void emulator_type::run() {
 				screens[curScreen]->handleF3();
 				break;
 			case KEY_CTRL_F4:
-				tryScreenChange(4);
+				screens[curScreen]->handleF4();
 				break;
 			case KEY_CTRL_F5:
 				tryScreenChange(5);
@@ -463,5 +463,5 @@ bool emulator_type::loadState() {
 
 	screens[curScreen]->postStateChange();
 
-	return false;
+	return true;
 }
