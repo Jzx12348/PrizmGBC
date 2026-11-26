@@ -172,26 +172,6 @@ A substantial evolution of the emulator and the overall user experience.
 
 The v2.0.0 scope will be refined as the earlier releases establish what is practical on the fx-CG50. The existing PrizmGBC logo and application icon are staying.
 
-## Hardware validation
-
-A successful build or simulator launch is not proof that a release works correctly on a calculator. Physical-device testing should record the calculator model, OS version, exact PrizmGBC build and games tested.
-
-Suggested validation checklist:
-
-- [ ] PrizmGBC appears in the calculator's add-in menu.
-- [ ] The add-in launches without an OS error.
-- [ ] The ROM browser can find files in calculator storage.
-- [ ] A known-good .gb ROM boots and displays correctly.
-- [ ] A known-good .gbc ROM boots and displays correctly.
-- [ ] Directional input, A, B, Start and Select work.
-- [ ] Gameplay remains stable during an extended session.
-- [ ] Audio can be enabled and disabled without a crash.
-- [ ] Save and load state work as expected.
-- [ ] Exiting the game and returning to the calculator OS works.
-- [ ] The same checks pass after restarting the calculator.
-
-Do not treat untested features or games as confirmed compatible. When reporting a problem, include the game title, ROM type, calculator model, OS version, PrizmGBC version and what happened.
-
 ## ROM files
 
 | File extension | Description |
