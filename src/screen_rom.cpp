@@ -182,14 +182,14 @@ void screen_rom::deselect() {
 }
 
 bool screen_rom::checkScroll() {
-	int selectY = selectedFile * 16 - curScroll + 44;
+	int selectY = selectedFile * 16 - curScroll + 73;
 
-	if (selectY < 44) {
+	if (selectY < 72) {
 		curScroll = 16 * selectedFile;
 		return true;
 	}
-	if (selectY > 178) {
-		curScroll = 16 * selectedFile - 134;
+	if (selectY > 180) {
+		curScroll = 16 * selectedFile - 107;
 		return true;
 	}
 	return false;
