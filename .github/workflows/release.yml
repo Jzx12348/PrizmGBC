@@ -1,4 +1,4 @@
-name: Create PrizmGBC release
+name: Publish PrizmGBC stable release
 
 on:
   workflow_dispatch:
@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   draft-release:
-    name: Create draft release
+    name: Publish stable release
     runs-on: ubuntu-latest
     steps:
       - name: Check out source
@@ -28,11 +28,26 @@ jobs:
         with:
           tag_name: ${{ inputs.version || github.ref_name }}
           target_commitish: master
-          draft: true
-          prerelease: true
-          generate_release_notes: true
+          draft: false
+          prerelease: false
+          generate_release_notes: false
+          name: PrizmGBC v1.2.0
           body: |
-            ## PrizmGBC
+            ## PrizmGBC v1.2.0
+
+            A Game Boy and Game Boy Color emulator for the Casio fx-CG50.
+
+            ## New in v1.2.0
+
+            - **Recently played:** Quickly access the five most recently launched games.
+            - **Library sorting:** Sort games by name, recent activity, or favourites.
+            - **Categorized settings:** Settings are organized into Performance, Display, Controls, Audio, and System sections.
+            - **Three save-state slots:** Select between three separate save-state files.
+            - **Settings migration:** Existing v1.1.0 settings are migrated when upgrading.
+
+            ---
+
+            **Stable release.** Please report bugs or compatibility issues through GitHub Issues. Hardware testing on a physical fx-CG50 is recommended.
 
             Experimental Game Boy and Game Boy Color emulator for the Casio Prizm.
 
