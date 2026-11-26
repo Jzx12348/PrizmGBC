@@ -12,6 +12,7 @@ struct screen_rom : public emulator_screen {
 	int selectedFile;
 	int loadedFile;
 	int curScroll;
+	bool gridMode;
 
 	virtual void setup() override;
 	virtual void select() override;
@@ -23,6 +24,7 @@ struct screen_rom : public emulator_screen {
 	virtual void handleLeft() override;
 	virtual void handleRight() override;
 	virtual void handleF3() override;
+	virtual void handleF4() override;
 
 private:
 	void discoverFiles();
