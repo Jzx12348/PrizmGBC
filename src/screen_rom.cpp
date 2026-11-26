@@ -152,6 +152,8 @@ void screen_rom::sortFiles() {
 			if (currentRank < 0) currentRank = 100;
 		} else if (emulator.settings.sortMode == 2) {
 			currentRank = findFavorite(current.path) >= 0 ? 0 : 1;
+		} else if (emulator.settings.sortMode == 3) {
+			currentRank = (int)findPlaytime(current.path);
 		}
 
 		int j = i - 1;
@@ -162,9 +164,12 @@ void screen_rom::sortFiles() {
 				if (previousRank < 0) previousRank = 100;
 			} else if (emulator.settings.sortMode == 2) {
 				previousRank = findFavorite(files[j].path) >= 0 ? 0 : 1;
+			} else if (emulator.settings.sortMode == 3) {
+				previousRank = (int)findPlaytime(files[j].path);
 			}
 
-			bool before = currentRank < previousRank;
+			bool before = emulator.settings.sortMode == 3 ?
+				currentRank > previousRank : currentRank < previousRank;
 			if (currentRank == previousRank) before = compareNames(current.path, files[j].path) < 0;
 			if (!before) break;
 			files[j + 1] = files[j];
@@ -299,8 +304,8 @@ void screen_rom::drawFiles() {
 		Print(20, 117, "calculator root folder.", false, COLOR_SILVER);
 		Print(20, 145, "GB  /  GBC  /  GBZ", false, COLOR_LIGHTGREEN);
 	} else {
-		const char* sortNames[] = { "SORT: NAME", "SORT: RECENT", "SORT: FAVOURITES" };
-		Print(16, 56, sortNames[emulator.settings.sortMode < 3 ? emulator.settings.sortMode : 0], false, COLOR_LIGHTGREEN);
+		const char* sortNames[] = { "SORT: NAME", "SORT: RECENT", "SORT: FAVOURITES", "SORT: PLAYTIME" };
+		Print(16, 56, sortNames[emulator.settings.sortMode < 4 ? emulator.settings.sortMode : 0], false, COLOR_LIGHTGREEN);
 		if (!gridMode) {
 			for (int i = 0; i < numFiles; i++) {
 				int curY = i * 16 - curScroll + 73;
@@ -498,7 +503,7 @@ void screen_rom::changeSort(int direction) {
 	if (numFiles && selectedFile >= 0 && selectedFile < numFiles) {
 		strcpy(selectedName, files[selectedFile].path);
 	}
-	emulator.settings.sortMode = (emulator.settings.sortMode + 3 + direction) % 3;
+	emulator.settings.sortMode = (emulator.settings.sortMode + 4 + direction) % 4;
 	sortFiles();
 	selectedFile = 0;
 	for (int i = 0; i < numFiles; i++) {
