@@ -20,6 +20,7 @@ struct screen_rom : public emulator_screen {
 	// key press handles
 	virtual void handleUp() override;
 	virtual void handleDown() override;
+	virtual void handleF3() override;
 
 private:
 	void discoverFiles();
