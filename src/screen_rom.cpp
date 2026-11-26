@@ -1,6 +1,7 @@
 
 #include "platform.h"
 #include "screen_rom.h"
+#include "rom.h"
 
 typedef struct
 {
@@ -25,6 +26,79 @@ static void FindFiles(const char* path, foundFile* toArray, int& numFound) {
 	};
 
 	Bfile_FindClose(handle);
+}
+
+
+static const char* cartridgeTypeName(unsigned char type) {
+	switch (type) {
+		case 0x00: return "ROM ONLY";
+		case 0x01: return "MBC1";
+		case 0x02: return "MBC1 + RAM";
+		case 0x03: return "MBC1 + RAM + BATTERY";
+		case 0x05: return "MBC2";
+		case 0x06: return "MBC2 + BATTERY";
+		case 0x08: return "ROM + RAM";
+		case 0x09: return "ROM + RAM + BATTERY";
+		case 0x0F: return "MBC3 + TIMER + BATTERY";
+		case 0x10: return "MBC3 + TIMER + RAM";
+		case 0x11: return "MBC3";
+		case 0x12: return "MBC3 + RAM";
+		case 0x13: return "MBC3 + RAM + BATTERY";
+		case 0x19: return "MBC5";
+		case 0x1A: return "MBC5 + RAM";
+		case 0x1B: return "MBC5 + RAM + BATTERY";
+		case 0x1C: return "MBC5 + RUMBLE";
+		case 0x1D: return "MBC5 + RUMBLE + RAM";
+		case 0x1E: return "MBC5 + RUMBLE + RAM + BATTERY";
+		case 0x22: return "MBC7 + SENSOR";
+		case 0xFC: return "POCKET CAMERA";
+		case 0xFD: return "BANDAI TAMA5";
+		case 0xFE: return "HuC3";
+		case 0xFF: return "HuC1 + RAM + BATTERY";
+		default: return "OTHER / UNKNOWN";
+	}
+}
+
+static const char* romSizeName(unsigned char code) {
+	static char label[20];
+	if (code <= 8) {
+		sprintf(label, "%lu KB", (unsigned long)(32UL << code));
+		return label;
+	}
+	if (code == 0x52) return "1152 KB";
+	if (code == 0x53) return "1280 KB";
+	if (code == 0x54) return "1536 KB";
+	return "UNKNOWN";
+}
+
+static const char* ramSizeName(unsigned char code) {
+	switch (code) {
+		case 0: return "NONE";
+		case 1: return "2 KB";
+		case 2: return "8 KB";
+		case 3: return "32 KB";
+		case 4: return "128 KB";
+		case 5: return "64 KB";
+		default: return "UNKNOWN";
+	}
+}
+
+static bool readGameHeader(const char* filename, unsigned char* header, int& fileSize) {
+	char path[64];
+	unsigned short pFile[256];
+	strcpy(path, "\\\\fls0\\");
+	strcat(path, filename);
+	Bfile_StrToName_ncpy(pFile, (const char*)path, strlen(path) + 2);
+	int handle = Bfile_OpenFile_OS(pFile, READ, 0);
+	if (handle < 0) return false;
+	fileSize = Bfile_GetFileSize_OS(handle);
+	if (fileSize < 0x150) {
+		Bfile_CloseFile_OS(handle);
+		return false;
+	}
+	Bfile_ReadFile_OS(handle, header, 0x150, 0);
+	Bfile_CloseFile_OS(handle);
+	return true;
 }
 
 static int findFavorite(const char* filename) {
@@ -101,7 +175,76 @@ void screen_rom::discoverFiles() {
 	// FindFiles("\\\\fls0\\ROMS\\*.gb", files, numFiles);
 }
 
+
+void screen_rom::drawGameDetails() {
+	ResolveBG(bg_menu);
+	EnableStatusArea(3);
+
+	display_fill headerBar;
+	headerBar.x1 = 0; headerBar.x2 = 383; headerBar.y1 = 0; headerBar.y2 = 43; headerBar.mode = 1;
+	Bdisp_AreaClr(&headerBar, 1, COLOR_BLACK);
+	display_fill accent;
+	accent.x1 = 0; accent.x2 = 383; accent.y1 = 42; accent.y2 = 45; accent.mode = 1;
+	Bdisp_AreaClr(&accent, 1, COLOR_LIGHTGREEN);
+	Print(12, 5, "PRIZMGBC", true, COLOR_WHITE);
+	Print(12, 24, "GAME INFORMATION", false, COLOR_LIGHTGREEN);
+	Print(300, 5, "v1.3.0 DEV", false, COLOR_LIGHTGREEN);
+
+	display_fill leftPanel;
+	leftPanel.x1 = 8; leftPanel.x2 = 187; leftPanel.y1 = 53; leftPanel.y2 = 185; leftPanel.mode = 1;
+	Bdisp_AreaClr(&leftPanel, 1, COLOR_DARKGRAY);
+	display_fill rightPanel;
+	rightPanel.x1 = 194; rightPanel.x2 = 375; rightPanel.y1 = 53; rightPanel.y2 = 185; rightPanel.mode = 1;
+	Bdisp_AreaClr(&rightPanel, 1, COLOR_BLACK);
+
+	unsigned char header[0x150];
+	int fileSize = 0;
+	bool valid = readGameHeader(files[selectedFile].path, header, fileSize);
+	Print(18, 60, "FILE", false, COLOR_LIGHTGREEN);
+	Print(18, 78, files[selectedFile].path, true, COLOR_WHITE);
+	if (!valid) {
+		Print(18, 111, "HEADER UNAVAILABLE", true, COLOR_WHITE);
+		Print(18, 132, "The file could not be", false, COLOR_SILVER);
+		Print(18, 146, "read as a valid ROM.", false, COLOR_SILVER);
+	} else {
+		char title[17];
+		int titleLength = 0;
+		for (int i = 0; i < 16; i++) {
+			unsigned char ch = header[ROM_OFFSET_NAME + i];
+			if (ch == 0 || ch == 0x80 || ch == 0xC0) break;
+			if (ch < 32 || ch > 126) ch = '?';
+			title[titleLength++] = (char)ch;
+		}
+		title[titleLength] = 0;
+		if (!titleLength) strcpy(title, "UNTITLED");
+		Print(18, 105, "INTERNAL TITLE", false, COLOR_SILVER);
+		Print(18, 120, title, true, COLOR_WHITE);
+		Print(18, 148, "FILE SIZE", false, COLOR_SILVER);
+		char sizeText[24];
+		sprintf(sizeText, "%d KB", fileSize / 1024);
+		Print(18, 164, sizeText, false, COLOR_WHITE);
+
+		Print(204, 60, "CARTRIDGE", false, COLOR_LIGHTGREEN);
+		Print(204, 78, cartridgeTypeName(header[ROM_OFFSET_TYPE]), true, COLOR_WHITE);
+		Print(204, 101, "ROM CAPACITY", false, COLOR_SILVER);
+		Print(204, 116, romSizeName(header[ROM_OFFSET_ROM_SIZE]), false, COLOR_WHITE);
+		Print(204, 139, "RAM CAPACITY", false, COLOR_SILVER);
+		Print(204, 154, ramSizeName(header[ROM_OFFSET_RAM_SIZE]), false, COLOR_WHITE);
+		Print(204, 174, (header[ROM_OFFSET_GBC] == 0x80 || header[ROM_OFFSET_GBC] == 0xC0) ?
+			"GAME BOY COLOR" : "GAME BOY / DMG", false, COLOR_LIGHTGREEN);
+	}
+
+	display_fill footer;
+	footer.x1 = 0; footer.x2 = 383; footer.y1 = 192; footer.y2 = 215; footer.mode = 1;
+	Bdisp_AreaClr(&footer, 1, COLOR_BLACK);
+	Print(10, 198, "EXE BACK TO LIBRARY", false, COLOR_SILVER);
+	Print(178, 198, "F3 FAVOURITE", false, COLOR_YELLOW);
+	Print(292, 198, "F6 PLAY", false, COLOR_LIGHTGREEN);
+	DrawFrame(0);
+}
+
 void screen_rom::drawFiles() {
+	if (detailsMode) { drawGameDetails(); return; }
 	ResolveBG(bg_menu);
 	EnableStatusArea(3);
 
@@ -116,7 +259,7 @@ void screen_rom::drawFiles() {
 	Print(12, 24, "GAME LIBRARY", false, COLOR_LIGHTGREEN);
 	char countText[24];
 	sprintf(countText, "%d GAMES", numFiles);
-	Print(300, 5, "v1.2.0", false, COLOR_LIGHTGREEN);
+	Print(286, 5, "v1.3.0 DEV", false, COLOR_LIGHTGREEN);
 	Print(300, 24, countText, false, COLOR_SILVER);
 
 	// Main library and game information panels.
@@ -228,11 +371,13 @@ void screen_rom::setup() {
 	loadedFile = -1;
 	curScroll = 0;
 	gridMode = false;
+	detailsMode = false;
 }
 
 void screen_rom::select() {
 	// Keep the library viewport deterministic every time the screen is opened.
 	curScroll = 0;
+	detailsMode = false;
 
 	// file discovery doesn't work well when rom file is currently active, so we close it
 	loadedFile = -1;
@@ -364,7 +509,14 @@ void screen_rom::handleRight() {
 	}
 }
 
+void screen_rom::handleSelect() {
+	if (!numFiles) return;
+	detailsMode = !detailsMode;
+	drawFiles();
+}
+
 void screen_rom::handleF4() {
+	if (detailsMode) return;
 	gridMode = !gridMode;
 	curScroll = 0;
 	checkScroll();
