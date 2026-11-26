@@ -1,0 +1,49 @@
+name: Feature request
+description: Suggest an improvement or new feature
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Search existing issues and the project roadmap before submitting. A suggestion is not a guarantee that the feature will be implemented.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or motivation
+      description: What limitation or user need would this feature address?
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: Describe the feature or improvement you would like.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Are there other ways to solve this problem?
+  - type: dropdown
+    id: area
+    attributes:
+      label: Related area
+      options:
+        - Game library
+        - Emulator performance / compatibility
+        - Save states
+        - Controls
+        - Display / graphics
+        - Audio
+        - Settings / personalisation
+        - Documentation / website
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional context
+      description: Mock-ups or examples are welcome. Do not include copyrighted game files.
