@@ -460,7 +460,7 @@ void drawFramebufferMain(void) {
 		sprintf(fpsText, "%dFPS", displayedFps);
 		int fpsX = 2;
 		int fpsY = 2;
-		PrintMini(&fpsX, &fpsY, fpsText, 0, 0xffffffff, 0, 0, COLOR_CYAN, COLOR_BLACK, 1, 0);
+		PrintMini(&fpsX, &fpsY, fpsText, 0, 0xffffffff, 0, 0, COLOR_LIGHTGREEN, COLOR_BLACK, 1, 0);
 	}
 
 	// Present through the calculator OS instead of writing directly to the
