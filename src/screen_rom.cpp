@@ -135,26 +135,59 @@ void screen_rom::drawFiles() {
 	} else {
 		const char* sortNames[] = { "SORT: NAME", "SORT: RECENT", "SORT: FAVOURITES" };
 		Print(16, 56, sortNames[emulator.settings.sortMode < 3 ? emulator.settings.sortMode : 0], false, COLOR_LIGHTGREEN);
-		for (int i = 0; i < numFiles; i++) {
-			int curY = i * 16 - curScroll + 73;
-			if (curY >= 72 && curY < 184) {
-				if (i == selectedFile) {
-					display_fill selected;
-					selected.x1 = 10; selected.x2 = 251;
-					selected.y1 = curY - 2; selected.y2 = curY + 12;
-					selected.mode = 1;
-					Bdisp_AreaClr(&selected, 1, COLOR_DARKGREEN);
+		if (!gridMode) {
+			for (int i = 0; i < numFiles; i++) {
+				int curY = i * 16 - curScroll + 73;
+				if (curY >= 72 && curY < 184) {
+					if (i == selectedFile) {
+						display_fill selected;
+						selected.x1 = 10; selected.x2 = 251;
+						selected.y1 = curY - 2; selected.y2 = curY + 12;
+						selected.mode = 1;
+						Bdisp_AreaClr(&selected, 1, COLOR_DARKGREEN);
+						display_fill marker;
+						marker.x1 = 10; marker.x2 = 13;
+						marker.y1 = curY - 2; marker.y2 = curY + 12;
+						marker.mode = 1;
+						Bdisp_AreaClr(&marker, 1, COLOR_LIGHTGREEN);
+					}
+					char index[8];
+					sprintf(index, "%02d", i + 1);
+					Print(18, curY, index, false, COLOR_SILVER);
+					if (findFavorite(files[i].path) >= 0) Print(232, curY, "*", true, COLOR_YELLOW);
+					Print(43, curY, files[i].path, i == selectedFile, COLOR_WHITE);
+				}
+			}
+		} else {
+			for (int slot = 0; slot < 6; slot++) {
+				int fileIndex = curScroll + slot;
+				if (fileIndex >= numFiles) break;
+				int column = slot % 2;
+				int row = slot / 2;
+				int x = 12 + column * 120;
+				int y = 78 + row * 35;
+				display_fill tile;
+				tile.x1 = x; tile.x2 = x + 113;
+				tile.y1 = y; tile.y2 = y + 29; tile.mode = 1;
+				Bdisp_AreaClr(&tile, 1, fileIndex == selectedFile ? COLOR_DARKGREEN : COLOR_BLACK);
+				if (fileIndex == selectedFile) {
 					display_fill marker;
-					marker.x1 = 10; marker.x2 = 13;
-					marker.y1 = curY - 2; marker.y2 = curY + 12;
-					marker.mode = 1;
+					marker.x1 = x; marker.x2 = x + 3;
+					marker.y1 = y; marker.y2 = y + 29; marker.mode = 1;
 					Bdisp_AreaClr(&marker, 1, COLOR_LIGHTGREEN);
 				}
-				char index[8];
-				sprintf(index, "%02d", i + 1);
-				Print(18, curY, index, false, COLOR_SILVER);
-				if (findFavorite(files[i].path) >= 0) Print(232, curY, "*", true, COLOR_YELLOW);
-				Print(43, curY, files[i].path, i == selectedFile, COLOR_WHITE);
+				char label[20];
+				int length = strlen(files[fileIndex].path);
+				if (length > 15) {
+					memcpy(label, files[fileIndex].path, 12);
+					strcpy(label + 12, "...");
+				} else {
+					strcpy(label, files[fileIndex].path);
+				}
+				Print(x + 8, y + 6, label, fileIndex == selectedFile, COLOR_WHITE);
+				Print(x + 8, y + 19, findFavorite(files[fileIndex].path) >= 0 ? "FAVOURITE" :
+					(findRecent(files[fileIndex].path) >= 0 ? "RECENTLY PLAYED" : "GAME FILE"),
+					false, COLOR_SILVER);
 			}
 		}
 
@@ -181,9 +214,10 @@ void screen_rom::drawFiles() {
 	display_fill footer;
 	footer.x1 = 0; footer.x2 = 383; footer.y1 = 192; footer.y2 = 215; footer.mode = 1;
 	Bdisp_AreaClr(&footer, 1, COLOR_BLACK);
-	Print(8, 198, "LEFT/RIGHT SORT", false, COLOR_SILVER);
+	Print(8, 198, gridMode ? "ARROWS SELECT" : "LEFT/RIGHT SORT", false, COLOR_SILVER);
 	Print(137, 198, "F3 FAV", false, COLOR_YELLOW);
 	Print(214, 198, "F2 SETTINGS", false, COLOR_SILVER);
+	Print(310, 198, gridMode ? "F4 LIST" : "F4 GRID", false, COLOR_LIGHTGREEN);
 	Print(310, 198, "F6 PLAY", false, COLOR_LIGHTGREEN);
 	DrawFrame(0);
 }
@@ -193,6 +227,7 @@ void screen_rom::setup() {
 	selectedFile = 0;
 	loadedFile = -1;
 	curScroll = 0;
+	gridMode = false;
 }
 
 void screen_rom::select() {
@@ -250,6 +285,12 @@ void screen_rom::deselect() {
 }
 
 bool screen_rom::checkScroll() {
+	if (gridMode) {
+		int page = (selectedFile / 6) * 6;
+		bool changed = curScroll != page;
+		curScroll = page;
+		return changed;
+	}
 	int selectY = selectedFile * 16 - curScroll + 73;
 
 	if (selectY < 72) {
@@ -265,8 +306,8 @@ bool screen_rom::checkScroll() {
 
 void screen_rom::handleUp() {
 	if (numFiles) {
-		selectedFile = (selectedFile + numFiles - 1) % numFiles;
-
+		selectedFile = gridMode ? (selectedFile >= 2 ? selectedFile - 2 : selectedFile) :
+			(selectedFile + numFiles - 1) % numFiles;
 		checkScroll();
 		drawFiles();
 	}
@@ -274,8 +315,11 @@ void screen_rom::handleUp() {
 
 void screen_rom::handleDown() {
 	if (numFiles) {
-		selectedFile = (selectedFile + 1) % numFiles;
-
+		if (gridMode) {
+			selectedFile = selectedFile + 2 < numFiles ? selectedFile + 2 : selectedFile;
+		} else {
+			selectedFile = (selectedFile + 1) % numFiles;
+		}
 		checkScroll();
 		drawFiles();
 	}
@@ -301,11 +345,30 @@ void screen_rom::changeSort(int direction) {
 }
 
 void screen_rom::handleLeft() {
-	changeSort(-1);
+	if (gridMode) {
+		if (numFiles && selectedFile > 0) selectedFile--;
+		checkScroll();
+		drawFiles();
+	} else {
+		changeSort(-1);
+	}
 }
 
 void screen_rom::handleRight() {
-	changeSort(1);
+	if (gridMode) {
+		if (numFiles && selectedFile + 1 < numFiles) selectedFile++;
+		checkScroll();
+		drawFiles();
+	} else {
+		changeSort(1);
+	}
+}
+
+void screen_rom::handleF4() {
+	gridMode = !gridMode;
+	curScroll = 0;
+	checkScroll();
+	drawFiles();
 }
 
 void screen_rom::handleF3() {
