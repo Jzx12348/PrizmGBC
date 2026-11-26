@@ -436,6 +436,13 @@ void SetupDisplayDriver(char withFrameskip) {
 
 	frameSkip = withFrameskip;
 
+	// Reset PPU frame state as well as the LCD DMA buffers. cpuReset() can be
+	// called for a new ROM while these globals survive from the previous game.
+	// A stale invalidFrame flag suppresses both scanline rendering and frame DMA,
+	// which presents as a permanently black game screen while input still works.
+	invalidFrame = false;
+	windowLineOffset = 0;
+
 	drawFramebuffer = drawFramebufferMain;
 
 	renderScanline = cgb.isCGB ? scanlineCGB : scanlineDMG;
