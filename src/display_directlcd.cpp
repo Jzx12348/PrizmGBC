@@ -122,8 +122,10 @@ void resolveScanline_OS(void) {
 
 	if (mode == emu_scale::LO_200 || mode == emu_scale::HI_200) {
 		const int y = cpu.memory.LY_lcdline * 2 - 36;
-		if (y < 0 || y >= LCD_HEIGHT_PX) return;
-		unsigned short* dest = screen + y * LCD_WIDTH_PX + 32;
+		if (y < 0 || y >= 216) return;
+		unsigned short* row = screen + y * LCD_WIDTH_PX;
+		for (int x = 0; x < 32; x++) { row[x] = COLOR_BLACK; row[352 + x] = COLOR_BLACK; }
+		unsigned short* dest = row + 32;
 		for (int x = 0; x < 160; x++) {
 			const unsigned short color = (unsigned short)GetPaletteForSrc(lineBuffer[x + 8]);
 			dest[x * 2] = color;
@@ -134,8 +136,10 @@ void resolveScanline_OS(void) {
 
 	const int firstY = cpu.memory.LY_lcdline * 3 / 2;
 	const int lastY = (cpu.memory.LY_lcdline + 1) * 3 / 2;
-	for (int y = firstY; y < lastY && y < LCD_HEIGHT_PX; y++) {
-		unsigned short* dest = screen + y * LCD_WIDTH_PX + 72;
+	for (int y = firstY; y < lastY && y < 216; y++) {
+		unsigned short* row = screen + y * LCD_WIDTH_PX;
+		for (int x = 0; x < 72; x++) { row[x] = COLOR_BLACK; row[312 + x] = COLOR_BLACK; }
+		unsigned short* dest = row + 72;
 		for (int x = 0; x < 240; x++) {
 			const int sourceX = x * 2 / 3;
 			dest[x] = (unsigned short)GetPaletteForSrc(lineBuffer[sourceX + 8]);
