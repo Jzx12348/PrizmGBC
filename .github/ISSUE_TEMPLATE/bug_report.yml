@@ -1,0 +1,85 @@
+name: Bug report
+description: Report a reproducible problem in PrizmGBC
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Check existing issues first. Do not attach or share copyrighted game ROMs, BIOS files, save files containing personal data, or private information.
+  - type: input
+    id: version
+    attributes:
+      label: PrizmGBC version
+      description: For example, v1.3.1 or a development build commit.
+      placeholder: v1.3.1
+    validations:
+      required: true
+  - type: input
+    id: calculator
+    attributes:
+      label: Calculator model
+      placeholder: Casio fx-CG50
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Calculator OS version
+      placeholder: OS version, if known
+  - type: input
+    id: game
+    attributes:
+      label: Game / ROM title
+      description: Include the game title and region/revision if known. Do not upload the ROM.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      options:
+        - Installation / startup
+        - Game library
+        - Gameplay / emulation
+        - Graphics / display
+        - Audio
+        - Controls
+        - Save states
+        - Settings
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+      description: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+      description: What happened instead? Include any visible error message.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: List the steps needed to reproduce the issue.
+      placeholder: |
+        1. Open PrizmGBC
+        2. Select a game
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: frequency
+    attributes:
+      label: Frequency and impact
+      description: Does this happen every time, occasionally, or only with a particular game?
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Screenshots or additional notes
+      description: Attach screenshots or photos if useful. Do not include copyrighted ROM files or personal information.
