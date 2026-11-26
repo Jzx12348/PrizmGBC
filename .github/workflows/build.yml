@@ -50,3 +50,4 @@ jobs:
           name: PrizmGBC ${{ github.ref_name }}
           generate_release_notes: true
           files: PrizmSDK/projects/PrizmGBC/PrizmGBC.g3a
+          token: ${{ secrets.GH_TOKEN }}
