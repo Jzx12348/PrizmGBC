@@ -34,7 +34,7 @@ void screen_savestate::draw() {
 	Bdisp_AreaClr(&accent, 1, COLOR_LIGHTGREEN);
 	Print(12, 5, "PRIZMGBC", true, COLOR_WHITE);
 	Print(12, 24, "SAVE STATE MANAGER", false, COLOR_LIGHTGREEN);
-	Print(300, 5, "v1.3.0 DEV", false, COLOR_LIGHTGREEN);
+	Print(300, 5, "v1.3.0 BETA", false, COLOR_LIGHTGREEN);
 
 	display_fill panel;
 	panel.x1 = 8; panel.x2 = 375; panel.y1 = 54; panel.y2 = 184; panel.mode = 1;
