@@ -306,12 +306,7 @@ void screen_settings::handleSelect() {
 		}
 		case 1:
 		{
-			drawCurrentKeyMap();
-			int key = 0;
-			GetKey(&key);
-			if (key == KEY_CTRL_EXE || key == KEY_CTRL_SHIFT) {
-				selectKeys();
-			}
+			editKeys();
 			break;
 		}
 		case 2:
