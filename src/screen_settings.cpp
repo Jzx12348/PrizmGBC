@@ -14,7 +14,7 @@ enum settings_category {
 };
 
 static const char* categoryNames[CATEGORY_COUNT] = {
-	"PERFORMANCE", "DISPLAY", "CONTROLS", "AUDIO", "SYSTEM"
+	"PERF", "DISPLAY", "CTRL", "AUDIO", "SYSTEM"
 };
 
 struct option_type {
@@ -127,17 +127,17 @@ void screen_settings::drawOptions() {
 	Print(12, 22, "SETTINGS", false, COLOR_LIGHTGREEN);
 	Print(310, 13, "v1.3.0 BETA", false, COLOR_LIGHTGREEN);
 
-	const int tabX[CATEGORY_COUNT] = { 9, 87, 163, 246, 311 };
-	const int tabW[CATEGORY_COUNT] = { 73, 71, 77, 60, 64 };
+	const int tabX[CATEGORY_COUNT] = { 8, 84, 160, 236, 312 };
+	const int tabW[CATEGORY_COUNT] = { 64, 64, 64, 64, 64 };
 	for (int i = 0; i < CATEGORY_COUNT; i++) {
 		if (i == curCategory) {
 			display_fill tab;
 			tab.x1 = tabX[i]; tab.x2 = tabX[i] + tabW[i];
 			tab.y1 = 48; tab.y2 = 68; tab.mode = 1;
 			Bdisp_AreaClr(&tab, 1, COLOR_DARKGREEN);
-			Print(tabX[i] + 5, 53, categoryNames[i], true, COLOR_LIGHTGREEN);
+			Print(tabX[i] + (tabW[i] - PrintWidth(categoryNames[i])) / 2, 53, categoryNames[i], true, COLOR_LIGHTGREEN);
 		} else {
-			Print(tabX[i] + 5, 53, categoryNames[i], false, COLOR_SILVER);
+			Print(tabX[i] + (tabW[i] - PrintWidth(categoryNames[i])) / 2, 53, categoryNames[i], false, COLOR_SILVER);
 		}
 	}
 
@@ -150,7 +150,7 @@ void screen_settings::drawOptions() {
 	for (int row = 0; row < count; row++) {
 		int index = categoryOptionIndex(curCategory, row);
 		if (index < 0) continue;
-		int y = 101 + row * 20;
+		int y = 99 + row * 17;
 		bool selected = row == curOption;
 
 		if (selected) {
@@ -215,8 +215,8 @@ void screen_settings::drawOptions() {
 	display_fill footer;
 	footer.x1 = 0; footer.x2 = 383; footer.y1 = 192; footer.y2 = 215; footer.mode = 1;
 	Bdisp_AreaClr(&footer, 1, COLOR_BLACK);
-	Print(9, 198, "LEFT / RIGHT  CATEGORY", false, COLOR_SILVER);
-	Print(246, 198, "UP / DOWN  SELECT", false, COLOR_LIGHTGREEN);
+	Print(9, 198, "LEFT/RIGHT: CATEGORY", false, COLOR_SILVER);
+	Print(250, 198, "UP/DOWN: OPTION", false, COLOR_LIGHTGREEN);
 	DrawFrame(0);
 }
 
