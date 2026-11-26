@@ -242,6 +242,8 @@ static const char* getMappedKeyLabel(unsigned char code) {
 	switch (code) {
 		case 78: return "SHIFT";
 		case 68: return "OPTN";
+		case 59: return "F3";
+		case 49: return "F4";
 		case 39: return "F5";
 		case 29: return "F6";
 		case 27: return "RIGHT";
@@ -311,7 +313,7 @@ void screen_settings::editKeys() {
 			return;
 		} else if (key == KEY_CTRL_F1) {
 			static const unsigned char defaults[emu_button::MAX] = {
-				78, 68, 39, 29, 27, 38, 28, 37, 43, 25
+				78, 68, 39, 29, 27, 38, 28, 37, 59, 49
 			};
 			memcpy(emulator.settings.keyMap, defaults, sizeof(defaults));
 			emulator.saveSettings();
