@@ -27,6 +27,15 @@ static void FindFiles(const char* path, foundFile* toArray, int& numFound) {
 	Bfile_FindClose(handle);
 }
 
+static int findFavorite(const char* filename) {
+	int count = emulator.settings.favoriteCount;
+	if (count > 8) count = 8;
+	for (int i = 0; i < count; i++) {
+		if (!strcmp(emulator.settings.favoriteRoms[i], filename)) return i;
+	}
+	return -1;
+}
+
 void screen_rom::discoverFiles() {
 	files = new foundFile[64];
 	numFiles = 0;
@@ -89,6 +98,7 @@ void screen_rom::drawFiles() {
 				char index[8];
 				sprintf(index, "%02d", i + 1);
 				Print(18, curY, index, false, COLOR_SILVER);
+				if (findFavorite(files[i].path) >= 0) Print(232, curY, "*", true, COLOR_YELLOW);
 				Print(43, curY, files[i].path, i == selectedFile, COLOR_WHITE);
 			}
 		}
@@ -109,6 +119,7 @@ void screen_rom::drawFiles() {
 		Print(270, 126, format, false, COLOR_WHITE);
 		Print(270, 151, "STATUS", false, COLOR_SILVER);
 		Print(270, 165, selectedFile == loadedFile ? "LOADED" : "READY", false, COLOR_CYAN);
+		Print(270, 180, findFavorite(files[selectedFile].path) >= 0 ? "FAVORITE *" : "F3 TO FAVORITE", false, COLOR_YELLOW);
 	}
 
 	// Consistent footer navigation.
@@ -116,8 +127,9 @@ void screen_rom::drawFiles() {
 	footer.x1 = 0; footer.x2 = 383; footer.y1 = 192; footer.y2 = 215; footer.mode = 1;
 	Bdisp_AreaClr(&footer, 1, COLOR_BLACK);
 	Print(10, 198, "UP / DOWN  BROWSE", false, COLOR_SILVER);
-	Print(205, 198, "F2 SETTINGS", false, COLOR_SILVER);
-	Print(302, 198, "F6 PLAY", false, COLOR_CYAN);
+	Print(145, 198, "F3  FAV", false, COLOR_YELLOW);
+	Print(220, 198, "F2 SETTINGS", false, COLOR_SILVER);
+	Print(316, 198, "F6 PLAY", false, COLOR_CYAN);
 	DrawFrame(0);
 }
 void screen_rom::setup() {
@@ -212,4 +224,29 @@ void screen_rom::handleDown() {
 		checkScroll();
 		drawFiles();
 	}
+}
+
+void screen_rom::handleF3() {
+	if (!numFiles) return;
+
+	const char* filename = files[selectedFile].path;
+	int favorite = findFavorite(filename);
+	int count = emulator.settings.favoriteCount;
+	if (count > 8) count = 8;
+
+	if (favorite >= 0) {
+		for (int i = favorite; i < count - 1; i++) {
+			strcpy(emulator.settings.favoriteRoms[i], emulator.settings.favoriteRoms[i + 1]);
+		}
+		if (count > 0) {
+			emulator.settings.favoriteRoms[count - 1][0] = 0;
+			emulator.settings.favoriteCount = count - 1;
+		}
+	} else if (count < 8) {
+		strcpy(emulator.settings.favoriteRoms[count], filename);
+		emulator.settings.favoriteCount = count + 1;
+	}
+
+	emulator.saveSettings();
+	drawFiles();
 }
