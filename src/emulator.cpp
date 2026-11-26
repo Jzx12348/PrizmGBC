@@ -231,16 +231,14 @@ void emulator_type::defaultSettings() {
 	settings.keyMap[emu_button::LEFT] = 38;
 	settings.keyMap[emu_button::UP] = 28;
 	settings.keyMap[emu_button::DOWN] = 37;
-	settings.keyMap[emu_button::STATE_SAVE] = 43;	// 'S'
-	settings.keyMap[emu_button::STATE_LOAD] = 25;   // 'L'
+	settings.keyMap[emu_button::STATE_SAVE] = 59;	// F3
+	settings.keyMap[emu_button::STATE_LOAD] = 49;	// F4
 
 	settings.faqOffset = 0;
 
-	// simulator only defaults
+	// simulator-only defaults
 #if TARGET_WINSIM
 	settings.frameSkip = 0;
-	settings.keyMap[emu_button::STATE_SAVE] = 59;	// maps to F3
-	settings.keyMap[emu_button::STATE_LOAD] = 49;	// maps to F4
 #endif
 }
 
@@ -257,6 +255,19 @@ bool emulator_type::loadSettings() {
 			!MCSGetData1(0, len, &readSettings)) {
 			if (readSettings.version == SETTINGS_VERSION && len == sizeof(readSettings)) {
 				memcpy(&emulator.settings, &readSettings, sizeof(emulator_settings));
+				return true;
+			}
+
+			// v1.3.0 development builds using the previous default S/L save-state keys.
+			if (readSettings.version == 13 && len == sizeof(readSettings)) {
+				memcpy(&emulator.settings, &readSettings, sizeof(emulator_settings));
+				// Update only the shipped defaults. Preserve any custom user bindings.
+				if (emulator.settings.keyMap[emu_button::STATE_SAVE] == 43 &&
+					emulator.settings.keyMap[emu_button::STATE_LOAD] == 25) {
+					emulator.settings.keyMap[emu_button::STATE_SAVE] = 59;
+					emulator.settings.keyMap[emu_button::STATE_LOAD] = 49;
+				}
+				emulator.settings.version = SETTINGS_VERSION;
 				return true;
 			}
 
