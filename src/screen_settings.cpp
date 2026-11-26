@@ -79,10 +79,10 @@ void screen_settings::drawOptions() {
 	Bdisp_AreaClr(&header, 1, COLOR_BLACK);
 	display_fill accent;
 	accent.x1 = 0; accent.x2 = 383; accent.y1 = 42; accent.y2 = 45; accent.mode = 1;
-	Bdisp_AreaClr(&accent, 1, COLOR_CYAN);
+	Bdisp_AreaClr(&accent, 1, COLOR_LIGHTGREEN);
 	Print(12, 5, "PRIZMGBC", true, COLOR_WHITE);
-	Print(12, 24, "SYSTEM SETTINGS", false, COLOR_CYAN);
-	Print(300, 15, "v1.0.0", false, COLOR_CYAN);
+	Print(12, 24, "SYSTEM SETTINGS", false, COLOR_LIGHTGREEN);
+	Print(300, 15, "v1.0.0", false, COLOR_LIGHTGREEN);
 
 	display_fill panel;
 	panel.x1 = 7; panel.x2 = 376; panel.y1 = 51; panel.y2 = 187; panel.mode = 1;
@@ -100,12 +100,12 @@ void screen_settings::drawOptions() {
 			highlight.x1 = 10; highlight.x2 = 373;
 			highlight.y1 = y - 2; highlight.y2 = y + 11;
 			highlight.mode = 1;
-			Bdisp_AreaClr(&highlight, 1, COLOR_MEDIUMBLUE);
+			Bdisp_AreaClr(&highlight, 1, COLOR_DARKGREEN);
 			display_fill marker;
 			marker.x1 = 10; marker.x2 = 13;
 			marker.y1 = y - 2; marker.y2 = y + 11;
 			marker.mode = 1;
-			Bdisp_AreaClr(&marker, 1, COLOR_CYAN);
+			Bdisp_AreaClr(&marker, 1, COLOR_LIGHTGREEN);
 		}
 
 		Print(19, y, options[i].name, selected,
@@ -114,19 +114,19 @@ void screen_settings::drawOptions() {
 		if (options[i].type == 0) {
 			unsigned char isOn = *((unsigned char*)options[i].addr);
 			Print(302, y, isOn ? "ON" : "OFF", selected,
-				options[i].disabled ? COLOR_SILVER : (isOn ? COLOR_CYAN : COLOR_SILVER));
+				options[i].disabled ? COLOR_SILVER : (isOn ? COLOR_LIGHTGREEN : COLOR_SILVER));
 		} else if (options[i].type == 1) {
 			char bindText[16];
 			sprintf(bindText, "%d BOUND", emu_button::MAX);
-			Print(286, y, bindText, selected, COLOR_CYAN);
+			Print(286, y, bindText, selected, COLOR_LIGHTGREEN);
 		} else if (options[i].type == 2) {
 			char skip = *((char*)options[i].addr);
-			if (skip == -1) Print(318, y, "AUTO", selected, COLOR_CYAN);
+			if (skip == -1) Print(318, y, "AUTO", selected, COLOR_LIGHTGREEN);
 			else {
 				char buffer[8];
 				memset(buffer, 0, sizeof(buffer));
 				sprintf(buffer, "%d", skip);
-				Print(318, y, buffer, selected, COLOR_CYAN);
+				Print(318, y, buffer, selected, COLOR_LIGHTGREEN);
 			}
 		} else if (options[i].type == 3) {
 			colorpalette_type pal;
@@ -140,7 +140,7 @@ void screen_settings::drawOptions() {
 		} else if (options[i].type == 4) {
 			unsigned char opt = *((unsigned char*)options[i].addr);
 			const char* modes[] = { "1X", "FIT 1.5X", "2X CROP" };
-			Print(286, y, modes[opt < emu_scale::MAX ? opt : 0], selected, COLOR_CYAN);
+			Print(286, y, modes[opt < emu_scale::MAX ? opt : 0], selected, COLOR_LIGHTGREEN);
 		}
 	}
 
@@ -148,7 +148,7 @@ void screen_settings::drawOptions() {
 	footer.x1 = 0; footer.x2 = 383; footer.y1 = 192; footer.y2 = 215; footer.mode = 1;
 	Bdisp_AreaClr(&footer, 1, COLOR_BLACK);
 	Print(10, 198, "UP / DOWN  NAVIGATE", false, COLOR_SILVER);
-	Print(235, 198, "EXE  CHANGE", false, COLOR_CYAN);
+	Print(235, 198, "EXE  CHANGE", false, COLOR_LIGHTGREEN);
 	DrawFrame(0);
 }
 static const char* keyName[] = {
@@ -203,10 +203,10 @@ void screen_settings::drawCurrentKeyMap(int selected) {
 	Bdisp_AreaClr(&header, 1, COLOR_BLACK);
 	display_fill accent;
 	accent.x1 = 0; accent.x2 = 383; accent.y1 = 42; accent.y2 = 45; accent.mode = 1;
-	Bdisp_AreaClr(&accent, 1, COLOR_CYAN);
+	Bdisp_AreaClr(&accent, 1, COLOR_LIGHTGREEN);
 	Print(12, 5, "PRIZMGBC", true, COLOR_WHITE);
-	Print(12, 24, "CONTROLS / KEY MAPPING", false, COLOR_CYAN);
-	Print(300, 15, "v1.0.0", false, COLOR_CYAN);
+	Print(12, 24, "CONTROLS / KEY MAPPING", false, COLOR_LIGHTGREEN);
+	Print(300, 15, "v1.0.0", false, COLOR_LIGHTGREEN);
 
 	for (int i = 0; i < emu_button::MAX; i++) {
 		int column = i / 5;
@@ -217,20 +217,20 @@ void screen_settings::drawCurrentKeyMap(int selected) {
 			display_fill highlight;
 			highlight.x1 = x - 4; highlight.x2 = x + 175;
 			highlight.y1 = y - 3; highlight.y2 = y + 16; highlight.mode = 1;
-			Bdisp_AreaClr(&highlight, 1, COLOR_MEDIUMBLUE);
+			Bdisp_AreaClr(&highlight, 1, COLOR_DARKGREEN);
 		}
 		Print(x, y, keyName[i], i == selected, COLOR_WHITE);
 		const char* keyLabel = getMappedKeyLabel(emulator.settings.keyMap[i]);
 		char keyText[20];
 		if (keyLabel) strcpy(keyText, keyLabel);
 		else sprintf(keyText, "KEY %02u", emulator.settings.keyMap[i]);
-		Print(x + 112, y, keyText, true, COLOR_CYAN);
+		Print(x + 112, y, keyText, true, COLOR_LIGHTGREEN);
 	}
 	display_fill footer;
 	footer.x1 = 0; footer.x2 = 383; footer.y1 = 192; footer.y2 = 215; footer.mode = 1;
 	Bdisp_AreaClr(&footer, 1, COLOR_BLACK);
 	Print(8, 198, "UP/DN SELECT", false, COLOR_SILVER);
-	Print(130, 198, "EXE CHANGE", false, COLOR_CYAN);
+	Print(130, 198, "EXE CHANGE", false, COLOR_LIGHTGREEN);
 	Print(237, 198, "F1 RESET", false, COLOR_YELLOW);
 	Print(320, 198, "MENU BACK", false, COLOR_SILVER);
 	DrawFrame(0);
