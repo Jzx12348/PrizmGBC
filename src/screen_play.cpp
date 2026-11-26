@@ -73,6 +73,23 @@ void screen_play::drawPlayBG() {
 		DrawBGEmbedded((unsigned char*)bg_1x1);
 	}
 	EnableStatusArea(3);
+
+	// Clear the unused side margins once per gameplay session. The renderer
+	// updates only the game image, so rewriting these pixels per scanline is wasteful.
+	if (emulator.settings.scaleMode == emu_scale::FIT_150 ||
+		emulator.settings.scaleMode == emu_scale::CROP_200) {
+		unsigned short* screen = (unsigned short*)GetVRAMAddress();
+		const int margin = emulator.settings.scaleMode == emu_scale::FIT_150 ? 72 : 32;
+		const int rightStart = LCD_WIDTH_PX - margin;
+		for (int y = 0; y < LCD_HEIGHT_PX; y++) {
+			unsigned short* row = screen + y * LCD_WIDTH_PX;
+			for (int x = 0; x < margin; x++) {
+				row[x] = COLOR_BLACK;
+				row[rightStart + x] = COLOR_BLACK;
+			}
+		}
+	}
+
 	DrawFrame(0);
 	Bdisp_PutDisp_DD();
 }
