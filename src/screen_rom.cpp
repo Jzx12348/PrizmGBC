@@ -36,12 +36,66 @@ static int findFavorite(const char* filename) {
 	return -1;
 }
 
+static int findRecent(const char* filename) {
+	int count = emulator.settings.recentCount;
+	if (count > 5) count = 5;
+	for (int i = 0; i < count; i++) {
+		if (!strcmp(emulator.settings.recentRoms[i], filename)) return i;
+	}
+	return -1;
+}
+
+static int compareNames(const char* left, const char* right) {
+	while (*left && *right) {
+		char a = *left++;
+		char b = *right++;
+		if (a >= 'A' && a <= 'Z') a = (char)(a - 'A' + 'a');
+		if (b >= 'A' && b <= 'Z') b = (char)(b - 'A' + 'a');
+		if (a != b) return a < b ? -1 : 1;
+	}
+	if (*left) return 1;
+	if (*right) return -1;
+	return 0;
+}
+
+void screen_rom::sortFiles() {
+	for (int i = 1; i < numFiles; i++) {
+		foundFile current = files[i];
+		int currentRank = 0;
+		if (emulator.settings.sortMode == 1) {
+			currentRank = findRecent(current.path);
+			if (currentRank < 0) currentRank = 100;
+		} else if (emulator.settings.sortMode == 2) {
+			currentRank = findFavorite(current.path) >= 0 ? 0 : 1;
+		}
+
+		int j = i - 1;
+		while (j >= 0) {
+			int previousRank = 0;
+			if (emulator.settings.sortMode == 1) {
+				previousRank = findRecent(files[j].path);
+				if (previousRank < 0) previousRank = 100;
+			} else if (emulator.settings.sortMode == 2) {
+				previousRank = findFavorite(files[j].path) >= 0 ? 0 : 1;
+			}
+
+			bool before = currentRank < previousRank;
+			if (currentRank == previousRank) before = compareNames(current.path, files[j].path) < 0;
+			if (!before) break;
+			files[j + 1] = files[j];
+			j--;
+		}
+		files[j + 1] = current;
+	}
+}
+
 void screen_rom::discoverFiles() {
 	files = new foundFile[64];
 	numFiles = 0;
 	FindFiles("\\\\fls0\\*.gbz", files, numFiles);			// compressed gameboy ROM with utility
 	FindFiles("\\\\fls0\\*.gbc", files, numFiles);			// gameboy color
 	FindFiles("\\\\fls0\\*.gb", files, numFiles);			// gameboy
+	sortFiles();
 	// TODO : These don't work on Prizm?
 	// FindFiles("\\\\fls0\\Games\\*.gb", files, numFiles);
 	// FindFiles("\\\\fls0\\ROMS\\*.gb", files, numFiles);
@@ -62,7 +116,7 @@ void screen_rom::drawFiles() {
 	Print(12, 24, "GAME LIBRARY", false, COLOR_LIGHTGREEN);
 	char countText[24];
 	sprintf(countText, "%d GAMES", numFiles);
-	Print(300, 5, "v1.1.0", false, COLOR_LIGHTGREEN);
+	Print(300, 5, "v1.2.0", false, COLOR_LIGHTGREEN);
 	Print(300, 24, countText, false, COLOR_SILVER);
 
 	// Main library and game information panels.
@@ -79,7 +133,8 @@ void screen_rom::drawFiles() {
 		Print(20, 117, "calculator root folder.", false, COLOR_SILVER);
 		Print(20, 145, "GB  /  GBC  /  GBZ", false, COLOR_LIGHTGREEN);
 	} else {
-		Print(16, 56, "YOUR GAMES", false, COLOR_LIGHTGREEN);
+		const char* sortNames[] = { "SORT: NAME", "SORT: RECENT", "SORT: FAVOURITES" };
+		Print(16, 56, sortNames[emulator.settings.sortMode < 3 ? emulator.settings.sortMode : 0], false, COLOR_LIGHTGREEN);
 		for (int i = 0; i < numFiles; i++) {
 			int curY = i * 16 - curScroll + 73;
 			if (curY >= 72 && curY < 184) {
@@ -118,7 +173,7 @@ void screen_rom::drawFiles() {
 			(filename[length - 1] == 'z' || filename[length - 1] == 'Z')) format = "COMPRESSED";
 		Print(270, 126, format, false, COLOR_WHITE);
 		Print(270, 151, "STATUS", false, COLOR_SILVER);
-		Print(270, 165, selectedFile == loadedFile ? "LOADED" : "READY", false, COLOR_LIGHTGREEN);
+		Print(270, 165, selectedFile == loadedFile ? "LOADED" : (findRecent(files[selectedFile].path) >= 0 ? "PLAYED" : "READY"), false, COLOR_LIGHTGREEN);
 		Print(270, 180, findFavorite(files[selectedFile].path) >= 0 ? "FAVORITE *" : "F3 TO FAVORITE", false, COLOR_YELLOW);
 	}
 
@@ -126,10 +181,10 @@ void screen_rom::drawFiles() {
 	display_fill footer;
 	footer.x1 = 0; footer.x2 = 383; footer.y1 = 192; footer.y2 = 215; footer.mode = 1;
 	Bdisp_AreaClr(&footer, 1, COLOR_BLACK);
-	Print(10, 198, "UP / DOWN  BROWSE", false, COLOR_SILVER);
-	Print(145, 198, "F3  FAV", false, COLOR_YELLOW);
-	Print(220, 198, "F2 SETTINGS", false, COLOR_SILVER);
-	Print(316, 198, "F6 PLAY", false, COLOR_LIGHTGREEN);
+	Print(8, 198, "LEFT/RIGHT SORT", false, COLOR_SILVER);
+	Print(137, 198, "F3 FAV", false, COLOR_YELLOW);
+	Print(214, 198, "F2 SETTINGS", false, COLOR_SILVER);
+	Print(310, 198, "F6 PLAY", false, COLOR_LIGHTGREEN);
 	DrawFrame(0);
 }
 void screen_rom::setup() {
@@ -224,6 +279,33 @@ void screen_rom::handleDown() {
 		checkScroll();
 		drawFiles();
 	}
+}
+
+void screen_rom::changeSort(int direction) {
+	char selectedName[32] = { 0 };
+	if (numFiles && selectedFile >= 0 && selectedFile < numFiles) {
+		strcpy(selectedName, files[selectedFile].path);
+	}
+	emulator.settings.sortMode = (emulator.settings.sortMode + 3 + direction) % 3;
+	sortFiles();
+	selectedFile = 0;
+	for (int i = 0; i < numFiles; i++) {
+		if (!strcmp(files[i].path, selectedName)) {
+			selectedFile = i;
+			break;
+		}
+	}
+	checkScroll();
+	emulator.saveSettings();
+	drawFiles();
+}
+
+void screen_rom::handleLeft() {
+	changeSort(-1);
+}
+
+void screen_rom::handleRight() {
+	changeSort(1);
 }
 
 void screen_rom::handleF3() {
