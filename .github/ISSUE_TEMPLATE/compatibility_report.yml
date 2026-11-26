@@ -1,0 +1,68 @@
+name: Game compatibility report
+description: Report how a game behaves in a specific PrizmGBC build
+title: "[Compatibility]: "
+labels: ["compatibility"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Submit reports only for games you are legally entitled to use. Never upload or link to a commercial ROM. Reports are community observations and may need confirmation before being marked verified.
+  - type: input
+    id: game
+    attributes:
+      label: Game title
+      validations:
+        required: true
+  - type: input
+    id: region
+    attributes:
+      label: Region / revision
+      placeholder: e.g. Europe, USA, revision if known
+  - type: input
+    id: version
+    attributes:
+      label: PrizmGBC version or commit
+      placeholder: e.g. v1.3.1
+    validations:
+      required: true
+  - type: input
+    id: calculator
+    attributes:
+      label: Calculator model
+      placeholder: Casio fx-CG50
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Calculator OS version
+  - type: dropdown
+    id: result
+    attributes:
+      label: Overall result
+      options:
+        - Playable
+        - Playable with issues
+        - In-game but major issues
+        - Does not boot
+        - Crashes / freezes
+        - Not tested enough to determine
+    validations:
+      required: true
+  - type: textarea
+    id: tested
+    attributes:
+      label: What did you test?
+      description: Mention menus, gameplay duration, graphics, audio, saving and any other relevant areas.
+    validations:
+      required: true
+  - type: textarea
+    id: issues
+    attributes:
+      label: Known issues
+      description: Describe glitches, slowdowns, freezes or other problems. Write "None observed" if applicable.
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence / notes
+      description: Screenshots or a short description are useful. Do not attach ROMs, copyrighted game data or personal information.
