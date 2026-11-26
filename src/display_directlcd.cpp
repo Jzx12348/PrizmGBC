@@ -129,12 +129,12 @@ void resolveScanline_OS(void) {
 		const int y = cpu.memory.LY_lcdline * 2 - 36;
 		if (y < 0 || y >= 216) return;
 		unsigned short* row = screen + y * LCD_WIDTH_PX;
-		for (int x = 0; x < 32; x++) { row[x] = COLOR_BLACK; row[352 + x] = COLOR_BLACK; }
 		unsigned short* dest = row + 32;
+		unsigned short* out = dest;
 		for (int x = 0; x < 160; x++) {
 			const unsigned short color = (unsigned short)GetPaletteForSrc(lineBuffer[x + 8]);
-			dest[x * 2] = color;
-			dest[x * 2 + 1] = color;
+			*out++ = color;
+			if ((x & 1) == 0) *out++ = color;
 		}
 		return;
 	}
@@ -143,7 +143,6 @@ void resolveScanline_OS(void) {
 	const int lastY = (cpu.memory.LY_lcdline + 1) * 3 / 2;
 	for (int y = firstY; y < lastY && y < 216; y++) {
 		unsigned short* row = screen + y * LCD_WIDTH_PX;
-		for (int x = 0; x < 72; x++) { row[x] = COLOR_BLACK; row[312 + x] = COLOR_BLACK; }
 		unsigned short* dest = row + 72;
 		for (int x = 0; x < 240; x++) {
 			const int sourceX = x * 2 / 3;
