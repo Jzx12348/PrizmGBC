@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Jzx12348/PrizmGBC/releases/latest"><strong>Latest stable release: v1.2.0</strong></a>
+  <a href="https://github.com/Jzx12348/PrizmGBC/releases/latest"><strong>Latest stable release: v1.3.0</strong></a>
   ·
   <a href="https://jzx12348.github.io/PrizmGBC/">Project website</a>
   ·
@@ -25,7 +25,7 @@ PrizmGBC is a community-developed fork of [Prizoop](https://github.com/tswilliam
 
 The project is primarily developed and validated for the **Casio fx-CG50**. Compatibility and performance can vary between games, calculator models and OS versions.
 
-## Features in v1.2.0
+## Features in v1.3.0
 
 - **Game Boy and Game Boy Color ROM support** for .gb and .gbc files.
 - **Recently played list** that remembers the five latest launched games.
@@ -38,19 +38,21 @@ The project is primarily developed and validated for the **Casio fx-CG50**. Comp
 
 Some inherited emulator features may remain experimental. Consult the release notes and test on your own calculator before relying on save states or other critical functionality.
 
-## v1.3.0 beta
+## v1.3.0 stable
 
-**Beta release:** [PrizmGBC v1.3.0-beta](https://github.com/Jzx12348/PrizmGBC/releases/tag/v1.3.0-beta).
+**Stable release:** [PrizmGBC v1.3.0](https://github.com/Jzx12348/PrizmGBC/releases/tag/v1.3.0).
 
-The beta is ready for wider testing on a physical Casio fx-CG50. The v1.3.0 library and usability work includes:
+The v1.3.0 library and usability release includes:
 
 - Individual game information pages with cartridge and ROM metadata.
 - Persistent grid or list library preference, with consistent two-column grid navigation.
 - Improved recently played indicators and per-game playtime display, plus sorting by recent activity or total playtime.
 - Per-game settings profiles that can be saved and applied, including display, performance, audio and key mappings.
 - A dedicated three-slot save-state manager for the currently loaded game. **F3 saves** and **F4 loads** the selected slot, both in the manager and during gameplay.
+- A clearer library footer with action labels positioned directly above their matching F2, F3, F4 and F6 keys.
+- Wider, evenly spaced settings category tabs.
 
-This is a beta pre-release, not a stable release. Use v1.2.0 for normal installation if you prefer the established stable version. Back up calculator data before testing and report any issues through GitHub Issues.
+This is the stable v1.3.0 release. The v1.3.0-beta pre-release remains available in the release archive and will not receive further updates.
 
 ## Download and install
 
@@ -148,7 +150,7 @@ The roadmap describes the current direction of the project. Planned features are
 
 ### v1.3.0 · Library and usability
 
-The v1.3.0 beta contains the planned library and usability implementation: game information pages, persistent grid/list layout, refined grid navigation, recently played indicators, playtime display and sorting, manually saved and applied per-game settings profiles, and a dedicated three-slot save-state manager. Settings migration now updates legacy default save/load bindings individually while preserving custom mappings, and profile data is validated before application. Physical fx-CG50 testing remains essential, especially for save/load reliability, playtime accuracy, profile behaviour and upgrades from older settings versions.
+The stable v1.3.0 release delivers the library and usability implementation: game information pages, persistent grid/list layout, refined grid navigation, recently played indicators, playtime display and sorting, manually saved and applied per-game settings profiles, and a dedicated three-slot save-state manager. Settings migration now updates legacy default save/load bindings individually while preserving custom mappings, and profile data is validated before application. Physical fx-CG50 testing remains essential, especially for save/load reliability, playtime accuracy, profile behaviour and upgrades from older settings versions.
 
 ### v1.4.0 · Personalisation
 
