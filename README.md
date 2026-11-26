@@ -30,7 +30,7 @@ PrizmGBC is primarily being brought back to a known-good state on the **fx-CG50*
 
 ## Installation
 
-1. Build PrizmGBC using the instructions below, or obtain a `.g3a` file from a project release.
+1. Download the latest `PrizmGBC.g3a` from the [GitHub Releases page](https://github.com/Jzx12348/PrizmGBC/releases), or build it from source using the instructions below.
 2. Connect the calculator to your computer over USB and open its storage.
 3. Copy **`PrizmGBC.g3a`** to the calculator's root directory.
 4. Copy your legally obtained `.gb` or `.gbc` game files to the same root directory.
@@ -38,7 +38,7 @@ PrizmGBC is primarily being brought back to a known-good state on the **fx-CG50*
 
 Keep ROM filenames short and simple. The original Prizoop documentation recommends names shorter than 12 characters; this fork has not yet verified whether that restriction can be relaxed.
 
-**Important:** do not use the old `prizoop.g3a` binary in the repository as proof that the current source builds correctly. The current Makefile derives the output filename from the project directory, which is `PrizmGBC.g3a` when the repository folder is named `PrizmGBC`. Always install the freshly generated file.
+**Release policy:** compiled `.g3a` files are distributed through GitHub Releases, not committed to the source tree. The repository is intended to contain source code, documentation, and project assets. The Makefile generates `PrizmGBC.g3a` when the project is built from a directory named `PrizmGBC`.
 
 ## Building from source
 
@@ -198,9 +198,16 @@ This fork should preserve the original license and copyright notices. See the re
 PrizmGBC is an independent community project and is not affiliated with, endorsed by or sponsored by CASIO or Nintendo. Game Boy is a Nintendo trademark. Casio and fx-CG50 are trademarks of CASIO COMPUTER CO., LTD.
 
 
-## Website
+## Website and downloads
 
-The project landing page is in `index.html`. A GitHub Actions workflow deploys that page to GitHub Pages when it changes on `master`. Enable **Settings → Pages → Build and deployment → Source: GitHub Actions** in the repository to publish it.
+The project website is published with GitHub Pages from `index.html`. The website links to the source repository and the [GitHub Releases page](https://github.com/Jzx12348/PrizmGBC/releases), where packaged `.g3a` builds belong. Enable **Settings → Pages → Build and deployment → Source: GitHub Actions** in the repository if Pages has not already been activated.
+
+### Release policy
+
+- Keep compiled `.g3a` files out of the Git source tree.
+- Attach the calculator add-in as `PrizmGBC.g3a` to a versioned GitHub Release.
+- Include the source commit, build configuration, calculator OS tested, and known limitations in each release's notes.
+- Mark builds as pre-releases until the fx-CG50 device validation checklist has passed.
 
 ## Current hardware diagnostic build
 
