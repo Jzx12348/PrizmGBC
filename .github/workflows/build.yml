@@ -30,7 +30,7 @@ jobs:
 
       - name: Build PrizmGBC
         shell: cmd
-        working-directory: PrizmSDK\projects\PrizmGBC
+        working-directory: PrizmSDK\\projects\\PrizmGBC
         run: |
           call make.bat DEFINES="-DTARGET_PRIZM=1 -DDEBUG=0" CONFIG=DeviceRelease
           if not exist PrizmGBC.g3a exit /b 1
@@ -43,11 +43,30 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-      - name: Publish GitHub release
+      - name: Publish rolling development build
+        if: github.ref == 'refs/heads/master'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: dev
+          target_commitish: master
+          name: PrizmGBC Development Build
+          body: |
+            Rolling development build from the latest successful master commit.
+
+            This build may contain unfinished features or regressions. Use the stable release for everyday play.
+          prerelease: true
+          make_latest: false
+          overwrite_files: true
+          files: PrizmSDK/projects/PrizmGBC/PrizmGBC.g3a
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: Publish tagged release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
           name: PrizmGBC ${{ github.ref_name }}
+          prerelease: ${{ contains(github.ref_name, 'beta') || contains(github.ref_name, 'alpha') || contains(github.ref_name, 'rc') }}
+          make_latest: ${{ !(contains(github.ref_name, 'beta') || contains(github.ref_name, 'alpha') || contains(github.ref_name, 'rc')) }}
           generate_release_notes: true
           files: PrizmSDK/projects/PrizmGBC/PrizmGBC.g3a
           token: ${{ secrets.GH_TOKEN }}
