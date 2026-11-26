@@ -423,6 +423,17 @@ void drawFramebufferMain(void) {
 }
 
 void SetupDisplayDriver(char withFrameskip) {
+	// A ROM can be stopped and started again without restarting the add-in.
+	// Reset the scanline/DMA pipeline so a previous partial frame cannot leave
+	// the next game launch waiting on stale buffer state.
+	DmaWaitNext();
+	curScanBuffer = 0;
+	curScan = 0;
+	skippingFrame = false;
+	framecounter = 0;
+	lineBuffer = ((unsigned char*)0xE5017000);
+	prevLineBuffer = ((unsigned char*)0xE5017400);
+
 	frameSkip = withFrameskip;
 
 	drawFramebuffer = drawFramebufferMain;
