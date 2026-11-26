@@ -123,7 +123,7 @@ void emulator_type::defaultSettings() {
 	settings.version = SETTINGS_VERSION;
 	settings.selectedRom[0] = 0;
 	settings.overclock = false;
-	settings.scaleMode = emu_scale::LO_150;
+	settings.scaleMode = emu_scale::NONE;
 	settings.frameSkip = -1;
 
 	settings.clampSpeed = true;
