@@ -45,7 +45,7 @@ jobs:
         with:
           tag_name: v1.3.0-beta
           target_commitish: master
-          name: PrizmGBC v1.3.0-beta
+          name: v1.3.0-beta
           draft: false
           prerelease: true
           make_latest: false
