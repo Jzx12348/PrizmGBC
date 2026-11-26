@@ -15,43 +15,55 @@ void screen_play::setup() {
 }
 
 void screen_play::select() {
-	// was ROM already loaded? we may need to switch
+	// Reuse an already loaded ROM when possible.
 	if (loadedROM[0]) {
 		if (strcmp(loadedROM, emulator.settings.selectedRom)) {
 			unloadROM();
+			loadedROM[0] = 0;
 		} else {
-			// still playing the same game
 			play();
 			return;
 		}
 	}
 
-	// if we got here we need to reinit the ROM
-	initRom();
+	// F6 is the Play action: load and launch immediately.
+	if (initRom()) {
+		play();
+	}
 }
 
 void screen_play::deselect() {
 }
 
 void screen_play::handleSelect() {
-	if (mbc.romFile) {
-		play();
-	}
+	if (mbc.romFile) play();
 }
 
-void screen_play::initRom() {
+bool screen_play::initRom() {
 	ResolveBG(bg_menu);
-
 	reset_printf();
 	printf("Loading file \"%s\"...\n", emulator.settings.selectedRom);
 
-	if (!loadROM(emulator.settings.selectedRom)) {
-		printf("Failed!\n");
+	if (!loadROM(emulator.settings.selectedRom) || !mbc.romFile) {
+		loadedROM[0] = 0;
+		ResolveBG(bg_menu);
+		Print(14, 8, "PRIZMGBC", false, COLOR_WHITE);
+		Print(14, 27, "GAME COULD NOT START", false, COLOR_CYAN);
+		Print(18, 82, "ROM LOAD FAILED", false, COLOR_WHITE);
+		Print(18, 103, "Check the ROM file and format.", false, COLOR_SILVER);
+		Print(18, 119, "Supported: .GB, .GBC, .GBZ", false, COLOR_SILVER);
+		display_fill footer;
+		footer.x1 = 0; footer.x2 = 383; footer.y1 = 192; footer.y2 = 215; footer.mode = 1;
+		Bdisp_AreaClr(&footer, 1, COLOR_BLACK);
+		Print(10, 198, "F1 LIBRARY   F2 SETTINGS", false, COLOR_SILVER);
+		DrawFrame(0);
+		Bdisp_PutDisp_DD();
+		return false;
 	}
 
 	sndStartup();
-
 	strcpy(loadedROM, emulator.settings.selectedRom);
+	return true;
 }
 
 void screen_play::drawPlayBG() {
@@ -72,6 +84,7 @@ void screen_play::postStateChange() {
 bool bSoundEnabled = false;
 
 void screen_play::play() {
+	if (!mbc.romFile) return;
 	mbcFileUpdate();
 
 	drawPlayBG();
