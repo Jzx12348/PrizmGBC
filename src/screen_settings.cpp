@@ -81,7 +81,7 @@ void screen_settings::drawOptions() {
 	Bdisp_AreaClr(&accent, 1, COLOR_CYAN);
 	Print(12, 5, "PRIZMGBC", true, COLOR_WHITE);
 	Print(12, 24, "SYSTEM SETTINGS", false, COLOR_CYAN);
-	Print(300, 15, "CONFIG", false, COLOR_SILVER);
+	Print(300, 15, "v0.1.0", false, COLOR_CYAN);
 
 	display_fill panel;
 	panel.x1 = 7; panel.x2 = 376; panel.y1 = 51; panel.y2 = 187; panel.mode = 1;
@@ -115,7 +115,9 @@ void screen_settings::drawOptions() {
 			Print(302, y, isOn ? "ON" : "OFF", selected,
 				options[i].disabled ? COLOR_SILVER : (isOn ? COLOR_CYAN : COLOR_SILVER));
 		} else if (options[i].type == 1) {
-			Print(286, y, "CONFIGURE", selected, COLOR_CYAN);
+			char bindText[16];
+			sprintf(bindText, "%d BOUND", emu_button::MAX);
+			Print(286, y, bindText, selected, COLOR_CYAN);
 		} else if (options[i].type == 2) {
 			char skip = *((char*)options[i].addr);
 			if (skip == -1) Print(318, y, "AUTO", selected, COLOR_CYAN);
@@ -173,6 +175,37 @@ unsigned char getCurrentKey(bool wait = true) {
 	OS_InnerWait_ms(10);
 
 	return keyPressed;
+}
+
+static void drawCurrentKeyMap() {
+	ResolveBG(bg_menu);
+	EnableStatusArea(3);
+	display_fill header;
+	header.x1 = 0; header.x2 = 383; header.y1 = 0; header.y2 = 43; header.mode = 1;
+	Bdisp_AreaClr(&header, 1, COLOR_BLACK);
+	display_fill accent;
+	accent.x1 = 0; accent.x2 = 383; accent.y1 = 42; accent.y2 = 45; accent.mode = 1;
+	Bdisp_AreaClr(&accent, 1, COLOR_CYAN);
+	Print(12, 5, "PRIZMGBC", true, COLOR_WHITE);
+	Print(12, 24, "CURRENT KEY BINDS", false, COLOR_CYAN);
+	Print(300, 15, "v0.1.0", false, COLOR_CYAN);
+
+	for (int i = 0; i < emu_button::MAX; i++) {
+		int column = i / 5;
+		int row = i % 5;
+		int x = column ? 202 : 14;
+		int y = 57 + row * 25;
+		Print(x, y, keyName[i], false, COLOR_WHITE);
+		char keyText[20];
+		sprintf(keyText, "KEY %02u", emulator.settings.keyMap[i]);
+		Print(x + 112, y, keyText, true, COLOR_CYAN);
+	}
+	display_fill footer;
+	footer.x1 = 0; footer.x2 = 383; footer.y1 = 192; footer.y2 = 215; footer.mode = 1;
+	Bdisp_AreaClr(&footer, 1, COLOR_BLACK);
+	Print(10, 198, "EXE  REMAP ALL", false, COLOR_CYAN);
+	Print(245, 198, "MENU  BACK", false, COLOR_SILVER);
+	DrawFrame(0);
 }
 
 void screen_settings::selectKeys() {
@@ -253,7 +286,12 @@ void screen_settings::handleSelect() {
 		}
 		case 1:
 		{
-			selectKeys();
+			drawCurrentKeyMap();
+			int key = 0;
+			GetKey(&key);
+			if (key == KEY_CTRL_EXE || key == KEY_CTRL_SHIFT) {
+				selectKeys();
+			}
 			break;
 		}
 		case 2:
