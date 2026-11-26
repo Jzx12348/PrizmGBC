@@ -435,22 +435,9 @@ void SetupDisplayDriver(char withFrameskip) {
 	lineBuffer = ((unsigned char*)0xE5017000);
 	prevLineBuffer = ((unsigned char*)0xE5017400);
 
-	switch (emulator.settings.scaleMode) {
-		case emu_scale::LO_150:
-			resolveRenderedLine = resolveScanline_LO_150;
-			break;
-		case emu_scale::HI_150:
-			resolveRenderedLine = resolveScanline_HI_150;
-			break;
-		case emu_scale::LO_200:
-			resolveRenderedLine = resolveScanline_LO_200;
-			break;
-		case emu_scale::HI_200:
-			resolveRenderedLine = resolveScanline_HI_200;
-			break;
-		default:
-			resolveRenderedLine = resolveScanline_NONE;
-	}
+	// Use the OS-managed framebuffer presenter on every setting. The legacy
+	// scaled presenters all write directly to the old LCD controller.
+	resolveRenderedLine = resolveScanline_OS;
 }
 
 #endif
