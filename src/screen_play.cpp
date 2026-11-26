@@ -10,6 +10,26 @@
 
 #include "screen_play.h"
 
+static void rememberRecentRom(const char* filename) {
+	int count = emulator.settings.recentCount;
+	if (count > 5) count = 5;
+	int existing = -1;
+	for (int i = 0; i < count; i++) {
+		if (!strcmp(emulator.settings.recentRoms[i], filename)) {
+			existing = i;
+			break;
+		}
+	}
+
+	int last = existing >= 0 ? existing : (count < 5 ? count : 4);
+	for (int i = last; i > 0; i--) {
+		strcpy(emulator.settings.recentRoms[i], emulator.settings.recentRoms[i - 1]);
+	}
+	strcpy(emulator.settings.recentRoms[0], filename);
+	if (existing < 0 && count < 5) emulator.settings.recentCount = count + 1;
+	emulator.saveSettings();
+}
+
 void screen_play::setup() {
 	loadedROM[0] = 0;
 }
@@ -63,6 +83,7 @@ bool screen_play::initRom() {
 
 	sndStartup();
 	strcpy(loadedROM, emulator.settings.selectedRom);
+	rememberRecentRom(loadedROM);
 	return true;
 }
 
