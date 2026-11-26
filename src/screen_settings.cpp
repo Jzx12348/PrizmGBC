@@ -177,6 +177,23 @@ unsigned char getCurrentKey(bool wait = true) {
 	return keyPressed;
 }
 
+static const char* getMappedKeyLabel(unsigned char code) {
+	switch (code) {
+		case 78: return "SHIFT";
+		case 68: return "OPTN";
+		case 39: return "F5";
+		case 29: return "F6";
+		case 27: return "RIGHT";
+		case 38: return "LEFT";
+		case 28: return "UP";
+		case 37: return "DOWN";
+		case 43: return "S";
+		case 25: return "L";
+		case 48: return "MENU";
+		default: return NULL;
+	}
+}
+
 void screen_settings::drawCurrentKeyMap() {
 	ResolveBG(bg_menu);
 	EnableStatusArea(3);
@@ -196,8 +213,10 @@ void screen_settings::drawCurrentKeyMap() {
 		int x = column ? 202 : 14;
 		int y = 57 + row * 25;
 		Print(x, y, keyName[i], false, COLOR_WHITE);
+		const char* keyLabel = getMappedKeyLabel(emulator.settings.keyMap[i]);
 		char keyText[20];
-		sprintf(keyText, "KEY %02u", emulator.settings.keyMap[i]);
+		if (keyLabel) strcpy(keyText, keyLabel);
+		else sprintf(keyText, "KEY %02u", emulator.settings.keyMap[i]);
 		Print(x + 112, y, keyText, true, COLOR_CYAN);
 	}
 	display_fill footer;
