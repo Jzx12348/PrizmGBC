@@ -31,7 +31,7 @@ namespace emu_scale {
 }
 
 // Emulation settings
-#define SETTINGS_VERSION 5 // reset legacy settings for the unscaled renderer validation build
+#define SETTINGS_VERSION 6 // reset settings for the OS framebuffer scaled renderer
 struct emulator_settings {
 	int version;
 	unsigned int faqOffset;		// faq text offset (top 8 bits are name hash, bottom 24 are actual offset)
