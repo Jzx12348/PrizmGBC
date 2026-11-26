@@ -1,4 +1,4 @@
-name: Publish PrizmGBC stable
+name: Publish PrizmGBC stable # Stable releases only; the beta tag is never modified.
 
 on:
   push:
