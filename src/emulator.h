@@ -22,10 +22,8 @@ namespace emu_button {
 namespace emu_scale {
 	enum {
 		NONE = 0,
-		LO_150,
-		HI_150,
-		LO_200,
-		HI_200,
+		FIT_150,
+		CROP_200,
 		MAX
 	};
 }
