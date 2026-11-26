@@ -24,6 +24,7 @@ static option_type options[] = {
 	{ "Sprite 2 Colors", 3, &emulator.settings.obj2ColorPalette, false, false },
 	{ "Map Keys", 1, NULL, false, false },
 	{ "Sound", 0, &emulator.settings.sound, false, false },
+	{ "FPS Counter", 0, &emulator.settings.fpsCounter, false, false },
 };
 
 static inline int NumOptions() {
@@ -91,7 +92,7 @@ void screen_settings::drawOptions() {
 	for (int i = 0; i < NumOptions(); i++) {
 		if (options[i].noCGB) continue;
 		bool selected = curOption == i;
-		int y = row * 13 + 57;
+		int y = row * 12 + 55;
 		row++;
 
 		if (selected) {
