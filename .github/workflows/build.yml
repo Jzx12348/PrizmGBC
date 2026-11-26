@@ -56,17 +56,17 @@ jobs:
           script: |
             const tag = 'v1.2.0';
             try {
-              await github.rest.git.getRef({ ...context.repo, ref: 'tags/' + tag });
-              core.info(tag + ' already exists; leaving it unchanged.');
+              await github.rest.git.deleteRef({ ...context.repo, ref: 'tags/' + tag });
+              core.info('Removed existing ' + tag + ' so the stable release workflow can run.');
             } catch (error) {
               if (error.status !== 404) throw error;
-              await github.rest.git.createRef({
-                ...context.repo,
-                ref: 'refs/tags/' + tag,
-                sha: context.sha
-              });
-              core.info('Created ' + tag + ' at ' + context.sha);
             }
+            await github.rest.git.createRef({
+              ...context.repo,
+              ref: 'refs/tags/' + tag,
+              sha: context.sha
+            });
+            core.info('Created ' + tag + ' at ' + context.sha);
 
       - name: Publish rolling development build
         if: github.ref == 'refs/heads/master'
