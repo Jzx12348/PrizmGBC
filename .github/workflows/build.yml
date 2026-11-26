@@ -2,7 +2,7 @@ name: Build PrizmGBC
 
 on:
   push:
-    branches: [master]
+    branches: [master, v1.2.0]
     tags: ['v*']
   pull_request:
     branches: [master]
@@ -44,16 +44,16 @@ jobs:
           retention-days: 14
 
       - name: Publish rolling development build
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/v1.2.0'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: dev
-          target_commitish: master
-          name: v1.1.0-development
+          target_commitish: v1.2.0
+          name: v1.2.0-development
           body: |
             **Development build · PRE-RELEASE**
 
-            This is the latest development build from the master branch. It may contain unfinished features, experimental changes, or regressions. It is intended for testing, not everyday use.
+            This is the latest development build from the v1.2.0 development branch. It may contain unfinished features, experimental changes, or regressions. It is intended for testing, not everyday use.
 
             **Features under test**
             - In-game FPS counter, including its settings toggle.
