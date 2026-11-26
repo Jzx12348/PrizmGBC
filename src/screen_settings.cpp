@@ -39,6 +39,9 @@ static option_type options[] = {
 	{ "Sound", 0, CATEGORY_AUDIO, &emulator.settings.sound, false, false },
 	{ "FPS Counter", 0, CATEGORY_SYSTEM, &emulator.settings.fpsCounter, false, false },
 	{ "Save State Slot", 5, CATEGORY_SYSTEM, &emulator.settings.saveSlot, false, false },
+	{ "Save Game Profile", 6, CATEGORY_SYSTEM, NULL, false, false },
+	{ "Apply Game Profile", 7, CATEGORY_SYSTEM, NULL, false, false },
+	{ "Save State Manager", 8, CATEGORY_SYSTEM, NULL, false, false },
 };
 
 static inline int NumOptions() {
@@ -89,6 +92,9 @@ void screen_settings::select() {
 	// Overclock is only available on supported CG-20 hardware when Ptune2 is inactive.
 	int currentPtuneSetting = Ptune2_GetSetting();
 	options[0].disabled = getDeviceType() != DT_CG20 || currentPtuneSetting != PT2_DEFAULT;
+	options[12].disabled = !emulator.settings.selectedRom[0];
+	options[13].disabled = !emulator.hasGameProfile(emulator.settings.selectedRom);
+	options[14].disabled = !emulator.settings.selectedRom[0];
 
 	if (emulator.isCGBRomLoaded()) {
 		options[4].noCGB = true;
@@ -193,6 +199,14 @@ void screen_settings::drawOptions() {
 			char slotText[12];
 			sprintf(slotText, "SLOT %d", (slot < 3 ? slot : 0) + 1);
 			Print(300, y, slotText, selected, COLOR_LIGHTGREEN);
+		}
+		else if (options[index].type == 6) {
+			Print(300, y, "SAVE", selected, COLOR_LIGHTGREEN);
+		} else if (options[index].type == 7) {
+			Print(270, y, emulator.hasGameProfile(emulator.settings.selectedRom) ? "AVAILABLE" : "NONE",
+				selected, options[index].disabled ? COLOR_SILVER : COLOR_LIGHTGREEN);
+		} else if (options[index].type == 8) {
+			Print(300, y, "OPEN", selected, COLOR_LIGHTGREEN);
 		}
 	}
 
@@ -396,6 +410,15 @@ void screen_settings::handleSelect() {
 			*slot = ((*slot) + 1) % 3;
 			break;
 		}
+		case 6:
+			if (emulator.saveGameProfile(emulator.settings.selectedRom)) options[13].disabled = false;
+			break;
+		case 7:
+			emulator.applyGameProfile(emulator.settings.selectedRom);
+			break;
+		case 8:
+			emulator.tryScreenChange(4);
+			return;
 	}
 
 	ResolveBG(bg_menu);
