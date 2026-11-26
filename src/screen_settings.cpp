@@ -1,38 +1,79 @@
-
 #include "platform.h"
 #include "keys.h"
 
 #include "screen_settings.h"
 #include "ptune2_simple/Ptune2_direct.h"
 
+enum settings_category {
+	CATEGORY_PERFORMANCE = 0,
+	CATEGORY_DISPLAY,
+	CATEGORY_CONTROLS,
+	CATEGORY_AUDIO,
+	CATEGORY_SYSTEM,
+	CATEGORY_COUNT
+};
+
+static const char* categoryNames[CATEGORY_COUNT] = {
+	"PERFORMANCE", "DISPLAY", "CONTROLS", "AUDIO", "SYSTEM"
+};
+
 struct option_type {
 	const char* name;
-	int type;		// 0 = toggle, 1 = keys, 2 = frameskip, 3 = color, 4 = scale mode
+	int type; // 0 = toggle, 1 = keys, 2 = frameskip, 3 = color, 4 = scale mode
+	int category;
 	void* addr;
 	bool disabled;
 	bool noCGB;
 };
 
 static option_type options[] = {
-	{ "Overclock", 0, &emulator.settings.overclock, false, false },
-	{ "Fit To Screen", 4, &emulator.settings.scaleMode, false, false },
-	{ "CGB Colors", 0, &emulator.settings.useCGBColors, false, false },
-	{ "Clamp Speed", 0, &emulator.settings.clampSpeed, false, false },
-	{ "Frameskip", 2, &emulator.settings.frameSkip, false, false },
-	{ "BG Colors", 3, &emulator.settings.bgColorPalette, false, false },
-	{ "Sprite 1 Colors", 3, &emulator.settings.obj1ColorPalette, false, false },
-	{ "Sprite 2 Colors", 3, &emulator.settings.obj2ColorPalette, false, false },
-	{ "Map Keys", 1, NULL, false, false },
-	{ "Sound", 0, &emulator.settings.sound, false, false },
-	{ "FPS Counter", 0, &emulator.settings.fpsCounter, false, false },
+	{ "Overclock", 0, CATEGORY_PERFORMANCE, &emulator.settings.overclock, false, false },
+	{ "Clamp Speed", 0, CATEGORY_PERFORMANCE, &emulator.settings.clampSpeed, false, false },
+	{ "Frameskip", 2, CATEGORY_PERFORMANCE, &emulator.settings.frameSkip, false, false },
+	{ "Fit To Screen", 4, CATEGORY_DISPLAY, &emulator.settings.scaleMode, false, false },
+	{ "CGB Colors", 0, CATEGORY_DISPLAY, &emulator.settings.useCGBColors, false, false },
+	{ "BG Colors", 3, CATEGORY_DISPLAY, &emulator.settings.bgColorPalette, false, false },
+	{ "Sprite 1 Colors", 3, CATEGORY_DISPLAY, &emulator.settings.obj1ColorPalette, false, false },
+	{ "Sprite 2 Colors", 3, CATEGORY_DISPLAY, &emulator.settings.obj2ColorPalette, false, false },
+	{ "Map Keys", 1, CATEGORY_CONTROLS, NULL, false, false },
+	{ "Sound", 0, CATEGORY_AUDIO, &emulator.settings.sound, false, false },
+	{ "FPS Counter", 0, CATEGORY_SYSTEM, &emulator.settings.fpsCounter, false, false },
 };
 
 static inline int NumOptions() {
 	return sizeof(options) / sizeof(option_type);
 }
 
+static int categoryOptionCount(int category) {
+	int count = 0;
+	for (int i = 0; i < NumOptions(); i++) {
+		if (options[i].category == category && !options[i].noCGB) count++;
+	}
+	return count;
+}
+
+static int categoryOptionIndex(int category, int row) {
+	for (int i = 0; i < NumOptions(); i++) {
+		if (options[i].category == category && !options[i].noCGB) {
+			if (row == 0) return i;
+			row--;
+		}
+	}
+	return -1;
+}
+
+static int firstEnabledOption(int category) {
+	int count = categoryOptionCount(category);
+	for (int row = 0; row < count; row++) {
+		int index = categoryOptionIndex(category, row);
+		if (index >= 0 && !options[index].disabled) return row;
+	}
+	return 0;
+}
+
 void screen_settings::setup() {
 	curOption = 0;
+	curCategory = CATEGORY_PERFORMANCE;
 }
 
 void screen_settings::select() {
@@ -44,24 +85,18 @@ void screen_settings::select() {
 		options[i].noCGB = false;
 	}
 
-	// disable overclock on non CG-20 devices and when already overclocked (such as when using Ptune2)
+	// Overclock is only available on supported CG-20 hardware when Ptune2 is inactive.
 	int currentPtuneSetting = Ptune2_GetSetting();
 	options[0].disabled = getDeviceType() != DT_CG20 || currentPtuneSetting != PT2_DEFAULT;
 
 	if (emulator.isCGBRomLoaded()) {
-		options[2].noCGB = true;
+		options[4].noCGB = true;
 		options[5].noCGB = true;
 		options[6].noCGB = true;
 		options[7].noCGB = true;
 	}
 
-	for (int i = 0; i < NumOptions(); i++) {
-		if (options[i].noCGB) options[i].disabled = true;
-	}
-
-	// can't select disabled option
-	while (options[curOption].disabled) curOption = (curOption + 1) % NumOptions();
-
+	curOption = firstEnabledOption(curCategory);
 	drawOptions();
 }
 
@@ -73,72 +108,83 @@ void screen_settings::drawOptions() {
 	ResolveBG(bg_menu);
 	EnableStatusArea(3);
 
-	// Shared PrizmGBC visual language: dark header, cyan accent, clear panels.
 	display_fill header;
-	header.x1 = 0; header.x2 = 383; header.y1 = 0; header.y2 = 43; header.mode = 1;
+	header.x1 = 0; header.x2 = 383; header.y1 = 0; header.y2 = 39; header.mode = 1;
 	Bdisp_AreaClr(&header, 1, COLOR_BLACK);
 	display_fill accent;
-	accent.x1 = 0; accent.x2 = 383; accent.y1 = 42; accent.y2 = 45; accent.mode = 1;
+	accent.x1 = 0; accent.x2 = 383; accent.y1 = 38; accent.y2 = 41; accent.mode = 1;
 	Bdisp_AreaClr(&accent, 1, COLOR_LIGHTGREEN);
-	Print(12, 5, "PRIZMGBC", true, COLOR_WHITE);
-	Print(12, 24, "SYSTEM SETTINGS", false, COLOR_LIGHTGREEN);
-	Print(300, 15, "v1.1.0", false, COLOR_LIGHTGREEN);
+	Print(12, 4, "PRIZMGBC", true, COLOR_WHITE);
+	Print(12, 22, "SETTINGS", false, COLOR_LIGHTGREEN);
+	Print(310, 13, "v1.2.0", false, COLOR_LIGHTGREEN);
+
+	const int tabX[CATEGORY_COUNT] = { 9, 87, 163, 246, 311 };
+	const int tabW[CATEGORY_COUNT] = { 73, 71, 77, 60, 64 };
+	for (int i = 0; i < CATEGORY_COUNT; i++) {
+		if (i == curCategory) {
+			display_fill tab;
+			tab.x1 = tabX[i]; tab.x2 = tabX[i] + tabW[i];
+			tab.y1 = 48; tab.y2 = 68; tab.mode = 1;
+			Bdisp_AreaClr(&tab, 1, COLOR_DARKGREEN);
+			Print(tabX[i] + 5, 53, categoryNames[i], true, COLOR_LIGHTGREEN);
+		} else {
+			Print(tabX[i] + 5, 53, categoryNames[i], false, COLOR_SILVER);
+		}
+	}
 
 	display_fill panel;
-	panel.x1 = 7; panel.x2 = 376; panel.y1 = 51; panel.y2 = 187; panel.mode = 1;
+	panel.x1 = 7; panel.x2 = 376; panel.y1 = 76; panel.y2 = 186; panel.mode = 1;
 	Bdisp_AreaClr(&panel, 1, COLOR_DARKGRAY);
+	Print(17, 81, categoryNames[curCategory], false, COLOR_LIGHTGREEN);
 
-	int row = 0;
-	for (int i = 0; i < NumOptions(); i++) {
-		if (options[i].noCGB) continue;
-		bool selected = curOption == i;
-		int y = row * 12 + 55;
-		row++;
+	int count = categoryOptionCount(curCategory);
+	for (int row = 0; row < count; row++) {
+		int index = categoryOptionIndex(curCategory, row);
+		if (index < 0) continue;
+		int y = 101 + row * 20;
+		bool selected = row == curOption;
 
 		if (selected) {
 			display_fill highlight;
-			highlight.x1 = 10; highlight.x2 = 373;
-			highlight.y1 = y - 2; highlight.y2 = y + 11;
-			highlight.mode = 1;
-			Bdisp_AreaClr(&highlight, 1, COLOR_DARKGREEN);
+			highlight.x1 = 11; highlight.x2 = 372;
+			highlight.y1 = y - 3; highlight.y2 = y + 13; highlight.mode = 1;
+			Bdisp_AreaClr(&highlight, 1, COLOR_BLACK);
 			display_fill marker;
-			marker.x1 = 10; marker.x2 = 13;
-			marker.y1 = y - 2; marker.y2 = y + 11;
-			marker.mode = 1;
+			marker.x1 = 11; marker.x2 = 14;
+			marker.y1 = y - 3; marker.y2 = y + 13; marker.mode = 1;
 			Bdisp_AreaClr(&marker, 1, COLOR_LIGHTGREEN);
 		}
 
-		Print(19, y, options[i].name, selected,
-			options[i].disabled ? COLOR_SILVER : COLOR_WHITE);
+		Print(21, y, options[index].name, selected,
+			options[index].disabled ? COLOR_SILVER : COLOR_WHITE);
 
-		if (options[i].type == 0) {
-			unsigned char isOn = *((unsigned char*)options[i].addr);
-			Print(302, y, isOn ? "ON" : "OFF", selected,
-				options[i].disabled ? COLOR_SILVER : (isOn ? COLOR_LIGHTGREEN : COLOR_SILVER));
-		} else if (options[i].type == 1) {
+		if (options[index].type == 0) {
+			unsigned char isOn = *((unsigned char*)options[index].addr);
+			Print(315, y, isOn ? "ON" : "OFF", selected,
+				options[index].disabled ? COLOR_SILVER : (isOn ? COLOR_LIGHTGREEN : COLOR_SILVER));
+		} else if (options[index].type == 1) {
 			char bindText[16];
 			sprintf(bindText, "%d BOUND", emu_button::MAX);
 			Print(286, y, bindText, selected, COLOR_LIGHTGREEN);
-		} else if (options[i].type == 2) {
-			char skip = *((char*)options[i].addr);
-			if (skip == -1) Print(318, y, "AUTO", selected, COLOR_LIGHTGREEN);
+		} else if (options[index].type == 2) {
+			char skip = *((char*)options[index].addr);
+			if (skip == -1) Print(315, y, "AUTO", selected, COLOR_LIGHTGREEN);
 			else {
 				char buffer[8];
-				memset(buffer, 0, sizeof(buffer));
 				sprintf(buffer, "%d", skip);
-				Print(318, y, buffer, selected, COLOR_LIGHTGREEN);
+				Print(315, y, buffer, selected, COLOR_LIGHTGREEN);
 			}
-		} else if (options[i].type == 3) {
+		} else if (options[index].type == 3) {
 			colorpalette_type pal;
-			emulator.getPalette(*((unsigned char*)options[i].addr), pal);
+			emulator.getPalette(*((unsigned char*)options[index].addr), pal);
 			for (int j = 0; j < 4; j++) {
 				display_fill swatch;
-				swatch.x1 = 300 + 17 * j; swatch.x2 = swatch.x1 + 13;
-				swatch.y1 = y - 1; swatch.y2 = y + 10; swatch.mode = 1;
+				swatch.x1 = 306 + 16 * j; swatch.x2 = swatch.x1 + 12;
+				swatch.y1 = y - 1; swatch.y2 = y + 11; swatch.mode = 1;
 				Bdisp_AreaClr(&swatch, 1, pal.colors[j]);
 			}
-		} else if (options[i].type == 4) {
-			unsigned char opt = *((unsigned char*)options[i].addr);
+		} else if (options[index].type == 4) {
+			unsigned char opt = *((unsigned char*)options[index].addr);
 			const char* modes[] = { "1X", "FIT 1.5X", "2X CROP" };
 			Print(286, y, modes[opt < emu_scale::MAX ? opt : 0], selected, COLOR_LIGHTGREEN);
 		}
@@ -147,10 +193,11 @@ void screen_settings::drawOptions() {
 	display_fill footer;
 	footer.x1 = 0; footer.x2 = 383; footer.y1 = 192; footer.y2 = 215; footer.mode = 1;
 	Bdisp_AreaClr(&footer, 1, COLOR_BLACK);
-	Print(10, 198, "UP / DOWN  NAVIGATE", false, COLOR_SILVER);
-	Print(235, 198, "EXE  CHANGE", false, COLOR_LIGHTGREEN);
+	Print(9, 198, "LEFT / RIGHT  CATEGORY", false, COLOR_SILVER);
+	Print(246, 198, "UP / DOWN  SELECT", false, COLOR_LIGHTGREEN);
 	DrawFrame(0);
 }
+
 static const char* keyName[] = {
 	"A", "B", "Select", "Start", "Right", "Left", "Up", "Down", "Save State", "Load State"
 };
@@ -159,22 +206,15 @@ unsigned char getCurrentKey(bool wait = true) {
 	unsigned char keyPressed = 0;
 	do {
 		for (unsigned int c = 25; c <= 79; c++) {
-			// skip invalid keys
-			if (c % 10 == 0 || c == 34)
-				continue;
-
+			if (c % 10 == 0 || c == 34) continue;
 			if (keyDown_fast(c)) {
 				keyPressed = c;
-				// wait for key too lift
 				while (keyDown_fast(keyPressed)) {}
 				break;
 			}
 		}
 	} while (keyPressed == 0 && wait);
-
-	// wait a moment
 	OS_InnerWait_ms(10);
-
 	return keyPressed;
 }
 
@@ -206,7 +246,7 @@ void screen_settings::drawCurrentKeyMap(int selected) {
 	Bdisp_AreaClr(&accent, 1, COLOR_LIGHTGREEN);
 	Print(12, 5, "PRIZMGBC", true, COLOR_WHITE);
 	Print(12, 24, "CONTROLS / KEY MAPPING", false, COLOR_LIGHTGREEN);
-	Print(300, 15, "v1.1.0", false, COLOR_LIGHTGREEN);
+	Print(300, 15, "v1.2.0", false, COLOR_LIGHTGREEN);
 
 	for (int i = 0; i < emu_button::MAX; i++) {
 		int column = i / 5;
@@ -250,14 +290,12 @@ void screen_settings::editKeys() {
 		} else if (key == KEY_CTRL_MENU || key == KEY_CTRL_EXIT) {
 			return;
 		} else if (key == KEY_CTRL_F1) {
-			// Restore only the controls, leaving all other user settings intact.
 			static const unsigned char defaults[emu_button::MAX] = {
 				78, 68, 39, 29, 27, 38, 28, 37, 43, 25
 			};
 			memcpy(emulator.settings.keyMap, defaults, sizeof(defaults));
 			emulator.saveSettings();
 		} else if (key == KEY_CTRL_EXE || key == KEY_CTRL_SHIFT) {
-			// Let the confirmation key lift before waiting for the replacement.
 			getCurrentKey(false);
 			display_fill prompt;
 			prompt.x1 = 55; prompt.x2 = 328; prompt.y1 = 82; prompt.y2 = 137; prompt.mode = 1;
@@ -267,7 +305,6 @@ void screen_settings::editKeys() {
 			Print(192 - PrintWidth(keyName[selected]) / 2, 114, keyName[selected], true, COLOR_DARKCYAN);
 			Bdisp_PutDisp_DD();
 			unsigned char newKey = getCurrentKey();
-			// MENU cancels this one change.
 			if (newKey != 48) {
 				emulator.settings.keyMap[selected] = newKey;
 				emulator.saveSettings();
@@ -276,61 +313,75 @@ void screen_settings::editKeys() {
 	}
 }
 
-void screen_settings::handleUp() {
-	do {
-		curOption = (curOption + NumOptions() - 1) % NumOptions();
-	} while (options[curOption].disabled);
+void screen_settings::moveCategory(int direction) {
+	curCategory = (curCategory + CATEGORY_COUNT + direction) % CATEGORY_COUNT;
+	curOption = firstEnabledOption(curCategory);
+	ResolveBG(bg_menu);
+	DrawPausePreview();
+	drawOptions();
+}
 
+void screen_settings::handleLeft() {
+	moveCategory(-1);
+}
+
+void screen_settings::handleRight() {
+	moveCategory(1);
+}
+
+void screen_settings::handleUp() {
+	int count = categoryOptionCount(curCategory);
+	if (!count) return;
+	for (int attempt = 0; attempt < count; attempt++) {
+		curOption = (curOption + count - 1) % count;
+		int index = categoryOptionIndex(curCategory, curOption);
+		if (index >= 0 && !options[index].disabled) break;
+	}
 	ResolveBG(bg_menu);
 	DrawPausePreview();
 	drawOptions();
 }
 
 void screen_settings::handleDown() {
-	do {
-		curOption = (curOption + 1) % NumOptions();
-	} while (options[curOption].disabled);
-
+	int count = categoryOptionCount(curCategory);
+	if (!count) return;
+	for (int attempt = 0; attempt < count; attempt++) {
+		curOption = (curOption + 1) % count;
+		int index = categoryOptionIndex(curCategory, curOption);
+		if (index >= 0 && !options[index].disabled) break;
+	}
 	ResolveBG(bg_menu);
 	DrawPausePreview();
 	drawOptions();
 }
 
 void screen_settings::handleSelect() {
-	switch (options[curOption].type) {
-		case 0:
-		{
-			unsigned char* isOn = ((unsigned char*)options[curOption].addr);
+	int index = categoryOptionIndex(curCategory, curOption);
+	if (index < 0 || options[index].disabled) return;
+
+	switch (options[index].type) {
+		case 0: {
+			unsigned char* isOn = (unsigned char*)options[index].addr;
 			*isOn = 1 - *isOn;
 			break;
 		}
 		case 1:
-		{
 			editKeys();
 			break;
-		}
-		case 2:
-		{
-			char* skip = ((char*)options[curOption].addr);
+		case 2: {
+			char* skip = (char*)options[index].addr;
 			(*skip)++;
-			if (*skip == 5) {
-				*skip = -1;
-			}
+			if (*skip == 5) *skip = -1;
 			break;
 		}
-		case 3:
-		{
-			unsigned char* palette = ((unsigned char*)options[curOption].addr);
+		case 3: {
+			unsigned char* palette = (unsigned char*)options[index].addr;
 			*palette = ((*palette) + 1) % emulator.numPalettes();
-
-			// disable cgb colors
 			emulator.settings.useCGBColors = false;
-
 			break;
 		}
-		case 4:
-		{
-			unsigned char* opt = ((unsigned char*)options[curOption].addr);
+		case 4: {
+			unsigned char* opt = (unsigned char*)options[index].addr;
 			*opt = ((*opt) + 1) % emu_scale::MAX;
 			break;
 		}
@@ -340,4 +391,3 @@ void screen_settings::handleSelect() {
 	DrawPausePreview();
 	drawOptions();
 }
-
