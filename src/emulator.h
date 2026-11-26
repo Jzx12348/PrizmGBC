@@ -29,7 +29,7 @@ namespace emu_scale {
 }
 
 // Emulation settings
-#define SETTINGS_VERSION 11 // persist library view preference
+#define SETTINGS_VERSION 12 // add per-game playtime tracking
 struct emulator_settings {
 	int version;
 	unsigned int faqOffset;		// faq text offset (top 8 bits are name hash, bottom 24 are actual offset)
@@ -52,7 +52,11 @@ struct emulator_settings {
 	unsigned char sortMode; // 0 = name, 1 = recent, 2 = favourites
 	unsigned char saveSlot; // 0 = slot 1, 1 = slot 2, 2 = slot 3
 	unsigned char libraryView; // 0 = list, 1 = grid
-	unsigned char reserved[2]; // keep settings size 4-byte aligned
+	unsigned char reserved[2];
+	unsigned char playtimeCount;
+	unsigned char playtimeReserved[3];
+	char playtimeRoms[16][32];
+	unsigned int playtimeSeconds[16];
 };
 
 // color palette colors
