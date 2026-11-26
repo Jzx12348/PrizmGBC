@@ -119,6 +119,17 @@ static int findRecent(const char* filename) {
 	return -1;
 }
 
+static unsigned int findPlaytime(const char* filename) {
+	int count = emulator.settings.playtimeCount;
+	if (count > 16) count = 16;
+	for (int i = 0; i < count; i++) {
+		if (!strcmp(emulator.settings.playtimeRoms[i], filename)) {
+			return emulator.settings.playtimeSeconds[i];
+		}
+	}
+	return 0;
+}
+
 static int compareNames(const char* left, const char* right) {
 	while (*left && *right) {
 		char a = *left++;
@@ -232,6 +243,18 @@ void screen_rom::drawGameDetails() {
 		Print(204, 154, ramSizeName(header[ROM_OFFSET_RAM_SIZE]), false, COLOR_WHITE);
 		Print(204, 174, (header[ROM_OFFSET_GBC] == 0x80 || header[ROM_OFFSET_GBC] == 0xC0) ?
 			"GAME BOY COLOR" : "GAME BOY / DMG", false, COLOR_LIGHTGREEN);
+
+		unsigned int playedSeconds = findPlaytime(files[selectedFile].path);
+		unsigned int playedMinutes = playedSeconds / 60;
+		char playtimeText[32];
+		if (playedMinutes >= 60) {
+			sprintf(playtimeText, "PLAYED: %uH %uM", playedMinutes / 60, playedMinutes % 60);
+		} else if (playedMinutes > 0) {
+			sprintf(playtimeText, "PLAYED: %u MIN", playedMinutes);
+		} else {
+			strcpy(playtimeText, "PLAYED: UNDER 1 MIN");
+		}
+		Print(18, 178, playtimeText, false, COLOR_YELLOW);
 	}
 
 	display_fill footer;
