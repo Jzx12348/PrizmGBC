@@ -61,7 +61,7 @@ jobs:
           files: PrizmSDK/projects/PrizmGBC/PrizmGBC.g3a
           fail_on_unmatched_files: true
           body: |
-            A Game Boy and Game Boy Color emulator for the Casio fx-CG50.
+            ## A Game Boy and Game Boy Color emulator for the Casio fx-CG50.
 
             *Stable patch v1.3.1, updating the existing release.*
 
