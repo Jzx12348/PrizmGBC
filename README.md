@@ -198,7 +198,7 @@ The Makefile fixes the target name to PrizmGBC. Build from the repository root a
 
 PrizmGBC is based on [Prizoop by tswilliamson](https://github.com/tswilliamson/prizoop), which acknowledges [Cinoop by CTurt](https://github.com/CTurt/Cinoop). The upstream project also credits BGB for its usefulness during emulator debugging and compatibility work.
 
-Preserve the original license and copyright notices when modifying or redistributing the project. See the repository's license information for the applicable terms.
+Preserve the original license and copyright notices when modifying or redistributing the project. Check the upstream Prizoop repository for its applicable license terms before redistributing derivative work.
 
 ## Disclaimer
 
