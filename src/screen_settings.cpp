@@ -150,7 +150,9 @@ void screen_settings::drawOptions() {
 	for (int row = 0; row < count; row++) {
 		int index = categoryOptionIndex(curCategory, row);
 		if (index < 0) continue;
-		int y = 99 + row * 17;
+		// Keep the five-row System category comfortably inside the grey panel.
+		int rowSpacing = curCategory == CATEGORY_SYSTEM ? 15 : 17;
+		int y = 99 + row * rowSpacing;
 		bool selected = row == curOption;
 
 		if (selected) {
