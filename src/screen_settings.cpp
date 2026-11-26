@@ -69,84 +69,72 @@ void screen_settings::deselect() {
 }
 
 void screen_settings::drawOptions() {
+	ResolveBG(bg_menu);
 	EnableStatusArea(3);
 
-	display_fill header;
-	header.x1 = 0; header.x2 = 383; header.y1 = 0; header.y2 = 38; header.mode = 1;
-	Bdisp_AreaClr(&header, 1, COLOR_BLACK);
+	display_fill top;
+	top.x1 = 0; top.x2 = 383; top.y1 = 0; top.y2 = 43; top.mode = 1;
+	Bdisp_AreaClr(&top, 1, COLOR_BLACK);
 	display_fill accent;
-	accent.x1 = 0; accent.x2 = 383; accent.y1 = 37; accent.y2 = 39; accent.mode = 1;
+	accent.x1 = 0; accent.x2 = 383; accent.y1 = 42; accent.y2 = 45; accent.mode = 1;
 	Bdisp_AreaClr(&accent, 1, COLOR_CYAN);
-	Print(10, 5, "PRIZMGBC", false, COLOR_WHITE);
-	Print(10, 21, "SYSTEM SETTINGS", false, COLOR_CYAN);
+	Print(12, 5, "PRIZMGBC", false, COLOR_WHITE);
+	Print(12, 23, "SYSTEM SETTINGS", false, COLOR_CYAN);
 
 	int row = 0;
 	for (int i = 0; i < NumOptions(); i++) {
 		bool selected = curOption == i;
-		int y = row * 14 + 44;
-
+		int y = row * 14 + 50;
 		if (options[i].noCGB) continue;
 		row++;
 
-		Print(10, y, options[i].name, selected, options[i].disabled ? COLOR_DARKGRAY : COLOR_WHITE);
+		if (selected) {
+			display_fill highlight;
+			highlight.x1 = 8; highlight.x2 = 375;
+			highlight.y1 = y - 2; highlight.y2 = y + 12;
+			highlight.mode = 1;
+			Bdisp_AreaClr(&highlight, 1, COLOR_MEDIUMBLUE);
+		}
+		Print(15, y, options[i].name, selected,
+			options[i].disabled ? COLOR_DARKGRAY : COLOR_WHITE);
 
 		if (options[i].type == 0) {
 			unsigned char isOn = *((unsigned char*)options[i].addr);
-
-			Print(180, y, "On", selected && isOn, isOn && !options[i].disabled ? COLOR_WHITE : COLOR_DARKGRAY);
-			Print(210, y, "Off", selected && !isOn, !isOn && !options[i].disabled ? COLOR_WHITE : COLOR_DARKGRAY);
-		}
-		else if (options[i].type == 1) {
-			// key map
-		}
-		else if (options[i].type == 2) {
-			// frame skip
+			Print(230, y, isOn ? "[ ON ]" : "[ OFF ]", selected,
+				options[i].disabled ? COLOR_DARKGRAY : (isOn ? COLOR_CYAN : COLOR_SILVER));
+		} else if (options[i].type == 1) {
+			Print(230, y, "CONFIGURE", selected, COLOR_CYAN);
+		} else if (options[i].type == 2) {
 			char skip = *((char*)options[i].addr);
-
-			if (skip == -1) {
-				Print(180, y, "Auto", selected);
-			}
+			if (skip == -1) Print(230, y, "AUTO", selected, COLOR_CYAN);
 			else {
-				char buffer[5];
+				char buffer[8];
 				memset(buffer, 0, sizeof(buffer));
 				sprintf(buffer, "%d", skip);
-				Print(180, y, buffer, selected);
+				Print(230, y, buffer, selected, COLOR_CYAN);
 			}
-		}
-		else if (options[i].type == 3) {
-			// color palette
+		} else if (options[i].type == 3) {
 			colorpalette_type pal;
 			emulator.getPalette(*((unsigned char*)options[i].addr), pal);
-
-			// draw each color box
 			for (int j = 0; j < 4; j++) {
 				display_fill area;
-				area.x1 = 180 + 18 * j; 
-				area.x2 = area.x1 + 16;
-				area.y1 = y + 1;
-				area.y2 = y + 16;
-				area.mode = 1;
-				display_fill temp = area;
-				Bdisp_AreaClr(&temp, 1, selected ? COLOR_LIGHTGREEN : COLOR_WHITE);
-				area.x1++;
-				area.x2--;
-				area.y1++;
-				area.y2--;
+				area.x1 = 230 + 18 * j; area.x2 = area.x1 + 15;
+				area.y1 = y - 1; area.y2 = y + 11; area.mode = 1;
 				Bdisp_AreaClr(&area, 1, pal.colors[j]);
 			}
-		}
-		else if (options[i].type == 4) {
+		} else if (options[i].type == 4) {
 			unsigned char opt = *((unsigned char*)options[i].addr);
-			const char* modes[] = {
-				"None", "150% LowQ", "150% HighQ", "Fit LowQ", "Fit HighQ"
-			};
-			unsigned short colors[] = {
-				COLOR_WHITE, COLOR_WHITE, COLOR_ORANGE, COLOR_YELLOW, COLOR_ORANGE
-			};
-			Print(180, y, modes[opt], selected, !options[i].disabled ? colors[opt] : COLOR_DARKGRAY);
+			const char* modes[] = { "NONE", "150% LOW", "150% HIGH", "FIT LOW", "FIT HIGH" };
+			Print(230, y, modes[opt], selected,
+				!options[i].disabled ? COLOR_CYAN : COLOR_DARKGRAY);
 		}
 	}
 
+	display_fill footer;
+	footer.x1 = 0; footer.x2 = 383; footer.y1 = 192; footer.y2 = 215; footer.mode = 1;
+	Bdisp_AreaClr(&footer, 1, COLOR_BLACK);
+	Print(10, 198, "UP/DOWN SELECT OPTION", false, COLOR_SILVER);
+	Print(280, 198, "F1 LIBRARY", false, COLOR_CYAN);
 	DrawFrame(0);
 }
 
