@@ -10,6 +10,39 @@
 
 #include "screen_play.h"
 
+static void recordPlaytime(const char* filename, unsigned int elapsedSeconds) {
+	if (!filename || !filename[0] || elapsedSeconds == 0) return;
+
+	int count = emulator.settings.playtimeCount;
+	if (count > 16) count = 16;
+	int existing = -1;
+	for (int i = 0; i < count; i++) {
+		if (!strcmp(emulator.settings.playtimeRoms[i], filename)) {
+			existing = i;
+			break;
+		}
+	}
+
+	unsigned int totalSeconds = existing >= 0 ? emulator.settings.playtimeSeconds[existing] : 0;
+	if (existing >= 0) {
+		for (int i = existing; i > 0; i--) {
+			strcpy(emulator.settings.playtimeRoms[i], emulator.settings.playtimeRoms[i - 1]);
+			emulator.settings.playtimeSeconds[i] = emulator.settings.playtimeSeconds[i - 1];
+		}
+	} else {
+		if (count < 16) count++;
+		for (int i = count - 1; i > 0; i--) {
+			strcpy(emulator.settings.playtimeRoms[i], emulator.settings.playtimeRoms[i - 1]);
+			emulator.settings.playtimeSeconds[i] = emulator.settings.playtimeSeconds[i - 1];
+		}
+	}
+
+	strcpy(emulator.settings.playtimeRoms[0], filename);
+	emulator.settings.playtimeSeconds[0] = totalSeconds + elapsedSeconds;
+	emulator.settings.playtimeCount = count;
+	emulator.saveSettings();
+}
+
 static void rememberRecentRom(const char* filename) {
 	int count = emulator.settings.recentCount;
 	if (count > 5) count = 5;
@@ -179,6 +212,9 @@ void screen_play::play() {
 	ScopeTimer::InitSystem();
 #endif
 
+	// Track active gameplay time using the calculator RTC tick counter.
+	unsigned int playtimeStart = (unsigned int)RTC_GetTicks();
+
 	// wait for exit "key" to exit (This actually renders a preview screen first)
 	keys.exit = false;
 	while (keys.exit == false) {
@@ -187,6 +223,10 @@ void screen_play::play() {
 
 	// make sure menu isn't pressed
 	while (keyDown_fast(48) == true);
+
+	// Persist the elapsed playtime for this ROM.
+	unsigned int elapsedTicks = (unsigned int)RTC_GetTicks() - playtimeStart;
+	recordPlaytime(loadedROM, elapsedTicks / 128U);
 
 	// save sram
 	saveRAM();
