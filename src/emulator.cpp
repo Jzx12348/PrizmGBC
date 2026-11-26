@@ -1,4 +1,5 @@
 
+#include <stddef.h>
 #include "emulator.h"
 #include "memory.h"
 #include "cgb.h"
@@ -132,6 +133,9 @@ void emulator_type::defaultSettings() {
 	settings.fpsCounter = true;
 	settings.favoriteCount = 0;
 	memset(settings.favoriteRoms, 0, sizeof(settings.favoriteRoms));
+	settings.recentCount = 0;
+	memset(settings.recentRoms, 0, sizeof(settings.recentRoms));
+	settings.sortMode = 0;
 
 	settings.keyMap[emu_button::A] = 78;			// SHIFT
 	settings.keyMap[emu_button::B] = 68;			// OPTN
@@ -156,11 +160,22 @@ void emulator_type::defaultSettings() {
 
 bool emulator_type::loadSettings() {
 	int len;
-	if (!MCSGetDlen2((unsigned char*) settingsDir, (unsigned char*) settingsFile, &len) && len == sizeof(emulator.settings)) {
+	if (!MCSGetDlen2((unsigned char*) settingsDir, (unsigned char*) settingsFile, &len)) {
 		emulator_settings readSettings;
-		if (!MCSGetData1(0, sizeof(readSettings), &readSettings)) {
-			if (readSettings.version == SETTINGS_VERSION) {
+		memset(&readSettings, 0, sizeof(readSettings));
+		const int oldSize = (int)offsetof(emulator_settings, recentCount);
+		if ((len == sizeof(readSettings) || len == oldSize) && !MCSGetData1(0, len, &readSettings)) {
+			if (readSettings.version == SETTINGS_VERSION && len == sizeof(readSettings)) {
 				memcpy(&emulator.settings, &readSettings, sizeof(emulator_settings));
+				return true;
+			}
+			// Preserve v1.1.0 settings and favourites when adding the v1.2.0 fields.
+			if (readSettings.version == 8 && len == oldSize) {
+				memcpy(&emulator.settings, &readSettings, oldSize);
+				emulator.settings.recentCount = 0;
+				memset(emulator.settings.recentRoms, 0, sizeof(emulator.settings.recentRoms));
+				emulator.settings.sortMode = 0;
+				emulator.settings.version = SETTINGS_VERSION;
 				return true;
 			}
 		}
