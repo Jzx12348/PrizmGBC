@@ -19,6 +19,11 @@
 
 unsigned int framecounter = 0;
 
+// Rolling FPS measurement, updated twice per second.
+static unsigned int fpsClockTotal = 0;
+static unsigned int fpsFrameTotal = 0;
+static int displayedFps = 0;
+
 static int frameSkip = 0;
 static bool skippingFrame = false;			// whether the current frame is being skipped, determined by frameSkip value
 
@@ -405,6 +410,18 @@ void drawFramebufferMain(void) {
 		totalClocks = 0;
 	}
 #endif
+
+	// Measure actual emulated frame rate using the same TMU clock as speed control.
+	if (tmu1Clocks) {
+		fpsClockTotal += tmu1Clocks;
+		fpsFrameTotal++;
+		if (fpsFrameTotal >= 30) {
+			int fpsTenths = ((143994 * fpsFrameTotal * Ptune2_GetPLLFreq()) >> Ptune2_GetPFCDiv()) / fpsClockTotal;
+			displayedFps = fpsTenths / 10;
+			fpsClockTotal = 0;
+			fpsFrameTotal = 0;
+		}
+	}
 
 	// determine frame skip
 	skippingFrame = false;
