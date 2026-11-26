@@ -252,7 +252,7 @@ void screen_rom::drawGameDetails() {
 		} else if (playedMinutes > 0) {
 			sprintf(playtimeText, "PLAYED: %u MIN", playedMinutes);
 		} else {
-			strcpy(playtimeText, "PLAYED: UNDER 1 MIN");
+			strcpy(playtimeText, playedSeconds ? "PLAYED: UNDER 1 MIN" : "NOT PLAYED YET");
 		}
 		Print(18, 178, playtimeText, false, COLOR_YELLOW);
 	}
@@ -261,7 +261,7 @@ void screen_rom::drawGameDetails() {
 	footer.x1 = 0; footer.x2 = 383; footer.y1 = 192; footer.y2 = 215; footer.mode = 1;
 	Bdisp_AreaClr(&footer, 1, COLOR_BLACK);
 	Print(10, 198, "EXE BACK TO LIBRARY", false, COLOR_SILVER);
-	Print(178, 198, "F3 FAVOURITE", false, COLOR_YELLOW);
+	Print(178, 198, findFavorite(files[selectedFile].path) >= 0 ? "F3 UNFAVOURITE" : "F3 FAVOURITE", false, COLOR_YELLOW);
 	Print(292, 198, "F6 PLAY", false, COLOR_LIGHTGREEN);
 	DrawFrame(0);
 }
