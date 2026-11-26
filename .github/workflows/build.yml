@@ -2,7 +2,7 @@ name: Build PrizmGBC
 
 on:
   push:
-    branches: [master, v1.2.0]
+    branches: [master]
     tags: ['v*']
   pull_request:
     branches: [master]
@@ -44,25 +44,24 @@ jobs:
           retention-days: 14
 
       - name: Publish rolling development build
-        if: github.ref == 'refs/heads/v1.2.0'
+        if: github.ref == 'refs/heads/master'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: dev
-          target_commitish: v1.2.0
+          target_commitish: master
           name: v1.2.0-development
           body: |
-            **Development build · PRE-RELEASE**
+            ## **Development build · PRE-RELEASE**
 
-            This is the latest development build from the v1.2.0 development branch. It may contain unfinished features, experimental changes, or regressions. It is intended for testing, not everyday use.
+            *This is the latest development build from the v1.2.0 development branch. It may contain unfinished features, experimental changes, or regressions. It is intended for testing, not everyday use.*
 
-            **Features under test**
-            - In-game FPS counter, including its settings toggle.
-            - Per-button key remapping and reset-to-default controls.
-            - Favourite games in the library, including the quick favourite shortcut.
-            - Updated minimalist graphite-and-mint interface.
-            - Optimized 1.5× and 2× framebuffer scaling for smoother rendering.
+            ## **v1.2.0 development focus**
+            - Complete interface redesign with stronger contrast and improved readability.
+            - Reorganized settings with clear categories.
+            - Recently played games and improved library sorting.
+            - Per-game configuration profiles.
 
-            Please report bugs, compatibility issues, and performance differences. A successful build does not guarantee that every feature has been validated on a physical fx-CG50.
+            The v1.2.0 items are planned work, not completed features. Please report bugs, compatibility issues, and performance differences. A successful build does not guarantee physical fx-CG50 validation.
 
             For a stable version, install the latest numbered release.
           prerelease: true
