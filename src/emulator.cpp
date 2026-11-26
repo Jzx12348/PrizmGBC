@@ -130,6 +130,8 @@ void emulator_type::defaultSettings() {
 	settings.useCGBColors = true;
 	settings.sound = false;
 	settings.fpsCounter = true;
+	settings.favoriteCount = 0;
+	memset(settings.favoriteRoms, 0, sizeof(settings.favoriteRoms));
 
 	settings.keyMap[emu_button::A] = 78;			// SHIFT
 	settings.keyMap[emu_button::B] = 68;			// OPTN
