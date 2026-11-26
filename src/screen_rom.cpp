@@ -370,7 +370,7 @@ void screen_rom::setup() {
 	selectedFile = 0;
 	loadedFile = -1;
 	curScroll = 0;
-	gridMode = false;
+	gridMode = emulator.settings.libraryView == 1;
 	detailsMode = false;
 }
 
@@ -518,6 +518,8 @@ void screen_rom::handleSelect() {
 void screen_rom::handleF4() {
 	if (detailsMode) return;
 	gridMode = !gridMode;
+	emulator.settings.libraryView = gridMode ? 1 : 0;
+	emulator.saveSettings();
 	curScroll = 0;
 	checkScroll();
 	drawFiles();
