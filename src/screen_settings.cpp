@@ -72,72 +72,82 @@ void screen_settings::drawOptions() {
 	ResolveBG(bg_menu);
 	EnableStatusArea(3);
 
-	display_fill top;
-	top.x1 = 0; top.x2 = 383; top.y1 = 0; top.y2 = 43; top.mode = 1;
-	Bdisp_AreaClr(&top, 1, COLOR_BLACK);
+	// Shared PrizmGBC visual language: dark header, cyan accent, clear panels.
+	display_fill header;
+	header.x1 = 0; header.x2 = 383; header.y1 = 0; header.y2 = 43; header.mode = 1;
+	Bdisp_AreaClr(&header, 1, COLOR_BLACK);
 	display_fill accent;
 	accent.x1 = 0; accent.x2 = 383; accent.y1 = 42; accent.y2 = 45; accent.mode = 1;
 	Bdisp_AreaClr(&accent, 1, COLOR_CYAN);
-	Print(12, 5, "PRIZMGBC", false, COLOR_WHITE);
-	Print(12, 23, "SYSTEM SETTINGS", false, COLOR_CYAN);
+	Print(12, 5, "PRIZMGBC", true, COLOR_WHITE);
+	Print(12, 24, "SYSTEM SETTINGS", false, COLOR_CYAN);
+	Print(300, 15, "CONFIG", false, COLOR_SILVER);
+
+	display_fill panel;
+	panel.x1 = 7; panel.x2 = 376; panel.y1 = 51; panel.y2 = 187; panel.mode = 1;
+	Bdisp_AreaClr(&panel, 1, COLOR_DARKGRAY);
 
 	int row = 0;
 	for (int i = 0; i < NumOptions(); i++) {
-		bool selected = curOption == i;
-		int y = row * 14 + 50;
 		if (options[i].noCGB) continue;
+		bool selected = curOption == i;
+		int y = row * 13 + 57;
 		row++;
 
 		if (selected) {
 			display_fill highlight;
-			highlight.x1 = 8; highlight.x2 = 375;
-			highlight.y1 = y - 2; highlight.y2 = y + 12;
+			highlight.x1 = 10; highlight.x2 = 373;
+			highlight.y1 = y - 2; highlight.y2 = y + 11;
 			highlight.mode = 1;
 			Bdisp_AreaClr(&highlight, 1, COLOR_MEDIUMBLUE);
+			display_fill marker;
+			marker.x1 = 10; marker.x2 = 13;
+			marker.y1 = y - 2; marker.y2 = y + 11;
+			marker.mode = 1;
+			Bdisp_AreaClr(&marker, 1, COLOR_CYAN);
 		}
-		Print(15, y, options[i].name, selected,
-			options[i].disabled ? COLOR_DARKGRAY : COLOR_WHITE);
+
+		Print(19, y, options[i].name, selected,
+			options[i].disabled ? COLOR_SILVER : COLOR_WHITE);
 
 		if (options[i].type == 0) {
 			unsigned char isOn = *((unsigned char*)options[i].addr);
-			Print(230, y, isOn ? "[ ON ]" : "[ OFF ]", selected,
-				options[i].disabled ? COLOR_DARKGRAY : (isOn ? COLOR_CYAN : COLOR_SILVER));
+			Print(302, y, isOn ? "ON" : "OFF", selected,
+				options[i].disabled ? COLOR_SILVER : (isOn ? COLOR_CYAN : COLOR_SILVER));
 		} else if (options[i].type == 1) {
-			Print(230, y, "CONFIGURE", selected, COLOR_CYAN);
+			Print(286, y, "CONFIGURE", selected, COLOR_CYAN);
 		} else if (options[i].type == 2) {
 			char skip = *((char*)options[i].addr);
-			if (skip == -1) Print(230, y, "AUTO", selected, COLOR_CYAN);
+			if (skip == -1) Print(318, y, "AUTO", selected, COLOR_CYAN);
 			else {
 				char buffer[8];
 				memset(buffer, 0, sizeof(buffer));
 				sprintf(buffer, "%d", skip);
-				Print(230, y, buffer, selected, COLOR_CYAN);
+				Print(318, y, buffer, selected, COLOR_CYAN);
 			}
 		} else if (options[i].type == 3) {
 			colorpalette_type pal;
 			emulator.getPalette(*((unsigned char*)options[i].addr), pal);
 			for (int j = 0; j < 4; j++) {
-				display_fill area;
-				area.x1 = 230 + 18 * j; area.x2 = area.x1 + 15;
-				area.y1 = y - 1; area.y2 = y + 11; area.mode = 1;
-				Bdisp_AreaClr(&area, 1, pal.colors[j]);
+				display_fill swatch;
+				swatch.x1 = 300 + 17 * j; swatch.x2 = swatch.x1 + 13;
+				swatch.y1 = y - 1; swatch.y2 = y + 10; swatch.mode = 1;
+				Bdisp_AreaClr(&swatch, 1, pal.colors[j]);
 			}
 		} else if (options[i].type == 4) {
 			unsigned char opt = *((unsigned char*)options[i].addr);
 			const char* modes[] = { "1X", "FIT 1.5X", "2X CROP" };
-			Print(230, y, modes[opt], selected,
-				!options[i].disabled ? COLOR_CYAN : COLOR_DARKGRAY);
+			Print(286, y, modes[opt < emu_scale::MAX ? opt : 0], selected, COLOR_CYAN);
 		}
 	}
 
 	display_fill footer;
 	footer.x1 = 0; footer.x2 = 383; footer.y1 = 192; footer.y2 = 215; footer.mode = 1;
 	Bdisp_AreaClr(&footer, 1, COLOR_BLACK);
-	Print(10, 198, "UP/DOWN SELECT OPTION", false, COLOR_SILVER);
-	Print(280, 198, "F1 LIBRARY", false, COLOR_CYAN);
+	Print(10, 198, "UP / DOWN  NAVIGATE", false, COLOR_SILVER);
+	Print(235, 198, "EXE  CHANGE", false, COLOR_CYAN);
 	DrawFrame(0);
 }
-
 static const char* keyName[] = {
 	"A", "B", "Select", "Start", "Right", "Left", "Up", "Down", "Save State", "Load State"
 };
