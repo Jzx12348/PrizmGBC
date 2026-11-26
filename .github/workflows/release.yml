@@ -40,7 +40,14 @@ jobs:
           call make.bat DEFINES="-DTARGET_PRIZM=1 -DDEBUG=0" CONFIG=DeviceRelease
           if not exist PrizmGBC.g3a exit /b 1
 
-      - name: Publish stable release
+      - name: Move v1.3.1 tag to the patched source
+        shell: pwsh
+        working-directory: PrizmSDK/projects/PrizmGBC
+        run: |
+          git tag -f v1.3.1 $env:GITHUB_SHA
+          git push origin refs/tags/v1.3.1 --force
+
+      - name: Update existing stable release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v1.3.1
@@ -50,23 +57,19 @@ jobs:
           prerelease: false
           make_latest: true
           generate_release_notes: false
+          overwrite_files: true
           files: PrizmSDK/projects/PrizmGBC/PrizmGBC.g3a
           fail_on_unmatched_files: true
           body: |
-            ## **Stable release**
+            A Game Boy and Game Boy Color emulator for the Casio fx-CG50.
 
-            *PrizmGBC v1.3.1 is a small stable patch for the Casio fx-CG50, building on v1.3.0.*
+            *Stable patch v1.3.1, updating the existing release.*
 
-            ## New features and improvements
+            ## Improvements and fixes
 
-            - **Refined game library:** Improved grid/list navigation, persistent layout preference, favourites and clearer selected-game information.
-            - **Recently played experience:** Recent-game indicators, recent-activity sorting and per-game playtime display.
-            - **Game information:** Dedicated pages showing ROM title, file size, cartridge type, ROM capacity and RAM capacity.
-            - **Per-game settings profiles:** Save and manually apply performance, display, audio and control settings. Profile data is validated, and a full profile store no longer silently overwrites an existing profile.
-            - **Save-state manager:** Three slots for the currently loaded game, with **F3 to save** and **F4 to load** both in the manager and during gameplay.
-            - **Settings migration:** Legacy default save/load bindings migrate to F3/F4 without overwriting custom key mappings.
-            - **Library navigation:** Added F1 MENU and F5 NOTES hints beside the existing F2, F3, F4 and F6 actions.
+            - **Game library:** Refined grid/list navigation, favourites, recently played, game information and per-game settings profiles.
+            - **Save states:** Three slots, with **F3 to save** and **F4 to load**.
+            - **Library shortcuts:** F1 MENU and F5 NOTES hints. F5 opens the selected game's matching .txt notes file from the menu; its Game Boy Select mapping during gameplay is unchanged.
+            - **fx-CG50 stability:** Avoids Ptune2 calls on CG50 devices and hardens shutdown cleanup to reduce the risk of calculator instability.
 
-            ## Stable release notes
-
-            This patch adds the F1 MENU and F5 NOTES labels to the main library footer. F5 opens the selected game's matching .txt notes file from the menu; its Game Boy Select mapping during gameplay is unchanged. The earlier v1.3.0-beta release remains unchanged in the release archive.
+            The Ptune2 restriction is based on the SDK header warning. The intermittent disappearing-add-ins symptom still requires verification on a physical fx-CG50; this build should not be treated as hardware-confirmed.
