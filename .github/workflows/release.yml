@@ -65,7 +65,7 @@ jobs:
             - **Remembered library layout:** Switch between grid and list views, with your preference saved between launches.
             - **Playtime tracking:** Track playtime per game and sort the library by accumulated playtime.
             - **Per-game settings profiles:** Save and manually apply individual performance, display, audio and control settings.
-            - **Save-state manager:** Manage three save-state slots for the currently loaded game.
+            - **Save-state controls:** Press **F3 to save** and **F4 to load** the selected save-state slot, both during gameplay and in the dedicated three-slot save-state manager.
 
             ---
 
