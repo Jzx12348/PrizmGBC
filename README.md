@@ -40,7 +40,9 @@ Some inherited emulator features may remain experimental. Consult the release no
 
 ## v1.3.0 development
 
-PrizmGBC v1.3.0 is under active development. The following work is present in the development code and remains subject to calculator testing:
+**Development pre-release available:** [PrizmGBC v1.3.0-development](https://github.com/Jzx12348/PrizmGBC/releases/tag/v1.3.0-development).
+
+This build is intended for testing on a physical Casio fx-CG50. The following features are included in the development build and still require hardware validation:
 
 - Individual game information pages with cartridge and ROM metadata.
 - Persistent grid or list library preference.
@@ -48,7 +50,7 @@ PrizmGBC v1.3.0 is under active development. The following work is present in th
 - Per-game settings profiles that can be saved and applied, including display, performance, audio and key mappings.
 - A dedicated three-slot save-state manager with slot selection, saving and loading for the currently loaded game.
 
-There is no public v1.3.0 release yet. Development builds are available as temporary artifacts from the [GitHub Actions build workflow](https://github.com/Jzx12348/PrizmGBC/actions/workflows/build.yml). Use the v1.2.0 stable release for normal installation until the v1.3.0 features have been tested on physical hardware.
+This is a development pre-release, not a stable release. Use v1.2.0 for normal installation if you prefer the established stable version. Further development builds may change settings formats or behaviour.
 
 ## Download and install
 
@@ -146,7 +148,7 @@ The roadmap describes the current direction of the project. Planned features are
 
 ### v1.3.0 · Library and usability
 
-Development is underway. The current development code includes the game information screen, persistent grid/list preference, playtime tracking and sorting, manually saved and applied per-game settings profiles, and a dedicated three-slot save-state manager. These features still require broader testing on a physical fx-CG50.
+A development pre-release is available for calculator testing. The current development code includes the game information screen, persistent grid/list preference, playtime tracking and sorting, manually saved and applied per-game settings profiles, and a dedicated three-slot save-state manager. These features still require broader testing on a physical fx-CG50.
 
 Remaining work includes refining the library layout, improving the recently played experience, checking settings migration across upgrade paths, and validating save/load behaviour and profile handling on hardware.
 
