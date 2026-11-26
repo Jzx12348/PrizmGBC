@@ -77,6 +77,7 @@ struct emulator_screen {
 	virtual void handleRight() {}
 	virtual void handleSelect() {}
 	virtual void handleF3() {}
+	virtual void handleF4() {}
 
 protected:
 	// helper functions
