@@ -59,8 +59,9 @@ void screen_savestate::draw() {
 		char slotText[24];
 		sprintf(slotText, "SLOT %d", i + 1);
 		Print(25, y, slotText, i == selectedSlot, COLOR_WHITE);
-		Print(285, y, emulator.hasSaveState(i) ? "SAVED" : "EMPTY", false,
-			emulator.hasSaveState(i) ? COLOR_LIGHTGREEN : COLOR_SILVER);
+		bool saved = active && emulator.hasSaveState(i);
+		Print(285, y, saved ? "SAVED" : (active ? "EMPTY" : "N/A"), false,
+			saved ? COLOR_LIGHTGREEN : COLOR_SILVER);
 	}
 
 	display_fill footer;
