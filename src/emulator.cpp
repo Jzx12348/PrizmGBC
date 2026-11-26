@@ -129,6 +129,7 @@ void emulator_type::defaultSettings() {
 	settings.clampSpeed = true;
 	settings.useCGBColors = true;
 	settings.sound = false;
+	settings.fpsCounter = true;
 
 	settings.keyMap[emu_button::A] = 78;			// SHIFT
 	settings.keyMap[emu_button::B] = 68;			// OPTN
