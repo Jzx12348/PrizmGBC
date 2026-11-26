@@ -195,7 +195,7 @@ static const char* getMappedKeyLabel(unsigned char code) {
 	}
 }
 
-void screen_settings::drawCurrentKeyMap() {
+void screen_settings::drawCurrentKeyMap(int selected) {
 	ResolveBG(bg_menu);
 	EnableStatusArea(3);
 	display_fill header;
@@ -205,7 +205,7 @@ void screen_settings::drawCurrentKeyMap() {
 	accent.x1 = 0; accent.x2 = 383; accent.y1 = 42; accent.y2 = 45; accent.mode = 1;
 	Bdisp_AreaClr(&accent, 1, COLOR_CYAN);
 	Print(12, 5, "PRIZMGBC", true, COLOR_WHITE);
-	Print(12, 24, "CURRENT KEY BINDS", false, COLOR_CYAN);
+	Print(12, 24, "CONTROLS / KEY MAPPING", false, COLOR_CYAN);
 	Print(300, 15, "v1.0.0", false, COLOR_CYAN);
 
 	for (int i = 0; i < emu_button::MAX; i++) {
@@ -213,7 +213,13 @@ void screen_settings::drawCurrentKeyMap() {
 		int row = i % 5;
 		int x = column ? 202 : 14;
 		int y = 57 + row * 25;
-		Print(x, y, keyName[i], false, COLOR_WHITE);
+		if (i == selected) {
+			display_fill highlight;
+			highlight.x1 = x - 4; highlight.x2 = x + 175;
+			highlight.y1 = y - 3; highlight.y2 = y + 16; highlight.mode = 1;
+			Bdisp_AreaClr(&highlight, 1, COLOR_MEDIUMBLUE);
+		}
+		Print(x, y, keyName[i], i == selected, COLOR_WHITE);
 		const char* keyLabel = getMappedKeyLabel(emulator.settings.keyMap[i]);
 		char keyText[20];
 		if (keyLabel) strcpy(keyText, keyLabel);
@@ -223,57 +229,51 @@ void screen_settings::drawCurrentKeyMap() {
 	display_fill footer;
 	footer.x1 = 0; footer.x2 = 383; footer.y1 = 192; footer.y2 = 215; footer.mode = 1;
 	Bdisp_AreaClr(&footer, 1, COLOR_BLACK);
-	Print(10, 198, "EXE  REMAP ALL", false, COLOR_CYAN);
-	Print(245, 198, "MENU  BACK", false, COLOR_SILVER);
+	Print(8, 198, "UP/DN SELECT", false, COLOR_SILVER);
+	Print(130, 198, "EXE CHANGE", false, COLOR_CYAN);
+	Print(237, 198, "F1 RESET", false, COLOR_YELLOW);
+	Print(320, 198, "MENU BACK", false, COLOR_SILVER);
 	DrawFrame(0);
 }
 
-void screen_settings::selectKeys() {
-	unsigned char newMap[emu_button::MAX];
+void screen_settings::editKeys() {
+	int selected = 0;
+	for (;;) {
+		drawCurrentKeyMap(selected);
+		int key = 0;
+		GetKey(&key);
 
-	// wait for key release
-	getCurrentKey(false);
-
-	for (int i = 0; i < emu_button::MAX; i++) {
-		display_fill area;
-		area.x1 = 65;
-		area.x2 = 318;
-		area.y1 = 86;
-		area.y2 = 132;
-		area.mode = 1;
-		display_fill temp = area;
-		Bdisp_AreaClr(&temp, 1, COLOR_BLACK);
-
-		area.x1 += 2;
-		area.x2 -= 2;
-		area.y1 += 2;
-		area.y2 -= 2;
-		Bdisp_AreaClr(&area, 1, COLOR_WHITE);
-
-		const char* pressKey = "Press key for ";
-		const char* exitPrompt = "Press MENU to cancel";
-
-		int line1WidthA = PrintWidth(pressKey);
-		int line1WidthB = PrintWidth(keyName[i]);
-		int x = 192 - (line1WidthA + line1WidthB) / 2;
-
-		Print(x, 90, pressKey, false, COLOR_BLACK);
-		Print(x + line1WidthA, 90, keyName[i], true, COLOR_YELLOW);
-
-		int line2Width = PrintWidth(exitPrompt);
-		Print(192 - line2Width / 2, 110, exitPrompt, false, COLOR_DARKRED);
-
-		Bdisp_PutDisp_DD();
-
-		newMap[i] = getCurrentKey();
-
-		// MENU = cancel
-		if (newMap[i] == 48)
+		if (key == KEY_CTRL_UP) {
+			selected = (selected + emu_button::MAX - 1) % emu_button::MAX;
+		} else if (key == KEY_CTRL_DOWN) {
+			selected = (selected + 1) % emu_button::MAX;
+		} else if (key == KEY_CTRL_MENU || key == KEY_CTRL_EXIT) {
 			return;
+		} else if (key == KEY_CTRL_F1) {
+			// Restore only the controls, leaving all other user settings intact.
+			static const unsigned char defaults[emu_button::MAX] = {
+				78, 68, 39, 29, 27, 38, 28, 37, 43, 25
+			};
+			memcpy(emulator.settings.keyMap, defaults, sizeof(defaults));
+			emulator.saveSettings();
+		} else if (key == KEY_CTRL_EXE || key == KEY_CTRL_SHIFT) {
+			// Let the confirmation key lift before waiting for the replacement.
+			getCurrentKey(false);
+			display_fill prompt;
+			prompt.x1 = 55; prompt.x2 = 328; prompt.y1 = 82; prompt.y2 = 137; prompt.mode = 1;
+			Bdisp_AreaClr(&prompt, 1, COLOR_WHITE);
+			const char* promptText = "PRESS A NEW KEY";
+			Print(192 - PrintWidth(promptText) / 2, 94, promptText, true, COLOR_BLACK);
+			Print(192 - PrintWidth(keyName[selected]) / 2, 114, keyName[selected], true, COLOR_DARKCYAN);
+			Bdisp_PutDisp_DD();
+			unsigned char newKey = getCurrentKey();
+			// MENU cancels this one change.
+			if (newKey != 48) {
+				emulator.settings.keyMap[selected] = newKey;
+				emulator.saveSettings();
+			}
+		}
 	}
-
-	// copy to settings
-	memcpy(emulator.settings.keyMap, newMap, sizeof(newMap));
 }
 
 void screen_settings::handleUp() {
