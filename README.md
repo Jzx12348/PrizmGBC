@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>A Game Boy and Game Boy Color emulator for the Casio fx-CG50.</strong><br>
-  Built for the calculator, packaged as a native <code>.g3a</code> add-in.
+  Designed for the calculator, packaged as a native <code>.g3a</code> add-in.
 </p>
 
 <p align="center">
@@ -37,6 +37,18 @@ The project is primarily developed and validated for the **Casio fx-CG50**. Comp
 - **Native calculator installation** through a .g3a add-in.
 
 Some inherited emulator features may remain experimental. Consult the release notes and test on your own calculator before relying on save states or other critical functionality.
+
+## v1.3.0 development
+
+PrizmGBC v1.3.0 is under active development. The following work is present in the development code and remains subject to calculator testing:
+
+- Individual game information pages with cartridge and ROM metadata.
+- Persistent grid or list library preference.
+- Per-game playtime tracking and sorting by total playtime.
+- Per-game settings profiles that can be saved and applied, including display, performance, audio and key mappings.
+- A dedicated three-slot save-state manager with slot selection, saving and loading for the currently loaded game.
+
+There is no public v1.3.0 release yet. Development builds are available as temporary artifacts from the [GitHub Actions build workflow](https://github.com/Jzx12348/PrizmGBC/actions/workflows/build.yml). Use the v1.2.0 stable release for normal installation until the v1.3.0 features have been tested on physical hardware.
 
 ## Download and install
 
@@ -134,13 +146,9 @@ The roadmap describes the current direction of the project. Planned features are
 
 ### v1.3.0 · Library and usability
 
-- Complete game library interface redesign.
-- Grid and list view options.
-- Individual game information screens.
-- Per-game settings profiles.
-- Improved recently played experience.
-- Playtime tracking.
-- Dedicated save-state management screen.
+Development is underway. The current development code includes the game information screen, persistent grid/list preference, playtime tracking and sorting, manually saved and applied per-game settings profiles, and a dedicated three-slot save-state manager. These features still require broader testing on a physical fx-CG50.
+
+Remaining work includes refining the library layout, improving the recently played experience, checking settings migration across upgrade paths, and validating save/load behaviour and profile handling on hardware.
 
 ### v1.4.0 · Personalisation
 
