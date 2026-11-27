@@ -1,4 +1,4 @@
-name: Publish PrizmGBC stable # Existing v1.3.1 release patch; the beta tag is never modified.
+name: Publish PrizmGBC stable # v1.3.2 patch release; the archived beta tag is never modified.
 
 on:
   push:
@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   publish-stable:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.event.head_commit.message == 'Prepare v1.3.1 patch release'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.event.head_commit.message == 'Prepare v1.3.2 patch release'
     name: Build and publish stable release
     runs-on: windows-latest
     steps:
@@ -40,19 +40,19 @@ jobs:
           call make.bat DEFINES="-DTARGET_PRIZM=1 -DDEBUG=0" CONFIG=DeviceRelease
           if not exist PrizmGBC.g3a exit /b 1
 
-      - name: Move v1.3.1 tag to the patched source
+      - name: Create v1.3.2 tag
         shell: pwsh
         working-directory: PrizmSDK/projects/PrizmGBC
         run: |
-          git tag -f v1.3.1 $env:GITHUB_SHA
-          git push origin refs/tags/v1.3.1 --force
+          git tag v1.3.2 $env:GITHUB_SHA
+          git push origin refs/tags/v1.3.2
 
-      - name: Update existing stable release
+      - name: Publish v1.3.2 stable release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.3.1
+          tag_name: v1.3.2
           target_commitish: master
-          name: v1.3.1
+          name: v1.3.2
           draft: false
           prerelease: false
           make_latest: true
@@ -63,13 +63,13 @@ jobs:
           body: |
             ## A Game Boy and Game Boy Color emulator for the Casio fx-CG50.
 
-            *Stable patch v1.3.1, updating the existing release.*
+            *Stable patch release v1.3.2.*
 
-            ## Improvements and fixes
+            ## Fixes
 
-            - **Game library:** Refined grid/list navigation, favourites, recently played, game information and per-game settings profiles.
-            - **Save states:** Three slots, with **F3 to save** and **F4 to load**.
-            - **Library shortcuts:** F1 MENU and F5 NOTES hints. F5 opens the selected game's matching .txt notes file from the menu; its Game Boy Select mapping during gameplay is unchanged.
-            - **fx-CG50 stability:** Avoids Ptune2 calls on CG50 devices and hardens shutdown cleanup to reduce the risk of calculator instability.
+            - **F5 NOTES:** Hardened notes-file loading and rendering with validated offsets, a null-terminated read buffer and bounds-checked line rendering.
+            - Prevents the F5 notes screen from reading beyond the loaded text buffer.
 
-            The Ptune2 restriction is based on the SDK header warning. The intermittent disappearing-add-ins symptom still requires verification on a physical fx-CG50; this build should not be treated as hardware-confirmed.
+            ## Important testing note
+
+            The automated Windows SDK build passed. The reported issue where installed .g3a add-ins disappear from the calculator launcher after exiting PrizmGBC still requires testing on a physical fx-CG50. This release does not claim that symptom is resolved.
