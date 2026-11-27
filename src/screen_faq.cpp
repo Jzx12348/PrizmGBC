@@ -107,16 +107,27 @@ void screen_faq::draw() {
 		const int lineSize = 384 / 5;
 		char bufToDraw[lineSize + 1];
 		bool skipLine = false;
-		if (x) {
-			for (int c = 0; c < x; c++) {
-				if (textBuffer[curTextPos + c] == '\n') {
+		int lineStart = curTextPos;
+		if (lineStart < 0 || lineStart >= textSize) break;
+
+		if (x > 0) {
+			int available = textSize - lineStart;
+			int skip = min(x, available);
+			for (int c = 0; c < skip; c++) {
+				if (textBuffer[lineStart + c] == '\n') {
 					skipLine = true;
+					break;
 				}
 			}
 		}
 		if (!skipLine) {
-			strncpy(bufToDraw, textBuffer + curTextPos + x, lineSize);
-			for (int c = 0; c < lineSize; c++) {
+			int start = lineStart + min(x, textSize - lineStart);
+			int copyLength = min(lineSize, textSize - start);
+			if (copyLength > 0) {
+				memcpy(bufToDraw, textBuffer + start, copyLength);
+			}
+			bufToDraw[copyLength] = 0;
+			for (int c = 0; c < copyLength; c++) {
 				if (bufToDraw[c] == '\n') {
 					bufToDraw[c] = 0;
 					break;
@@ -125,7 +136,6 @@ void screen_faq::draw() {
 
 			CalcType_Draw(&consolas_intl, bufToDraw, 2, y, COLOR_WHITE, 0, 0);
 		}
-		
 		// go to next line
 		do {
 			curTextPos++;
@@ -149,14 +159,33 @@ void screen_faq::draw() {
 }
 
 void screen_faq::readText(int bufferPos) {
+	if (faqHandle < 0 || faqSize <= 0) {
+		textSize = 0;
+		return;
+	}
+
+	if (bufferPos < 0) bufferPos = 0;
+	if (bufferPos > faqSize) bufferPos = faqSize;
 	textSize = min(4096, faqSize - bufferPos);
 	textOffset = bufferPos;
+	readOffset = 0;
+	if (textSize <= 0) {
+		textSize = 0;
+		return;
+	}
 
+	// Notes are user-provided files. Allocate one extra byte and terminate
+	// every read window before passing text to the renderer.
 	if (textBuffer == 0) {
-		textBuffer = (char*) malloc(4096);
+		textBuffer = (char*) malloc(4097);
+	}
+	if (textBuffer == 0) {
+		textSize = 0;
+		return;
 	}
 
 	Bfile_ReadFile_OS(faqHandle, textBuffer, textSize, bufferPos);
+	textBuffer[textSize] = 0;
 }
 
 void screen_faq::handleDown() {
