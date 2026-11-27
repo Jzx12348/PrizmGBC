@@ -2,12 +2,10 @@
 
 All notable user-facing changes to PrizmGBC are documented here. New development changes should be recorded under **Unreleased** as they are merged. When a version is published, move the relevant entries into a dated version section and keep the GitHub release notes consistent.
 
-## Unreleased
+## v1.3.2 - 2026-11-27
 
-- Community contribution workflow: structured bug, feature request and game compatibility issue forms.
-- Added contribution guidance, a community compatibility tracker and development-build testing instructions.
-- Added this changelog and linked community resources from the README and project website.
-- Hardened F5 game-notes loading and rendering: bounds-check note offsets, allocate a terminated read buffer, and prevent line rendering from reading beyond the loaded text window.
+- Hardened F5 game-notes loading and rendering: validate note offsets, allocate a null-terminated read buffer, and prevent line rendering from reading beyond the loaded text.
+- The F5 memory-safety fix has passed the automated build. The reported disappearing-add-ins symptom still requires testing on a physical fx-CG50 and is not claimed as resolved.
 
 ## v1.3.1 - 2026-11-26
 
