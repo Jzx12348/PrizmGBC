@@ -2,7 +2,7 @@
 
 <p align="center"><img src="PrizmGBC-logo.svg" alt="PrizmGBC logo" width="420"></p>
 <p align="center"><strong>A Game Boy and Game Boy Color emulator for the Casio fx-CG50.</strong><br>Built for the calculator and distributed as a native <code>.g3a</code> add-in.</p>
-<p align="center"><a href="https://github.com/Jzx12348/PrizmGBC/releases/latest"><strong>Latest stable release: v1.3.1</strong></a> · <a href="https://jzx12348.github.io/PrizmGBC/">Project website</a> · <a href="https://github.com/Jzx12348/PrizmGBC/releases">All releases</a></p>
+<p align="center"><a href="https://github.com/Jzx12348/PrizmGBC/releases/latest"><strong>Latest stable release: v1.3.2</strong></a> · <a href="https://jzx12348.github.io/PrizmGBC/">Project website</a> · <a href="https://github.com/Jzx12348/PrizmGBC/releases">All releases</a></p>
 
 ---
 
@@ -12,7 +12,7 @@ PrizmGBC is a community-developed fork of [Prizoop](https://github.com/tswilliam
 
 The project is primarily developed for the **Casio fx-CG50**. Compatibility and performance can vary between games, calculator models and OS versions.
 
-## v1.3.0 stable features
+## Current stable features · v1.3.2
 
 - **Game Boy and Game Boy Color support** for .gb and .gbc ROMs, plus inherited .gbz support.
 - **Redesigned game library** with persistent grid/list layouts and improved navigation.
@@ -26,6 +26,11 @@ The project is primarily developed for the **Casio fx-CG50**. Compatibility and 
 - **Categorised settings** for Performance, Display, Controls, Audio and System, with improved tab spacing.
 - **Configurable key mappings** and display modes including native 1×, 1.5× Fit and 2× Crop.
 - **Native calculator installation** through a .g3a add-in.
+
+## v1.3.2 patch
+
+- **F5 NOTES safety:** Hardened notes-file loading and rendering with validated offsets, a null-terminated read buffer and bounds-checked line rendering.
+- The F5 safety fix passes the automated build. The reported issue where installed `.g3a` add-ins disappear from the calculator launcher still requires physical fx-CG50 testing and is not claimed as resolved.
 
 ## v1.3.1 patch
 
